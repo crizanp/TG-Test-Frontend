@@ -1,41 +1,77 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { usePoints } from '../context/PointsContext';
 
 const EcosystemContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
   gap: 20px;
   padding: 20px;
-  background-color: #121212;
+  background-color: #1c1c1c;
   color: white;
   text-align: center;
-  min-height: 100vh;
-  font-family: Arial, sans-serif;
-`;
+  font-family: 'Arial, sans-serif';
+  height: 100vh;
+ 
+  
+  /* Hiding scrollbar for Chrome, Safari, and Opera */
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
 
-const EcosystemBox = styled.div`
-  background-color: #1e1e1e;
-  border-radius: 10px;
-  padding: 20px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s, box-shadow 0.2s;
-  user-select: none;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+  @media (max-width: 768px) {
+    padding: 15px;
   }
 
   @media (max-width: 480px) {
-    width: 100%;
+    padding: 10px;
+    /* Additional mobile-specific hiding */
+    -webkit-overflow-scrolling: touch;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+`;
+
+const UserInfo = styled.div`
+  background-color: #4caf50;
+  padding: 15px 20px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+
+  @media (max-width: 480px) {
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+`;
+
+const EcosystemBox = styled.div`
+  background-color: #252525;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 10px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+  }
+
+  @media (max-width: 480px) {
+    padding: 15px;
   }
 `;
 
 const SiteName = styled.h3`
   color: #ff9800;
-  font-size: 18px;
+  font-size: 20px;
   margin-bottom: 10px;
 `;
 
@@ -52,11 +88,46 @@ const Url = styled.a`
 `;
 
 const Description = styled.p`
-  font-size: 14px;
+  font-size: 16px;
   color: #cccccc;
+  margin-bottom: 10px;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
+`;
+
+const VisitButton = styled.button`
+  background-color: #ff9800;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #ffb74d;
+  }
+
+  &:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
 `;
 
 function EcosystemPage() {
+  const { points, setPoints } = usePoints();
+  const username = '@demo_username'; // Replace this with the actual username from context or props
+  const [processing, setProcessing] = useState(false);
+
   const ecosystems = [
     {
       name: 'IGH Group Agency',
@@ -73,50 +144,39 @@ function EcosystemPage() {
       url: 'https://cryptews.com/',
       description: 'News aggregator platform.',
     },
-    {
-      name: 'IGH CoinMarketCap Profile',
-      url: 'https://coinmarketcap.com/community/profile/icogemhunters',
-      description: 'Our official CoinMarketCap profile.',
-    },
-    {
-      name: 'IGH Twitter',
-      url: 'https://twitter.com/icogemhunters',
-      description: 'Follow us on Twitter.',
-    },
-    {
-      name: 'IGH Telegram Group',
-      url: 'https://t.me/ighgroup',
-      description: 'Join our community.',
-    },
-    {
-      name: 'IGH Telegram Channel',
-      url: 'https://t.me/icogemhunters',
-      description: 'Official updates and announcements.',
-    },
-    {
-      name: 'IGH Gate.io Profile',
-      url: 'https://www.gate.io/posts/homepage/CRkAAAoHXkNwUQoAHQlHDF9e',
-      description: 'Our official Gate.io profile.',
-    },
-    {
-      name: 'IGH Binance Profile',
-      url: 'https://www.binance.com/en/square/profile/ighgroup',
-      description: 'Our official Binance profile.',
-    },
-    {
-      name: 'Maxis0 Telegram',
-      url: 'https://t.me/maxis0',
-      description: 'Partnerships and collaborations.',
-    },
   ];
+
+  const handleVisit = (url) => {
+    setProcessing(true);
+    window.open(url, '_blank');
+
+    setTimeout(() => {
+      setPoints((prevPoints) => prevPoints + 100);
+      setProcessing(false);
+      alert('100 points awarded for visiting the site!');
+    }, 30000);
+  };
 
   return (
     <EcosystemContainer>
+      <UserInfo>
+        <div>{username}</div>
+        <div>Points: {points.toFixed(2)}</div>
+      </UserInfo>
+
       {ecosystems.map((site, index) => (
         <EcosystemBox key={index}>
           <SiteName>{site.name}</SiteName>
-          <Url href={site.url} target="_blank" rel="noopener noreferrer">{site.url}</Url>
+          <Url href={site.url} target="_blank" rel="noopener noreferrer">
+            {site.url}
+          </Url>
           <Description>{site.description}</Description>
+          <VisitButton
+            onClick={() => handleVisit(site.url)}
+            disabled={processing}
+          >
+            {processing ? 'Processing...' : 'Visit & Earn 100 Points'}
+          </VisitButton>
         </EcosystemBox>
       ))}
     </EcosystemContainer>
