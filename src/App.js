@@ -62,7 +62,8 @@ const MenuLabel = styled.div`
 `;
 
 function App() {
-  const totalPoints = 50;
+  const totalPoints = 50;  // You have declared this variable but not used it in the current code
+
 
   return (
     <Router>
