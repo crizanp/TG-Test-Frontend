@@ -7,12 +7,12 @@ const HomeContainer = styled.div`
   font-family: Arial, sans-serif;
   color: white;
   background-color: #121212;
-  padding: 10px;
+  padding: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 84vh;
+  height: 86vh;
   text-align: center;
   overflow: hidden;
   user-select: none; /* Prevent text selection */
@@ -24,11 +24,11 @@ const HomeContainer = styled.div`
 `;
 
 const TopSection = styled.div`
-  width: 100%;
+  width: 90%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 10px;
+  padding: 20px;
 `;
 
 const TelegramUsername = styled.div`

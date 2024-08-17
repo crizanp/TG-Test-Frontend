@@ -10,9 +10,10 @@ import { PointsProvider } from './context/PointsContext'; // Import PointsProvid
 
 const AppContainer = styled.div`
   font-family: 'Arial, sans-serif';
-  background-color: #000000;
-  padding: 20px;
+  ${'' /* background-color: #000000;
+  padding: 20px; */}
   max-width: 400px;
+
   height:100vh;
   margin: 0 auto;
 

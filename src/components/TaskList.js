@@ -10,7 +10,6 @@ const TaskContainer = styled.div`
   gap: 10px;
   padding: 20px;
   background-color: #121212;
-  min-height: 100vh;
   color: white;
   padding-bottom: 80px;
   font-family: 'Arial', sans-serif;
