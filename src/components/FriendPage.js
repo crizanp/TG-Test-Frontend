@@ -7,6 +7,10 @@ const FriendContainer = styled.div`
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 480px) {
+    padding: 15px;
+  }
 `;
 
 const FriendTitle = styled.h2`
@@ -16,6 +20,10 @@ const FriendTitle = styled.h2`
 const ReferralDetails = styled.div`
   margin-top: 20px;
   font-size: 18px;
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 `;
 
 const ReferralPoints = styled.div`

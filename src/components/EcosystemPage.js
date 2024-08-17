@@ -7,6 +7,10 @@ const EcosystemContainer = styled.div`
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 480px) {
+    padding: 15px;
+  }
 `;
 
 const EcosystemItem = styled.div`
@@ -33,7 +37,6 @@ function EcosystemPage() {
         <h3>Cryptews</h3>
         <p>Description of Cryptews news aggregator platform.</p>
       </EcosystemItem>
-      {/* Add more items as needed */}
     </EcosystemContainer>
   );
 }

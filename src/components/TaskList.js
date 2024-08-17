@@ -2,21 +2,31 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaChevronRight } from 'react-icons/fa';
 import { GiClockwork } from 'react-icons/gi';
+import { usePoints } from '../context/PointsContext';
 
 const TaskContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   padding: 20px;
   background-color: #121212;
   min-height: 100vh;
   color: white;
-  padding-bottom: 100px; /* Ensure space for the bottom menu */
+  padding-bottom: 80px;
   font-family: 'Arial', sans-serif;
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px;
+    padding-bottom: 80px;
+  }
 `;
 
 const TaskCategory = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 
 const TaskTitle = styled.h3`
@@ -24,30 +34,30 @@ const TaskTitle = styled.h3`
   margin-bottom: 10px;
   text-align: center;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
 `;
 
 const CoinLogo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  font-size: 64px;
+  margin-bottom: 10px;
+  font-size: 48px;
 `;
 
 const CoinText = styled.div`
   text-align: center;
   color: #fff;
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 20px;
+  margin-bottom: 10px;
   font-weight: bold;
 `;
 
 const TaskItem = styled.div`
   background-color: #1e1e1e;
-  padding: 20px;
-  margin: 10px;
-  border-radius: 20px;
+  padding: 15px;
+  margin: 5px;
+  border-radius: 15px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
@@ -56,7 +66,7 @@ const TaskItem = styled.div`
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
   }
 
@@ -70,6 +80,10 @@ const TaskItem = styled.div`
       box-shadow: none;
     }
   `}
+
+  @media (max-width: 480px) {
+    padding: 10px;
+  }
 `;
 
 const TaskDetails = styled.div`
@@ -79,23 +93,31 @@ const TaskDetails = styled.div`
 `;
 
 const TaskItemTitle = styled.div`
-  font-size: 18px;
+  font-size: 16px;
   color: #ffffff;
   margin-bottom: 5px;
   font-weight: bold;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
 const TaskPoints = styled.div`
   background-color: #ff9800;
   color: white;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 12px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
 
 const TaskIcon = styled.div`
-  font-size: 24px;
+  font-size: 20px;
   color: #ffffff;
 
   ${({ completed }) =>
@@ -107,6 +129,16 @@ const TaskIcon = styled.div`
     padding: 8px 12px;
     border-radius: 12px;
   `}
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+
+    ${({ completed }) =>
+      completed &&
+      `
+      font-size: 14px;
+    `}
+  }
 `;
 
 const ModalOverlay = styled.div`
@@ -120,6 +152,10 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
+
+  @media (max-width: 480px) {
+    align-items: center;
+  }
 `;
 
 const Modal = styled.div`
@@ -130,29 +166,37 @@ const Modal = styled.div`
   max-width: 400px;
   text-align: center;
   position: relative;
-  animation: slide-up 0.3s ease-out forwards;
 
-  @keyframes slide-up {
-    from {
-      transform: translateY(100%);
-    }
-    to {
-      transform: translateY(0);
-    }
+  @media (max-width: 768px) {
+    padding: 15px;
+    border-radius: 15px 15px 0 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
   }
 `;
 
 const ModalHeader = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   color: #ff9800;
   margin-bottom: 20px;
   font-weight: bold;
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 
 const ModalContent = styled.div`
-  font-size: 18px;
+  font-size: 16px;
   color: white;
   margin-bottom: 20px;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 
 const ModalButton = styled.button`
@@ -162,7 +206,7 @@ const ModalButton = styled.button`
   padding: 12px 24px;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   transition: background-color 0.3s;
 
@@ -173,6 +217,11 @@ const ModalButton = styled.button`
   &:disabled {
     background-color: grey;
     cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    padding: 10px 20px;
   }
 `;
 
@@ -197,6 +246,10 @@ const CloseButton = styled.div`
   font-size: 24px;
   cursor: pointer;
   color: white;
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 
 const ProofInput = styled.input`
@@ -213,6 +266,11 @@ const ProofInput = styled.input`
     outline: none;
     border-color: #ffb74d;
   }
+
+  @media (max-width: 480px) {
+    padding: 10px;
+    font-size: 16px;
+  }
 `;
 
 const PointsContainer = styled.div`
@@ -226,6 +284,11 @@ const PointsContainer = styled.div`
   margin-bottom: 20px;
   font-size: 22px;
   font-weight: bold;
+
+  @media (max-width: 480px) {
+    padding: 10px 20px;
+    font-size: 18px;
+  }
 `;
 
 const TotalPoints = styled.div`
@@ -246,15 +309,9 @@ const TimerIcon = styled(GiClockwork)`
   color: #ff9800;
   animation: ${spinAnimation} 2s linear infinite;
   margin-top: 20px;
-`;
 
-const LoadingIcon = styled.div`
-  font-size: 32px;
-  color: #ff9800;
-  margin-top: 20px;
-  &::after {
-    content: "⏳";
-    animation: ${spinAnimation} 2s linear infinite;
+  @media (max-width: 480px) {
+    font-size: 28px;
   }
 `;
 
@@ -263,6 +320,10 @@ const TimerText = styled.div`
   font-size: 18px;
   font-weight: bold;
   margin-top: 10px;
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 `;
 
 const tasks = {
@@ -285,11 +346,11 @@ const tasks = {
 };
 
 function TaskList() {
+  const { points, setPoints } = usePoints();
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState('');
   const [isClaimable, setIsClaimable] = useState(false);
   const [underModeration, setUnderModeration] = useState(false);
-  const [totalPoints, setTotalPoints] = useState(50);
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(30);
   const [timerStarted, setTimerStarted] = useState(false);
@@ -313,27 +374,27 @@ function TaskList() {
       setProof('');
       setIsClaimable(false);
       setUnderModeration(false);
-      setTimer(30); // Reset the timer to 30 seconds
-      setTimerStarted(false); // Ensure the timer hasn't started yet
+      setTimer(30);
+      setTimerStarted(false);
     }
   };
 
   const handleStartTask = () => {
     window.open(selectedTask.link, '_blank');
-    setTimerStarted(true); // Start the timer when the task is started
+    setTimerStarted(true);
   };
 
   const handleClaimReward = () => {
     setUnderModeration(true);
     setTimeout(() => {
-      setTotalPoints((prevPoints) => prevPoints + selectedTask.points);
+      setPoints((prevPoints) => prevPoints + selectedTask.points);
       setCompletedTasks((prevTasks) => ({
         ...prevTasks,
         [selectedTask.id]: true,
       }));
       alert('Points awarded!');
       setSelectedTask(null);
-    }, 30000); // 30 seconds moderation time
+    }, 30000);
   };
 
   const handleClose = () => {
@@ -344,7 +405,7 @@ function TaskList() {
     <>
       <PointsContainer>
         <div>🌟 Total Points</div>
-        <TotalPoints>{totalPoints}</TotalPoints>
+        <TotalPoints>{points.toFixed(2)}</TotalPoints>
       </PointsContainer>
 
       <TaskContainer>
@@ -413,7 +474,7 @@ function TaskList() {
                   <ModalContent>
                     Task under moderation...
                   </ModalContent>
-                  <LoadingIcon />
+                  <TimerIcon />
                 </>
               )}
             </Modal>

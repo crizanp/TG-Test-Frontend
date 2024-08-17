@@ -6,30 +6,25 @@ import TaskList from './components/TaskList';
 import HomePage from './components/HomePage';
 import EcosystemPage from './components/EcosystemPage';
 import FriendPage from './components/FriendPage';
+import { PointsProvider } from './context/PointsContext'; // Import PointsProvider
 
 const AppContainer = styled.div`
   font-family: 'Arial, sans-serif';
   background-color: #000000;
-  
   padding: 20px;
   max-width: 400px;
+  height:100vh;
   margin: 0 auto;
-`;
 
-const PointsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  font-size: 18px;
-`;
+  @media (max-width: 768px) {
+    padding: 15px;
+    max-width: 100%;
+  }
 
-const TotalPoints = styled.div`
-  font-weight: bold;
+  @media (max-width: 480px) {
+    padding: 10px;
+    max-width: 100%;
+  }
 `;
 
 const BottomMenu = styled.div`
@@ -44,6 +39,15 @@ const BottomMenu = styled.div`
   max-width: 400px;
   margin: 0 auto;
   z-index: 10;
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 0;
+    font-size: 12px;
+  }
 `;
 
 const MenuItem = styled(Link)`
@@ -54,52 +58,55 @@ const MenuItem = styled(Link)`
   font-size: 14px;
   padding: 5px 0;
   text-decoration: none;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+    padding: 4px 0;
+  }
 `;
 
 const MenuLabel = styled.div`
   font-size: 12px;
   margin-top: 5px;
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
 `;
 
 function App() {
-  const totalPoints = 50;  // You have declared this variable but not used it in the current code
-
-
   return (
-    <Router>
-      <AppContainer>
-        {/* <PointsContainer>
-          <div>🌟 Total Points</div>
-          <TotalPoints>{totalPoints}</TotalPoints>
-        </PointsContainer> */}
+    <PointsProvider>
+      <Router>
+        <AppContainer>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/earn" element={<TaskList />} />
+            <Route path="/ecosystem" element={<EcosystemPage />} />
+            <Route path="/friend" element={<FriendPage />} />
+          </Routes>
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/earn" element={<TaskList />} />
-          <Route path="/ecosystem" element={<EcosystemPage />} />
-          <Route path="/friend" element={<FriendPage />} />
-        </Routes>
-
-        <BottomMenu>
-          <MenuItem to="/friend">
-            <FaUserFriends size={24} />
-            <MenuLabel>Friend</MenuLabel>
-          </MenuItem>
-          <MenuItem to="/earn">
-            <FaCoins size={24} />
-            <MenuLabel>Earn</MenuLabel>
-          </MenuItem>
-          <MenuItem to="/ecosystem">
-            <FaGlobe size={24} />
-            <MenuLabel>Ecosystem</MenuLabel>
-          </MenuItem>
-          <MenuItem to="/">
-            <FaHome size={24} />
-            <MenuLabel>Home</MenuLabel>
-          </MenuItem>
-        </BottomMenu>
-      </AppContainer>
-    </Router>
+          <BottomMenu>
+            <MenuItem to="/friend">
+              <FaUserFriends size={24} />
+              <MenuLabel>Friend</MenuLabel>
+            </MenuItem>
+            <MenuItem to="/earn">
+              <FaCoins size={24} />
+              <MenuLabel>Earn</MenuLabel>
+            </MenuItem>
+            <MenuItem to="/ecosystem">
+              <FaGlobe size={24} />
+              <MenuLabel>Ecosystem</MenuLabel>
+            </MenuItem>
+            <MenuItem to="/">
+              <FaHome size={24} />
+              <MenuLabel>Home</MenuLabel>
+            </MenuItem>
+          </BottomMenu>
+        </AppContainer>
+      </Router>
+    </PointsProvider>
   );
 }
 
