@@ -1,6 +1,8 @@
+// src/components/EcosystemPage.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
+import UserInfo from './UserInfo';
 
 const EcosystemContainer = styled.div`
   display: flex;
@@ -12,7 +14,9 @@ const EcosystemContainer = styled.div`
   text-align: center;
   font-family: 'Arial, sans-serif';
   height: 100vh;
- 
+  overflow-y: scroll;
+  -ms-overflow-style: none;  /* Internet Explorer and Edge */
+  scrollbar-width: none;  /* Firefox */
   
   /* Hiding scrollbar for Chrome, Safari, and Opera */
   &::-webkit-scrollbar {
@@ -31,23 +35,6 @@ const EcosystemContainer = styled.div`
     &::-webkit-scrollbar {
       display: none;
     }
-  }
-`;
-
-const UserInfo = styled.div`
-  background-color: #4caf50;
-  padding: 15px 20px;
-  border-radius: 15px;
-  margin-bottom: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 18px;
-  font-weight: bold;
-
-  @media (max-width: 480px) {
-    padding: 10px 15px;
-    font-size: 16px;
   }
 `;
 
@@ -159,10 +146,7 @@ function EcosystemPage() {
 
   return (
     <EcosystemContainer>
-      <UserInfo>
-        <div>{username}</div>
-        <div>Points: {points.toFixed(2)}</div>
-      </UserInfo>
+      <UserInfo username={username} points={points} />
 
       {ecosystems.map((site, index) => (
         <EcosystemBox key={index}>

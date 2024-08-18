@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import eagleImage from '../assets/eagle.png';
 import { usePoints } from '../context/PointsContext';
+import UserInfo from './UserInfo';
 
 const HomeContainer = styled.div`
   font-family: Arial, sans-serif;
   color: white;
   background-color: #121212;
-  padding: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,36 +19,6 @@ const HomeContainer = styled.div`
 
   @media (max-width: 480px) {
     padding: 5px;
-  }
-`;
-
-const TopSection = styled.div`
-  width: 90%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-`;
-
-const TelegramUsername = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-  color: #ff9800;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
-`;
-
-const PointsDisplay = styled.div`
-  background-color: #4caf50;
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-size: 16px;
-  color: white;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
   }
 `;
 
@@ -83,13 +53,22 @@ const slapAnimation = (direction, intensity) => keyframes`
   100% { transform: translateX(0) rotate(0deg); }
 `;
 
+const EagleContainer = styled.div`
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const EagleImage = styled.img`
   width: 320px;
   height: auto;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
-  margin: 10px 0;
-  -webkit-tap-highlight-color: transparent; /* Prevent blue highlight on tap */
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     transform: scale(1.15);
@@ -212,26 +191,43 @@ function HomePage() {
     return "Slap this eagle, he took my golden fish!";
   };
 
+  const calculatePoints = (clickY, height, clickX, width) => {
+    // Head/cheek area: Top 30% of the image
+    if (clickY < height * 0.3) {
+      return 1;
+    }
+    // Below neck inside the image background
+    else if (clickY >= height * 0.3 && clickX >= width * 0.2 && clickX <= width * 0.8) {
+      return 0.75;
+    }
+    // Outside the image background
+    else {
+      return 0.25;
+    }
+  };
+
   const handleTap = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
+    const height = rect.height;
+    const width = rect.width;
+
+    const pointsToAdd = calculatePoints(clickY, height, clickX, width);
 
     const currentTime = Date.now();
     const timeDiff = currentTime - lastTapTime;
-    const tapSpeedMultiplier = Math.max(1, 500 / timeDiff); // Faster taps result in higher multiplier
+    const tapSpeedMultiplier = Math.max(1, 500 / timeDiff);
 
     setLastTapTime(currentTime);
 
-    const pointsToAdd = 0.5 * tapSpeedMultiplier;
-
     setAnimate(true);
-    setPoints((prevPoints) => prevPoints + pointsToAdd);
+    setPoints((prevPoints) => prevPoints + pointsToAdd * tapSpeedMultiplier);
     setTapCount((prevTapCount) => prevTapCount + 1);
 
     setFlyingPoints((prevFlyingPoints) => [
       ...prevFlyingPoints,
-      { id: Date.now(), x: e.clientX, y: e.clientY, value: pointsToAdd },
+      { id: Date.now(), x: e.clientX, y: e.clientY, value: pointsToAdd * tapSpeedMultiplier },
     ]);
 
     setSlapEmojis((prevEmojis) => [
@@ -240,13 +236,9 @@ function HomePage() {
     ]);
 
     setSlapDirection(slapDirection === 'left' ? 'right' : 'left');
-    setSlapIntensity(Math.min(2, tapSpeedMultiplier)); // Adjust slap intensity based on speed
+    setSlapIntensity(Math.min(2, tapSpeedMultiplier));
 
     setTimeout(() => setAnimate(false), 800);
-
-    if (navigator.vibrate) {
-      navigator.vibrate(50); // Shorter vibration for better responsiveness
-    }
   };
 
   useEffect(() => {
@@ -264,20 +256,19 @@ function HomePage() {
 
   return (
     <HomeContainer>
-      <TopSection>
-        <TelegramUsername>@demo_username</TelegramUsername>
-        <PointsDisplay>Points: {points.toFixed(2)}</PointsDisplay>
-      </TopSection>
+      <UserInfo username="@demo_username" points={points} />
       <MiddleSection>
         <Message>{getMessage()}</Message>
-        <EagleImage
-          src={eagleImage}
-          alt="Eagle"
-          onClick={handleTap}
-          animate={animate ? 1 : 0}
-          direction={slapDirection}
-          intensity={slapIntensity}
-        />
+        <EagleContainer>
+          <EagleImage
+            src={eagleImage}
+            alt="Eagle"
+            onClick={handleTap}
+            animate={animate ? 1 : 0}
+            direction={slapDirection}
+            intensity={slapIntensity}
+          />
+        </EagleContainer>
         <Description>
           Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
           Stay tuned for <span>updates</span> and <span>rewards</span>!

@@ -4,7 +4,7 @@ import BottomMenu from './BottomMenu'; // Import BottomMenu component
 
 const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
-  background-color: #000000;
+  background-color: #121212;
   max-width: 400px;
   height: 100vh;
   margin: 0 auto;
