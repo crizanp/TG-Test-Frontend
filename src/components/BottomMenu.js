@@ -5,19 +5,20 @@ import { FaUserFriends, FaCoins, FaGlobe, FaHome, FaGift } from 'react-icons/fa'
 
 const BottomMenuContainer = styled.div`
   background-color: #121212;
-  padding: 10px 0;
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
   align-items: center;
+  justify-content: center; /* Centers content vertically */
   position: fixed;
   bottom: 0;
   width: 100%;
   max-width: 400px;
+  padding: 0px 0px 10px  0px; /* Adjust padding as needed */
   margin: 0 auto;
   z-index: 10;
 
   @media (max-width: 768px) {
-    flex-direction: row;
+    flex-direction: column;
   }
 
   @media (max-width: 480px) {
@@ -38,18 +39,45 @@ const pulseAnimation = keyframes`
   }
 `;
 
+const PoweredBy = styled.div`
+  background-color: #ffffff;
+  color: #000000;
+  width: 100%;
+  text-align: center;
+  padding: 5px 0;
+  margin-bottom: 5px;
+  font-size: 12px;
+
+  a {
+    color: #000000;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
+`;
+
+const MenuItems = styled.div`
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding-top: 5px; /* Add some space between PoweredBy and MenuItems */
+`;
+
 const MenuItem = styled(Link)`
   display: flex;
   flex-direction: column;
   align-items: center;
   color: white;
   font-size: 12px;
-  padding: 4px 0;
   text-decoration: none;
 
   @media (max-width: 480px) {
     font-size: 10px;
-    padding: 3px 0;
   }
 `;
 
@@ -75,26 +103,34 @@ const MenuLabel = styled.div`
 function BottomMenu() {
   return (
     <BottomMenuContainer>
-      <MenuItem to="/friend">
-        <FaUserFriends size={20} />
-        <MenuLabel>Friend</MenuLabel>
-      </MenuItem>
-      <MenuItem to="/earn">
-        <FaCoins size={20} />
-        <MenuLabel>Earn</MenuLabel>
-      </MenuItem>
-      <HomeMenuItem to="/">
-        <FaHome size={32} />
-        <MenuLabel>Home</MenuLabel>
-      </HomeMenuItem>
-      <MenuItem to="/airdrop">
-        <FaGift size={20} />
-        <MenuLabel>Airdrop</MenuLabel>
-      </MenuItem>
-      <MenuItem to="/ecosystem">
-        <FaGlobe size={20} />
-        <MenuLabel>Ecosystem</MenuLabel>
-      </MenuItem>
+      <PoweredBy>
+        Powered by{' '}
+        <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">
+          IGH Group [ ICOGEMHUNTERS ]
+        </a>
+      </PoweredBy>
+      <MenuItems>
+        <MenuItem to="/friend">
+          <FaUserFriends size={20} />
+          <MenuLabel>Friend</MenuLabel>
+        </MenuItem>
+        <MenuItem to="/earn">
+          <FaCoins size={20} />
+          <MenuLabel>Earn</MenuLabel>
+        </MenuItem>
+        <HomeMenuItem to="/">
+          <FaHome size={32} />
+          <MenuLabel>Home</MenuLabel>
+        </HomeMenuItem>
+        <MenuItem to="/airdrop">
+          <FaGift size={20} />
+          <MenuLabel>Airdrop</MenuLabel>
+        </MenuItem>
+        <MenuItem to="/ecosystem">
+          <FaGlobe size={20} />
+          <MenuLabel>Ecosystem</MenuLabel>
+        </MenuItem>
+      </MenuItems>
     </BottomMenuContainer>
   );
 }

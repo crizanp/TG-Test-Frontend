@@ -12,7 +12,6 @@ const HomeContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 86vh;
   text-align: center;
   overflow: hidden;
   user-select: none;
@@ -274,11 +273,11 @@ function HomePage() {
           Stay tuned for <span>updates</span> and <span>rewards</span>!
         </Description>
       </MiddleSection>
-      <BottomSection>
+      {/* <BottomSection>
         <Footer>
           Powered by <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">IGH Group [ ICOGEMHUNTERS ]</a>
         </Footer>
-      </BottomSection>
+      </BottomSection> */}
 
       {flyingPoints.map((point) => (
         <FlyingPoints key={point.id} x={point.x} y={point.y}>
