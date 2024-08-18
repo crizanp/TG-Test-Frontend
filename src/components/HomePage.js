@@ -15,7 +15,7 @@ const HomeContainer = styled.div`
   height: 86vh;
   text-align: center;
   overflow: hidden;
-  user-select: none; /* Prevent text selection */
+  user-select: none;
 
   @media (max-width: 480px) {
     padding: 5px;
@@ -72,19 +72,34 @@ const MiddleSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px; /* Move content closer to the top */
+  margin-top: 20px;
+`;
+
+const slapAnimation = (direction, intensity) => keyframes`
+  0% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(${direction === 'left' ? `-${20 * intensity}px` : `${20 * intensity}px`}) rotate(${direction === 'left' ? `-${10 * intensity}deg` : `${10 * intensity}deg`}); }
+  50% { transform: translateX(${direction === 'left' ? `-${10 * intensity}px` : `${10 * intensity}px`}) rotate(${direction === 'left' ? `-${5 * intensity}deg` : `${5 * intensity}deg`}); }
+  75% { transform: translateX(${direction === 'left' ? `${5 * intensity}px` : `-${5 * intensity}px`}) rotate(${direction === 'left' ? `2deg` : `-2deg`}); }
+  100% { transform: translateX(0) rotate(0deg); }
 `;
 
 const EagleImage = styled.img`
   width: 320px;
   height: auto;
   cursor: pointer;
-  transition: transform 0.4s ease-in-out;
+  transition: transform 0.2s ease-in-out;
   margin: 10px 0;
+  -webkit-tap-highlight-color: transparent; /* Prevent blue highlight on tap */
 
   &:hover {
     transform: scale(1.15);
   }
+
+  ${({ animate, direction, intensity }) =>
+    animate &&
+    css`
+      animation: ${slapAnimation(direction, intensity)} 0.8s ease-in-out;
+    `}
 `;
 
 const Description = styled.div`
@@ -155,7 +170,7 @@ const FlyingPoints = styled.div`
   transform: translate(-50%, -100%);
 `;
 
-const slapAnimation = keyframes`
+const slapEffectAnimation = keyframes`
   0% {
     transform: scale(1) translateY(0) translateX(0);
     opacity: 1;
@@ -177,7 +192,7 @@ const SlapEmoji = styled.div`
   font-size: 24px;
   color: white;
   transform: translate(-50%, -50%);
-  animation: ${slapAnimation} 0.6s ease forwards;
+  animation: ${slapEffectAnimation} 0.6s ease forwards;
 `;
 
 function HomePage() {
@@ -188,6 +203,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [slapDirection, setSlapDirection] = useState('left');
   const [slapIntensity, setSlapIntensity] = useState(1);
+  const [lastTapTime, setLastTapTime] = useState(Date.now());
 
   const getMessage = () => {
     if (tapCount >= 150) return "He's feeling it! Keep going!";
@@ -200,19 +216,14 @@ function HomePage() {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
-    const height = rect.height;
 
-    let pointsToAdd;
-    if (clickY < height / 3) {
-      pointsToAdd = 1;
-      setSlapIntensity(1.5); // Stronger slap animation
-    } else if (clickY < height) {
-      pointsToAdd = 0.75;
-      setSlapIntensity(1); // Normal slap animation
-    } else {
-      pointsToAdd = 0.5;
-      setSlapIntensity(0.5); // Weaker slap animation
-    }
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastTapTime;
+    const tapSpeedMultiplier = Math.max(1, 500 / timeDiff); // Faster taps result in higher multiplier
+
+    setLastTapTime(currentTime);
+
+    const pointsToAdd = 0.5 * tapSpeedMultiplier;
 
     setAnimate(true);
     setPoints((prevPoints) => prevPoints + pointsToAdd);
@@ -229,10 +240,12 @@ function HomePage() {
     ]);
 
     setSlapDirection(slapDirection === 'left' ? 'right' : 'left');
+    setSlapIntensity(Math.min(2, tapSpeedMultiplier)); // Adjust slap intensity based on speed
+
     setTimeout(() => setAnimate(false), 800);
 
     if (navigator.vibrate) {
-      navigator.vibrate(100); // Vibrate for 100ms
+      navigator.vibrate(50); // Shorter vibration for better responsiveness
     }
   };
 
@@ -261,6 +274,9 @@ function HomePage() {
           src={eagleImage}
           alt="Eagle"
           onClick={handleTap}
+          animate={animate ? 1 : 0}
+          direction={slapDirection}
+          intensity={slapIntensity}
         />
         <Description>
           Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
