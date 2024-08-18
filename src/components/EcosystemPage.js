@@ -1,4 +1,3 @@
-// src/components/EcosystemPage.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
@@ -7,21 +6,28 @@ import UserInfo from './UserInfo';
 const EcosystemContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
+  align-items: center;
   background-color: #1c1c1c;
   color: white;
   text-align: center;
   font-family: 'Arial, sans-serif';
-  height: 100vh;
-  overflow-y: scroll;
+  min-height: 100vh;
+  padding-top: 70px; /* To accommodate fixed UserInfo */
+  position: relative;
+  overflow: hidden;
+`;
+
+const ScrollableContent = styled.div`
+  width: 95%;
+  max-width: 600px;
+  padding: 20px;
+  overflow-y: auto;
   -ms-overflow-style: none;  /* Internet Explorer and Edge */
   scrollbar-width: none;  /* Firefox */
-  
+
   /* Hiding scrollbar for Chrome, Safari, and Opera */
   &::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
+    display: none;
   }
 
   @media (max-width: 768px) {
@@ -30,11 +36,7 @@ const EcosystemContainer = styled.div`
 
   @media (max-width: 480px) {
     padding: 10px;
-    /* Additional mobile-specific hiding */
     -webkit-overflow-scrolling: touch;
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 `;
 
@@ -148,21 +150,23 @@ function EcosystemPage() {
     <EcosystemContainer>
       <UserInfo username={username} points={points} />
 
-      {ecosystems.map((site, index) => (
-        <EcosystemBox key={index}>
-          <SiteName>{site.name}</SiteName>
-          <Url href={site.url} target="_blank" rel="noopener noreferrer">
-            {site.url}
-          </Url>
-          <Description>{site.description}</Description>
-          <VisitButton
-            onClick={() => handleVisit(site.url)}
-            disabled={processing}
-          >
-            {processing ? 'Processing...' : 'Visit & Earn 100 Points'}
-          </VisitButton>
-        </EcosystemBox>
-      ))}
+      <ScrollableContent>
+        {ecosystems.map((site, index) => (
+          <EcosystemBox key={index}>
+            <SiteName>{site.name}</SiteName>
+            <Url href={site.url} target="_blank" rel="noopener noreferrer">
+              {site.url}
+            </Url>
+            <Description>{site.description}</Description>
+            <VisitButton
+              onClick={() => handleVisit(site.url)}
+              disabled={processing}
+            >
+              {processing ? 'Processing...' : 'Visit & Earn 100 Points'}
+            </VisitButton>
+          </EcosystemBox>
+        ))}
+      </ScrollableContent>
     </EcosystemContainer>
   );
 }

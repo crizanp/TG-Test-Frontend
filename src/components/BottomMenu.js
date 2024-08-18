@@ -87,7 +87,7 @@ const HomeMenuItem = styled(MenuItem)`
   animation: ${pulseAnimation} 2s infinite;
 
   @media (max-width: 480px) {
-    font-size: 18px;
+    font-size: 14px;
   }
 `;
 

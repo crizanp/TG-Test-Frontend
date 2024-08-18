@@ -11,29 +11,16 @@ const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   text-align: center;
+  min-height: 100vh;
   overflow: hidden;
   user-select: none;
+  padding: 0 10px;
+  position: relative;
 
   @media (max-width: 480px) {
-    padding: 5px;
-  }
-`;
-
-const Message = styled.div`
-  padding: 4px 8px;
-  font-size: 16px;
-  margin-bottom: 25px;
-  font-weight: bold;
-  color: #ffffff;
-  background-color: #ff0000;
-  border-radius: 8px;
-  text-align: center;
-  max-width: 80%;
-
-  @media (max-width: 480px) {
-    font-size: 16px;
+    padding: 0 5px;
   }
 `;
 
@@ -41,29 +28,44 @@ const MiddleSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  justify-content: center;
+  flex-grow: 1;
+  position: relative; /* Ensure that flying points and emojis are relative to this container */
 `;
 
-const slapAnimation = (direction, intensity) => keyframes`
-  0% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(${direction === 'left' ? `-${20 * intensity}px` : `${20 * intensity}px`}) rotate(${direction === 'left' ? `-${10 * intensity}deg` : `${10 * intensity}deg`}); }
-  50% { transform: translateX(${direction === 'left' ? `-${10 * intensity}px` : `${10 * intensity}px`}) rotate(${direction === 'left' ? `-${5 * intensity}deg` : `${5 * intensity}deg`}); }
-  75% { transform: translateX(${direction === 'left' ? `${5 * intensity}px` : `-${5 * intensity}px`}) rotate(${direction === 'left' ? `2deg` : `-2deg`}); }
-  100% { transform: translateX(0) rotate(0deg); }
+const Message = styled.div`
+  padding: 8px 16px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #ff0000;
+  border-radius: 8px;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
 `;
 
 const EagleContainer = styled.div`
   background-color: #1e1e1e;
-  padding: 20px;
+  padding: 15px;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 15px;
+
+  @media (max-width: 480px) {
+    width: 260px;
+    padding: 10px;
+  }
 `;
 
 const EagleImage = styled.img`
-  width: 320px;
+  width: 280px;
   height: auto;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
@@ -81,8 +83,8 @@ const EagleImage = styled.img`
 `;
 
 const Description = styled.div`
-  font-size: 16px;
-  margin-top: 16px;
+  font-size: 14px;
+  margin-top: 10px;
   line-height: 1.5;
   color: #eeeeee;
   max-width: 85%;
@@ -94,36 +96,16 @@ const Description = styled.div`
   }
 
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 12px;
   }
 `;
 
-const Footer = styled.div`
-  padding: 8px 16px;
-  font-size: 12px;
-  color: #ffffff;
-  background-color: #333333;
-  border-radius: 8px;
-  text-align: center;
-  width: 100%;
-  max-width: 380px;
-  margin-top: auto;
-
-  a {
-    color: #ff9800;
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
-const BottomSection = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-  background-color: #121212;
+const slapAnimation = (direction, intensity) => keyframes`
+  0% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(${direction === 'left' ? `-${20 * intensity}px` : `${20 * intensity}px`}) rotate(${direction === 'left' ? `-${10 * intensity}deg` : `${10 * intensity}deg`}); }
+  50% { transform: translateX(${direction === 'left' ? `-${10 * intensity}px` : `${10 * intensity}px`}) rotate(${direction === 'left' ? `-${5 * intensity}deg` : `${5 * intensity}deg`}); }
+  75% { transform: translateX(${direction === 'left' ? `${5 * intensity}px` : `-${5 * intensity}px`}) rotate(${direction === 'left' ? `2deg` : `-2deg`}); }
+  100% { transform: translateX(0) rotate(0deg); }
 `;
 
 const pointFlyingAnimation = keyframes`
@@ -144,6 +126,7 @@ const FlyingPoints = styled.div`
   animation: ${pointFlyingAnimation} 1s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
+  z-index: 10; /* Ensure it's above other elements */
   pointer-events: none;
   transform: translate(-50%, -100%);
 `;
@@ -169,6 +152,7 @@ const SlapEmoji = styled.div`
   left: ${({ x }) => x}px;
   font-size: 24px;
   color: white;
+  z-index: 10; /* Ensure it's above other elements */
   transform: translate(-50%, -50%);
   animation: ${slapEffectAnimation} 0.6s ease forwards;
 `;
@@ -187,20 +171,15 @@ function HomePage() {
     if (tapCount >= 150) return "He's feeling it! Keep going!";
     if (tapCount >= 100) return "Ouch! That's gotta hurt!";
     if (tapCount >= 50) return "Yeah, slap him more! :)";
-    return "Slap this eagle, he took my golden fish!";
+    return "Slap this eagle, he took my golden cheek!";
   };
 
   const calculatePoints = (clickY, height, clickX, width) => {
-    // Head/cheek area: Top 30% of the image
     if (clickY < height * 0.3) {
       return 1;
-    }
-    // Below neck inside the image background
-    else if (clickY >= height * 0.3 && clickX >= width * 0.2 && clickX <= width * 0.8) {
+    } else if (clickY >= height * 0.3 && clickX >= width * 0.2 && clickX <= width * 0.8) {
       return 0.75;
-    }
-    // Outside the image background
-    else {
+    } else {
       return 0.25;
     }
   };
@@ -273,11 +252,6 @@ function HomePage() {
           Stay tuned for <span>updates</span> and <span>rewards</span>!
         </Description>
       </MiddleSection>
-      {/* <BottomSection>
-        <Footer>
-          Powered by <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">IGH Group [ ICOGEMHUNTERS ]</a>
-        </Footer>
-      </BottomSection> */}
 
       {flyingPoints.map((point) => (
         <FlyingPoints key={point.id} x={point.x} y={point.y}>
