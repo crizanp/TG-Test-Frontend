@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
 import UserInfo from './UserInfo';
@@ -12,7 +12,7 @@ const EcosystemContainer = styled.div`
   text-align: center;
   font-family: 'Arial, sans-serif';
   min-height: 100vh;
-  padding-top: 70px; /* To accommodate fixed UserInfo */
+  padding-top: 70px;
   position: relative;
   overflow: hidden;
 `;
@@ -25,7 +25,6 @@ const ScrollableContent = styled.div`
   -ms-overflow-style: none;  /* Internet Explorer and Edge */
   scrollbar-width: none;  /* Firefox */
 
-  /* Hiding scrollbar for Chrome, Safari, and Opera */
   &::-webkit-scrollbar {
     display: none;
   }
@@ -87,23 +86,18 @@ const Description = styled.p`
 `;
 
 const VisitButton = styled.button`
-  background-color: #ff9800;
+  background-color: ${({ disabled }) => (disabled ? 'grey' : '#ff9800')};
   color: white;
   padding: 10px 20px;
   border-radius: 12px;
   font-size: 16px;
   font-weight: bold;
   border: none;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #ffb74d;
-  }
-
-  &:disabled {
-    background-color: grey;
-    cursor: not-allowed;
+    background-color: ${({ disabled }) => (disabled ? 'grey' : '#ffb74d')};
   }
 
   @media (max-width: 480px) {
@@ -114,8 +108,13 @@ const VisitButton = styled.button`
 
 function EcosystemPage() {
   const { points, setPoints } = usePoints();
-  const username = '@demo_username'; // Replace this with the actual username from context or props
+  const username = '@demo_username';
   const [processing, setProcessing] = useState(false);
+  const [cooldowns, setCooldowns] = useState(() => {
+    const storedCooldowns = localStorage.getItem('cooldowns');
+    return storedCooldowns ? JSON.parse(storedCooldowns) : {};
+  });
+  const [now, setNow] = useState(Date.now());
 
   const ecosystems = [
     {
@@ -135,15 +134,51 @@ function EcosystemPage() {
     },
   ];
 
-  const handleVisit = (url) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000); // Update the current time every second
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cooldowns', JSON.stringify(cooldowns));
+  }, [cooldowns]);
+
+  const handleVisit = (url, index) => {
+    if (processing || isCooldownActive(index)) return;
+
     setProcessing(true);
     window.open(url, '_blank');
 
     setTimeout(() => {
       setPoints((prevPoints) => prevPoints + 100);
       setProcessing(false);
+
+      const cooldownEnd = Date.now() + 30 * 60 * 1000; // 30 minutes cooldown
+      setCooldowns((prevCooldowns) => ({
+        ...prevCooldowns,
+        [index]: cooldownEnd,
+      }));
+
       alert('100 points awarded for visiting the site!');
     }, 30000);
+  };
+
+  const isCooldownActive = (index) => {
+    const cooldownEnd = cooldowns[index];
+    return cooldownEnd && cooldownEnd > now;
+  };
+
+  const getCooldownTime = (endTime) => {
+    const remainingTime = endTime - now;
+    if (remainingTime <= 0) {
+      return null;
+    }
+    const minutes = Math.floor(remainingTime / 60000);
+    const seconds = Math.floor((remainingTime % 60000) / 1000);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
   return (
@@ -159,10 +194,14 @@ function EcosystemPage() {
             </Url>
             <Description>{site.description}</Description>
             <VisitButton
-              onClick={() => handleVisit(site.url)}
-              disabled={processing}
+              onClick={() => handleVisit(site.url, index)}
+              disabled={isCooldownActive(index) || processing}
             >
-              {processing ? 'Processing...' : 'Visit & Earn 100 Points'}
+              {isCooldownActive(index)
+                ? `Paused: ${getCooldownTime(cooldowns[index])}`
+                : processing
+                ? 'Processing...'
+                : 'Visit & Earn 100 Points'}
             </VisitButton>
           </EcosystemBox>
         ))}
