@@ -280,7 +280,7 @@ const PointsContainer = styled.div`
   color: white;
   padding: 15px 25px;
   border-radius: 12px;
-  margin-bottom: 20px;
+  margin: 20px;
   font-size: 22px;
   font-weight: bold;
 

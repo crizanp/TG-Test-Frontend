@@ -17,7 +17,6 @@ const HomeContainer = styled.div`
   overflow: hidden;
   user-select: none; /* Prevent text selection */
 
-
   @media (max-width: 480px) {
     padding: 5px;
   }
@@ -76,30 +75,16 @@ const MiddleSection = styled.div`
   margin-top: 20px; /* Move content closer to the top */
 `;
 
-const slapAnimation = (direction, intensity) => keyframes`
-  0% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(${direction === 'left' ? `-${20 * intensity}px` : `${20 * intensity}px`}) rotate(${direction === 'left' ? `-${10 * intensity}deg` : `${10 * intensity}deg`}); }
-  50% { transform: translateX(${direction === 'left' ? `-${10 * intensity}px` : `${10 * intensity}px`}) rotate(${direction === 'left' ? `-${5 * intensity}deg` : `${5 * intensity}deg`}); }
-  75% { transform: translateX(${direction === 'left' ? `${5 * intensity}px` : `-${5 * intensity}px`}) rotate(${direction === 'left' ? `2deg` : `-2deg`}); }
-  100% { transform: translateX(0) rotate(0deg); }
-`;
-
 const EagleImage = styled.img`
-  width: 320px; /* Increase the width to make the eagle larger */
+  width: 320px;
   height: auto;
   cursor: pointer;
   transition: transform 0.4s ease-in-out;
-  margin: 10px 0; /* Add some space above and below */
+  margin: 10px 0;
 
   &:hover {
-    transform: scale(1.15); /* Increase scale for hover effect */
+    transform: scale(1.15);
   }
-
-  ${({ animate, direction, intensity }) =>
-    animate &&
-    css`
-      animation: ${slapAnimation(direction, intensity)} 0.8s ease-in-out;
-    `}
 `;
 
 const Description = styled.div`
@@ -129,7 +114,7 @@ const Footer = styled.div`
   text-align: center;
   width: 100%;
   max-width: 380px;
-  margin-top: auto; /* Push the footer to the bottom */
+  margin-top: auto;
 
   a {
     color: #ff9800;
@@ -170,11 +155,37 @@ const FlyingPoints = styled.div`
   transform: translate(-50%, -100%);
 `;
 
+const slapAnimation = keyframes`
+  0% {
+    transform: scale(1) translateY(0) translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5) translateY(-10px) translateX(10px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2) translateY(-20px) translateX(-20px);
+    opacity: 0;
+  }
+`;
+
+const SlapEmoji = styled.div`
+  position: absolute;
+  top: ${({ y }) => y}px;
+  left: ${({ x }) => x}px;
+  font-size: 24px;
+  color: white;
+  transform: translate(-50%, -50%);
+  animation: ${slapAnimation} 0.6s ease forwards;
+`;
+
 function HomePage() {
   const { points, setPoints } = usePoints();
   const [tapCount, setTapCount] = useState(0);
   const [animate, setAnimate] = useState(false);
   const [flyingPoints, setFlyingPoints] = useState([]);
+  const [slapEmojis, setSlapEmojis] = useState([]);
   const [slapDirection, setSlapDirection] = useState('left');
   const [slapIntensity, setSlapIntensity] = useState(1);
 
@@ -212,14 +223,26 @@ function HomePage() {
       { id: Date.now(), x: e.clientX, y: e.clientY, value: pointsToAdd },
     ]);
 
+    setSlapEmojis((prevEmojis) => [
+      ...prevEmojis,
+      { id: Date.now(), x: e.clientX, y: e.clientY },
+    ]);
+
     setSlapDirection(slapDirection === 'left' ? 'right' : 'left');
     setTimeout(() => setAnimate(false), 800);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(100); // Vibrate for 100ms
+    }
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
       setFlyingPoints((prevFlyingPoints) =>
         prevFlyingPoints.filter((point) => Date.now() - point.id < 1000)
+      );
+      setSlapEmojis((prevEmojis) =>
+        prevEmojis.filter((emoji) => Date.now() - emoji.id < 600)
       );
     }, 100);
 
@@ -238,9 +261,6 @@ function HomePage() {
           src={eagleImage}
           alt="Eagle"
           onClick={handleTap}
-          animate={animate ? 1 : 0}
-          direction={slapDirection}
-          intensity={slapIntensity}
         />
         <Description>
           Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
@@ -257,6 +277,11 @@ function HomePage() {
         <FlyingPoints key={point.id} x={point.x} y={point.y}>
           +{point.value.toFixed(2)}
         </FlyingPoints>
+      ))}
+      {slapEmojis.map((emoji) => (
+        <SlapEmoji key={emoji.id} x={emoji.x} y={emoji.y}>
+          👋
+        </SlapEmoji>
       ))}
     </HomeContainer>
   );

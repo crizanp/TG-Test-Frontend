@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FaUserFriends, FaCoins, FaGlobe, FaHome, FaGift } from 'react-icons/fa';
 
@@ -26,6 +26,18 @@ const BottomMenuContainer = styled.div`
   }
 `;
 
+const pulseAnimation = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
 const MenuItem = styled(Link)`
   display: flex;
   flex-direction: column;
@@ -38,6 +50,16 @@ const MenuItem = styled(Link)`
   @media (max-width: 480px) {
     font-size: 12px;
     padding: 4px 0;
+  }
+`;
+
+const HomeMenuItem = styled(MenuItem)`
+  font-size: 24px;
+  transform: translateY(-10px);
+  animation: ${pulseAnimation} 2s infinite;
+
+  @media (max-width: 480px) {
+    font-size: 20px;
   }
 `;
 
@@ -61,17 +83,17 @@ function BottomMenu() {
         <FaCoins size={24} />
         <MenuLabel>Earn</MenuLabel>
       </MenuItem>
-      <MenuItem to="/ecosystem">
-        <FaGlobe size={24} />
-        <MenuLabel>Ecosystem</MenuLabel>
-      </MenuItem>
+      <HomeMenuItem to="/">
+        <FaHome size={40} />
+        <MenuLabel>Home</MenuLabel>
+      </HomeMenuItem>
       <MenuItem to="/airdrop">
         <FaGift size={24} />
         <MenuLabel>Airdrop</MenuLabel>
       </MenuItem>
-      <MenuItem to="/">
-        <FaHome size={24} />
-        <MenuLabel>Home</MenuLabel>
+      <MenuItem to="/ecosystem">
+        <FaGlobe size={24} />
+        <MenuLabel>Ecosystem</MenuLabel>
       </MenuItem>
     </BottomMenuContainer>
   );
