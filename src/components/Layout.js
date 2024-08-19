@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import BottomMenu from './BottomMenu'; // Import BottomMenu component
+import BottomMenu from './BottomMenu';
 
 const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
@@ -11,23 +11,19 @@ const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: relative;
-  
 `;
 
 const Content = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 60px; /* Add padding to avoid content being covered by the bottom menu */
+  padding-bottom: 60px;
 `;
 
 function Layout({ children }) {
   return (
     <LayoutContainer>
-      <Content>
-        {children}
-      </Content>
-      <BottomMenu /> {/* Place BottomMenu at the bottom */}
+      <Content>{children}</Content>
+      <BottomMenu />
     </LayoutContainer>
   );
 }

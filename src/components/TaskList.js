@@ -325,27 +325,9 @@ const TimerText = styled.div`
   }
 `;
 
-const tasks = {
-  special: [
-    { id: 1, title: 'Follow Twitter', points: 20, emoji: '🎯', description: 'Follow our official Twitter account.', link: 'https://twitter.com' },
-    { id: 2, title: 'Retweet Post', points: 30, emoji: '⭐', description: 'Retweet the latest post from our account.', link: 'https://twitter.com' },
-  ],
-  daily: [
-    { id: 3, title: 'Join Telegram', points: 10, emoji: '📅', description: 'Join our official Telegram group.', link: 'https://telegram.org' },
-    { id: 4, title: 'Watch YouTube Video', points: 10, emoji: '⏰', description: 'Watch our latest video on YouTube.', link: 'https://youtube.com' },
-  ],
-  list: [
-    { id: 5, title: 'Like Facebook Page', points: 5, emoji: '✅', description: 'Like our Facebook page.', link: 'https://facebook.com' },
-    { id: 6, title: 'Comment on Post', points: 5, emoji: '💬', description: 'Comment on our latest post.', link: 'https://facebook.com' },
-    { id: 7, title: 'Visit Website', points: 5, emoji: '📈', description: 'Visit our official website.', link: 'https://example.com' },
-    { id: 8, title: 'Share Instagram Post', points: 5, emoji: '📊', description: 'Share our post on Instagram.', link: 'https://instagram.com' },
-    { id: 9, title: 'Follow on LinkedIn', points: 5, emoji: '🔗', description: 'Follow us on LinkedIn.', link: 'https://linkedin.com' },
-    { id: 10, title: 'Join Discord Server', points: 5, emoji: '💻', description: 'Join our Discord community.', link: 'https://discord.com' },
-  ],
-};
-
 function TaskList() {
   const { points, setPoints } = usePoints();
+  const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState('');
   const [isClaimable, setIsClaimable] = useState(false);
@@ -353,6 +335,30 @@ function TaskList() {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(30);
   const [timerStarted, setTimerStarted] = useState(false);
+
+
+  useEffect(() => {
+    // Fetch tasks dynamically from the API
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
+        const data = await response.json();
+
+        // Categorize tasks
+        const categorizedTasks = {
+          special: data.filter(task => task.category === 'Special'),
+          daily: data.filter(task => task.category === 'Daily'),
+          lists: data.filter(task => task.category === 'Lists'),
+        };
+
+        setTasks(categorizedTasks);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   useEffect(() => {
     let countdown;
@@ -368,7 +374,7 @@ function TaskList() {
   }, [selectedTask, timer, isClaimable, timerStarted]);
 
   const handleTaskClick = (task) => {
-    if (!completedTasks[task.id]) {
+    if (!completedTasks[task._id]) {
       setSelectedTask(task);
       setProof('');
       setIsClaimable(false);
@@ -389,7 +395,7 @@ function TaskList() {
       setPoints((prevPoints) => prevPoints + selectedTask.points);
       setCompletedTasks((prevTasks) => ({
         ...prevTasks,
-        [selectedTask.id]: true,
+        [selectedTask._id]: true,
       }));
       alert('Points awarded!');
       setSelectedTask(null);
@@ -416,16 +422,16 @@ function TaskList() {
             <TaskTitle>{category.charAt(0).toUpperCase() + category.slice(1)} Tasks</TaskTitle>
             {tasks[category].map((task) => (
               <TaskItem
-                key={task.id}
-                completed={completedTasks[task.id]}
+                key={task._id}
+                completed={completedTasks[task._id]}
                 onClick={() => handleTaskClick(task)}
               >
                 <TaskDetails>
-                  <TaskItemTitle>{task.title}</TaskItemTitle>
+                  <TaskItemTitle>{task.name}</TaskItemTitle>
                   <TaskPoints>{task.points} pts</TaskPoints>
                 </TaskDetails>
-                <TaskIcon completed={completedTasks[task.id]}>
-                  {completedTasks[task.id] ? 'Done' : <FaChevronRight />}
+                <TaskIcon completed={completedTasks[task._id]}>
+                  {completedTasks[task._id] ? 'Done' : <FaChevronRight />}
                 </TaskIcon>
               </TaskItem>
             ))}
@@ -436,7 +442,7 @@ function TaskList() {
           <ModalOverlay>
             <Modal>
               <CloseButton onClick={handleClose}>❌</CloseButton>
-              <ModalHeader>{selectedTask.title}</ModalHeader>
+              <ModalHeader>{selectedTask.name}</ModalHeader>
               <ModalContent>{selectedTask.description}</ModalContent>
               {!timerStarted && !isClaimable && !underModeration ? (
                 <ModalButton onClick={handleStartTask}>
