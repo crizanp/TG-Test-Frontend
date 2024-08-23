@@ -39,7 +39,7 @@ const UserInfo = () => {
   return (
     <UserInfoContainer>
       <Username>UId: {userID}</Username>
-      <Points> Stake: {Math.floor(points)}</Points>
+      <Points> IGH : {Math.floor(points)}</Points>
     </UserInfoContainer>
   );
 };

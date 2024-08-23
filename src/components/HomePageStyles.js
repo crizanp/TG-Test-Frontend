@@ -32,24 +32,48 @@ const bounceAnimation = keyframes`
   50% { transform: scale(1); }
 `;
 
+const pointsAnimation = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+`;
+
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: white;
-  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  background: linear-gradient(135deg, #002a69, #006ccd);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   text-align: center;
-  min-height: 89vh;
+  min-height: 85vh;
   overflow: hidden;
   user-select: none;
-  padding: 10px 20px;  // Reduced padding to minimize gap
+  padding: 10px 20px;
   position: relative;
 
   @media (max-width: 480px) {
     padding: 10px;
   }
+`;
+
+export const PointsDisplay = styled.div`
+  font-size: 48px;
+  color: #ffcc00;
+  font-weight: bold;
+  margin-top: 60px;
+  animation: ${({ $animate }) =>
+    $animate &&
+    css`
+      ${pointsAnimation} 1s ease-in-out;
+    `};
 `;
 
 export const MiddleSection = styled.div`
@@ -62,11 +86,11 @@ export const MiddleSection = styled.div`
 `;
 
 export const Message = styled.div`
-  padding: 10px 20px; // Reduced padding to minimize gap
+  padding: 10px 20px;
   font-size: 22px;
-  margin-bottom: 10px; // Reduced margin to minimize gap
+  margin-bottom: 10px;
   font-weight: bold;
-  color: #b82727;
+  color:#ff6b6b;
   border-radius: 12px;
   text-transform: uppercase;
 
@@ -78,7 +102,7 @@ export const Message = styled.div`
 
 export const EagleContainer = styled.div`
   background: radial-gradient(circle, #005cbf, #0078d7);
-  padding: 15px; // Reduced padding for better proportion
+  padding: 15px;
   border-radius: 50%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   display: flex;
@@ -112,7 +136,7 @@ export const EagleImage = styled.img`
 
 export const Description = styled.div`
   font-size: 16px;
-  margin-top: 10px; // Reduced margin to minimize gap
+  margin-top: 10px;
   line-height: 1.6;
   color: #ffffff;
   max-width: 80%;

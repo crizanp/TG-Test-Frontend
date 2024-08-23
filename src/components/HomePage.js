@@ -13,6 +13,7 @@ import {
   Description,
   FlyingPoints,
   SlapEmoji,
+  PointsDisplay, // Import new styled component
 } from './HomePageStyles';
 
 function HomePage() {
@@ -22,6 +23,7 @@ function HomePage() {
   const [flyingPoints, setFlyingPoints] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
+  const [pointsAnimation, setPointsAnimation] = useState(false); // State for points animation
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -63,6 +65,9 @@ function HomePage() {
     setLastTapTime(currentTime);
 
     setAnimate(true);
+    setPointsAnimation(true); // Trigger points animation
+    setTimeout(() => setPointsAnimation(false), 1000); // Reset animation after 1s
+
     const addedPoints = pointsToAdd * tapSpeedMultiplier;
 
     try {
@@ -107,6 +112,7 @@ function HomePage() {
   return (
     <HomeContainer>
       <UserInfo />
+      <PointsDisplay $animate={pointsAnimation}>🦅 {points.toFixed(2)}</PointsDisplay> {/* Big box showing points */}
       <MiddleSection>
         <Message>{getMessage()}</Message>
         <EagleContainer>
