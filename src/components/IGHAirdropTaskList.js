@@ -38,7 +38,7 @@ function IGHAirdropTaskList() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/igh-airdrop-tasks');
+        const response = await fetch('https://backend-tg-bot.vercel.app/api/igh-airdrop-tasks');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

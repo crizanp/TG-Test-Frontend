@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaUserFriends, FaCoins, FaGlobe, FaHome, FaGift } from 'react-icons/fa';
 
 const BottomMenuContainer = styled.div`
-  background-color: #121212;
+  background-color: #002a69;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,7 +128,7 @@ function BottomMenu() {
         </MenuItem>
         <MenuItem to="/ecosystem">
           <FaGlobe size={20} />
-          <MenuLabel>Ecosystem</MenuLabel>
+          <MenuLabel>Play</MenuLabel>
         </MenuItem>
       </MenuItems>
     </BottomMenuContainer>

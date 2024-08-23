@@ -1,365 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { FaChevronRight } from 'react-icons/fa';
-import { GiClockwork } from 'react-icons/gi';
+import axios from 'axios';
 import { usePoints } from '../context/PointsContext';
+import { getUserID } from '../utils/getUserID';
+import { FaChevronRight } from 'react-icons/fa';
 
-const TaskContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 20px;
-  background-color: #121212;
-  color: white;
-  padding-bottom: 80px;
-  font-family: 'Arial', sans-serif;
+import UserInfo from './UserInfo';
 
-  @media (max-width: 768px) {
-    padding: 15px;
-  }
+// Import styled components for TaskList
+import {
+  TaskContainer,
+  TaskCategory,
+  TaskTitle,
+  CoinLogo,
+  CoinText,
+  TaskItem,
+  TaskDetails,
+  TaskItemTitle,
+  TaskPoints,
+  TaskIcon,
+  ModalOverlay,
+  Modal,
+  ModalHeader,
+  ModalContent,
+  ModalButton,
+  ClaimButton,
+  CloseButton,
+  ProofInput,
+  TimerIcon,
+  TimerText,
+} from './TaskList.styles';
 
-  @media (max-width: 480px) {
-    padding: 10px;
-    padding-bottom: 80px;
-  }
-`;
-
-const TaskCategory = styled.div`
-  margin-bottom: 20px;
-`;
-
-const TaskTitle = styled.h3`
-  color: #ff9800;
-  margin-bottom: 10px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-`;
-
-const CoinLogo = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-  font-size: 48px;
-`;
-
-const CoinText = styled.div`
-  text-align: center;
-  color: #fff;
-  font-size: 20px;
-  margin-bottom: 10px;
-  font-weight: bold;
-`;
-
-const TaskItem = styled.div`
-  background-color: #1e1e1e;
-  padding: 15px;
-  margin: 5px;
-  border-radius: 15px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  ${({ completed }) =>
-    completed &&
-    `
-    background-color: #2e7d32;
-    cursor: default;
-    &:hover {
-      transform: none;
-      box-shadow: none;
-    }
-  `}
-
-  @media (max-width: 480px) {
-    padding: 10px;
-  }
-`;
-
-const TaskDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
-
-const TaskItemTitle = styled.div`
-  font-size: 16px;
-  color: #ffffff;
-  margin-bottom: 5px;
-  font-weight: bold;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
-`;
-
-const TaskPoints = styled.div`
-  background-color: #ff9800;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 14px;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-  }
-`;
-
-const TaskIcon = styled.div`
-  font-size: 20px;
-  color: #ffffff;
-
-  ${({ completed }) =>
-    completed &&
-    `
-    font-size: 16px;
-    color: #ffffff;
-    background-color: #2e7d32;
-    padding: 8px 12px;
-    border-radius: 12px;
-  `}
-
-  @media (max-width: 480px) {
-    font-size: 18px;
-
-    ${({ completed }) =>
-      completed &&
-      `
-      font-size: 14px;
-    `}
-  }
-`;
-
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-
-  @media (max-width: 480px) {
-    align-items: center;
-  }
-`;
-
-const Modal = styled.div`
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 20px 20px 0 0;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  position: relative;
-
-  @media (max-width: 768px) {
-    padding: 15px;
-    border-radius: 15px 15px 0 0;
-  }
-
-  @media (max-width: 480px) {
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-  }
-`;
-
-const ModalHeader = styled.div`
-  font-size: 24px;
-  color: #ff9800;
-  margin-bottom: 20px;
-  font-weight: bold;
-
-  @media (max-width: 480px) {
-    font-size: 20px;
-  }
-`;
-
-const ModalContent = styled.div`
-  font-size: 16px;
-  color: white;
-  margin-bottom: 20px;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
-`;
-
-const ModalButton = styled.button`
-  background-color: #ff9800;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #ffb74d;
-  }
-
-  &:disabled {
-    background-color: grey;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-    padding: 10px 20px;
-  }
-`;
-
-const ClaimButton = styled(ModalButton)`
-  background-color: green;
-  margin-top: 20px;
-
-  &:hover {
-    background-color: #66bb6a;
-  }
-
-  &:disabled {
-    background-color: grey;
-    cursor: not-allowed;
-  }
-`;
-
-const CloseButton = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  cursor: pointer;
-  color: white;
-
-  @media (max-width: 480px) {
-    font-size: 20px;
-  }
-`;
-
-const ProofInput = styled.input`
-  background-color: #333;
-  border: 2px solid #ff9800;
-  padding: 12px;
-  border-radius: 8px;
-  width: calc(100% - 24px);
-  color: white;
-  margin-bottom: 20px;
-  font-size: 18px;
-
-  &:focus {
-    outline: none;
-    border-color: #ffb74d;
-  }
-
-  @media (max-width: 480px) {
-    padding: 10px;
-    font-size: 16px;
-  }
-`;
-
-const PointsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #4CAF50;
-  color: white;
-  padding: 15px 25px;
-  border-radius: 12px;
-  margin: 20px;
-  font-size: 22px;
-  font-weight: bold;
-
-  @media (max-width: 480px) {
-    padding: 10px 20px;
-    font-size: 18px;
-  }
-`;
-
-const TotalPoints = styled.div`
-  font-weight: bold;
-`;
-
-const spinAnimation = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-const TimerIcon = styled(GiClockwork)`
-  font-size: 32px;
-  color: #ff9800;
-  animation: ${spinAnimation} 2s linear infinite;
-  margin-top: 20px;
-
-  @media (max-width: 480px) {
-    font-size: 28px;
-  }
-`;
-
-const TimerText = styled.div`
-  color: #ff9800;
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 10px;
-
-  @media (max-width: 480px) {
-    font-size: 16px;
-  }
-`;
-
-function TaskList() {
-  const { points, setPoints } = usePoints();
+const TaskList = () => {
+  const { points, setPoints, userID, setUserID } = usePoints();
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState('');
   const [isClaimable, setIsClaimable] = useState(false);
   const [underModeration, setUnderModeration] = useState(false);
   const [completedTasks, setCompletedTasks] = useState({});
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
 
-
   useEffect(() => {
-    // Fetch tasks dynamically from the API
-    const fetchTasks = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
-        const data = await response.json();
+    const initializeUserAndFetchTasks = async () => {
+      const userID = await getUserID(setUserID); // Ensure user is created if not existing
+      setUserID(userID);
 
-        // Categorize tasks
+      try {
+        // Fetch the existing user data
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        const userData = userResponse.data;
+
+        setPoints(userData.points);
+
+        const completedTasksMap = {};
+        userData.tasksCompleted.forEach(taskId => {
+          completedTasksMap[taskId] = true;
+        });
+        setCompletedTasks(completedTasksMap);
+  
+      } catch (error) {
+        console.error('Unexpected error fetching user data:', error);
+      }
+
+      try {
+        const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
+        const data = tasksResponse.data;
+  
         const categorizedTasks = {
           special: data.filter(task => task.category === 'Special'),
           daily: data.filter(task => task.category === 'Daily'),
           lists: data.filter(task => task.category === 'Lists'),
         };
-
+  
         setTasks(categorizedTasks);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
+      } catch (taskFetchError) {
+        console.error('Error fetching tasks:', taskFetchError);
       }
     };
+  
+    initializeUserAndFetchTasks();
+  }, [setPoints, setUserID]);
 
-    fetchTasks();
-  }, []);
-
+  // Start the countdown when the timer is started and not already claimable
   useEffect(() => {
     let countdown;
     if (selectedTask && timerStarted && !isClaimable && timer > 0) {
@@ -371,7 +94,7 @@ function TaskList() {
       clearInterval(countdown);
     }
     return () => clearInterval(countdown);
-  }, [selectedTask, timer, isClaimable, timerStarted]);
+  }, [selectedTask, timerStarted, isClaimable, timer]);
 
   const handleTaskClick = (task) => {
     if (!completedTasks[task._id]) {
@@ -379,28 +102,56 @@ function TaskList() {
       setProof('');
       setIsClaimable(false);
       setUnderModeration(false);
-      setTimer(30);
-      setTimerStarted(false);
+      setTimer(10); // Reset the timer to 10 seconds
+      setTimerStarted(false); // Ensure the timer doesn't start immediately
     }
   };
 
   const handleStartTask = () => {
     window.open(selectedTask.link, '_blank');
-    setTimerStarted(true);
+    setTimerStarted(true); // Start the timer when the task is started
   };
 
-  const handleClaimReward = () => {
+  const handleClaimReward = async () => {
     setUnderModeration(true);
-    setTimeout(() => {
-      setPoints((prevPoints) => prevPoints + selectedTask.points);
-      setCompletedTasks((prevTasks) => ({
-        ...prevTasks,
-        [selectedTask._id]: true,
-      }));
-      alert('Points awarded!');
-      setSelectedTask(null);
-    }, 30000);
-  };
+
+    try {
+        // Add points for the completed task
+        await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`, {
+            pointsToAdd: selectedTask.points,
+        });
+
+        // After the backend successfully updates the points, fetch the updated points
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        setPoints(userResponse.data.points); // Update points dynamically with the latest value from the backend
+
+        // Mark the task as completed
+        await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
+            userID,
+            tasksCompleted: [selectedTask._id],
+            taskHistory: [
+                {
+                    taskId: selectedTask._id,
+                    pointsEarned: selectedTask.points,
+                    completedAt: new Date(),
+                },
+            ],
+        });
+
+        setCompletedTasks((prevTasks) => ({
+            ...prevTasks,
+            [selectedTask._id]: true,
+        }));
+
+        alert('Points awarded!');
+        setSelectedTask(null);
+    } catch (error) {
+        console.error('Error claiming reward:', error);
+        alert('An error occurred while claiming the reward.');
+    } finally {
+        setUnderModeration(false);
+    }
+};
 
   const handleClose = () => {
     setSelectedTask(null);
@@ -408,10 +159,7 @@ function TaskList() {
 
   return (
     <>
-      <PointsContainer>
-        <div>🌟 Total Points</div>
-        <TotalPoints>{points.toFixed(2)}</TotalPoints>
-      </PointsContainer>
+      <UserInfo userID={userID} points={points} />
 
       <TaskContainer>
         <CoinLogo>🪙</CoinLogo>
@@ -423,14 +171,15 @@ function TaskList() {
             {tasks[category].map((task) => (
               <TaskItem
                 key={task._id}
-                completed={completedTasks[task._id]}
+                $completed={completedTasks[task._id]}
                 onClick={() => handleTaskClick(task)}
+                disabled={completedTasks[task._id]} // Disable the task if it is completed
               >
                 <TaskDetails>
                   <TaskItemTitle>{task.name}</TaskItemTitle>
                   <TaskPoints>{task.points} pts</TaskPoints>
                 </TaskDetails>
-                <TaskIcon completed={completedTasks[task._id]}>
+                <TaskIcon $completed={completedTasks[task._id]}>
                   {completedTasks[task._id] ? 'Done' : <FaChevronRight />}
                 </TaskIcon>
               </TaskItem>
@@ -461,7 +210,7 @@ function TaskList() {
                 <>
                   <ProofInput
                     type="text"
-                    placeholder="Enter your username or proof"
+                    placeholder="Enter your proof"
                     value={proof}
                     onChange={(e) => setProof(e.target.value)}
                   />
@@ -488,6 +237,6 @@ function TaskList() {
       </TaskContainer>
     </>
   );
-}
+};
 
 export default TaskList;

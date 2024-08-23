@@ -6,7 +6,7 @@ import TaskList from './components/TaskList';
 import HomePage from './components/HomePage';
 import EcosystemPage from './components/EcosystemPage';
 import FriendPage from './components/FriendPage';
-import AirdropPage from './components/AirdropPage';  // Import AirdropPage
+import AirdropPage from './components/AirdropPage';
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
             <Route path="/earn" element={<TaskList />} />
             <Route path="/ecosystem" element={<EcosystemPage />} />
             <Route path="/friend" element={<FriendPage />} />
-            <Route path="/airdrop" element={<AirdropPage />} /> {/* Airdrop route */}
+            <Route path="/airdrop" element={<AirdropPage />} />
           </Routes>
         </Layout>
       </Router>

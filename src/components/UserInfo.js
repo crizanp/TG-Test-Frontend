@@ -1,19 +1,21 @@
+// src/components/UserInfo.js
 import React from 'react';
 import styled from 'styled-components';
+import { usePoints } from '../context/PointsContext';
 
 const UserInfoContainer = styled.div`
   background-color: #4caf50;
   padding: 10px 20px;
   border-radius: 15px;
-  margin-top: 15px; /* Add margin from the top */
+  margin-top: 15px;
   max-width: 400px;
   display: flex;
-  justify-content: space-between; /* This ensures space between the username and points */
+  justify-content: space-between;
   align-items: center;
   font-size: 14px;
   font-weight: bold;
   position: fixed;
-  top: 0; /* Fix it to the top */
+  top: 0;
   z-index: 10;
 
   @media (max-width: 480px) {
@@ -24,18 +26,20 @@ const UserInfoContainer = styled.div`
 
 const Username = styled.div`
   color: white;
-  margin-right: 20px; /* Add some space between the username and points */
+  margin-right: 20px;
 `;
 
 const Points = styled.div`
   color: white;
 `;
 
-const UserInfo = ({ username, points }) => {
+const UserInfo = () => {
+  const { userID, points } = usePoints(); // Access userID and points from context
+
   return (
     <UserInfoContainer>
-      <Username>{username}</Username>
-      <Points>Points: {points.toFixed(2)}</Points>
+      <Username>UId: {userID}</Username>
+      <Points> Stake: {Math.floor(points)}</Points>
     </UserInfoContainer>
   );
 };
