@@ -47,34 +47,44 @@ const pointsAnimation = keyframes`
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: white;
-  background: linear-gradient(135deg, #002a69, #006ccd);
+  background-color: #0d2457;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   text-align: center;
-  min-height: 85vh;
+  min-height: 87vh;
   overflow: hidden;
   user-select: none;
-  padding: 10px 20px;
+  padding: 20px 20px;
   position: relative;
+`;
 
-  @media (max-width: 480px) {
-    padding: 10px;
-  }
+export const PointsDisplayContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 64px;
+  margin-bottom: 20px;
 `;
 
 export const PointsDisplay = styled.div`
-  font-size: 48px;
-  color: #ffcc00;
+  font-size: 50px;
+  color: white;
   font-weight: bold;
-  margin-top: 60px;
   animation: ${({ $animate }) =>
     $animate &&
     css`
       ${pointsAnimation} 1s ease-in-out;
     `};
 `;
+
+export const DollarIcon = styled.img`
+  width: 48px;
+  height: 48px;
+  margin-left: 10px;
+`;
+
 
 export const MiddleSection = styled.div`
   display: flex;
@@ -90,8 +100,7 @@ export const Message = styled.div`
   font-size: 22px;
   margin-bottom: 10px;
   font-weight: bold;
-  color:#ff6b6b;
-  border-radius: 12px;
+  color: white;
   text-transform: uppercase;
 
   @media (max-width: 480px) {
@@ -101,23 +110,17 @@ export const Message = styled.div`
 `;
 
 export const EagleContainer = styled.div`
-  background: radial-gradient(circle, #005cbf, #0078d7);
-  padding: 15px;
+  background-color: black;
+  padding: 20px;
   border-radius: 50%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
-
-  @media (max-width: 480px) {
-    width: 202px;
-    padding: 30px;
-  }
 `;
 
 export const EagleImage = styled.img`
-  width: 240px;
+  width: 200px;
   height: auto;
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
@@ -137,13 +140,14 @@ export const EagleImage = styled.img`
 export const Description = styled.div`
   font-size: 16px;
   margin-top: 10px;
+  margin-bottom: 20px;
   line-height: 1.6;
-  color: #ffffff;
-  max-width: 80%;
+  color: white;
+  max-width: 100%;
   text-align: center;
 
   & span {
-    color: #c0ff00;
+    color: #ffd700;
     font-weight: bold;
   }
 
@@ -155,7 +159,7 @@ export const Description = styled.div`
 export const FlyingPoints = styled.div`
   position: absolute;
   font-size: 16px;
-  color: #ffcc00;
+  color: #ffd700;
   animation: ${pointFlyingAnimation} 1s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
@@ -173,4 +177,19 @@ export const SlapEmoji = styled.div`
   z-index: 10;
   transform: translate(-50%, -50%);
   animation: ${slapEffectAnimation} 0.6s ease forwards;
+`;
+
+export const HeaderText = styled.div`
+  background-color: #1ea53e; /* Green background */
+  color: black;
+  font-size: 18px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+  max-width: 300px;
 `;

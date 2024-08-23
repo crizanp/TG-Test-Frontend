@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import eagleImage from '../assets/eagle.png';
+import dollarImage from '../assets/dollar-homepage.png'; // Correctly import the dollar image
 import { usePoints } from '../context/PointsContext';
 import UserInfo from './UserInfo';
 import axios from 'axios';
@@ -7,13 +8,15 @@ import { getUserID } from '../utils/getUserID';
 import {
   HomeContainer,
   MiddleSection,
+  PointsDisplayContainer,
+  DollarIcon,
   Message,
   EagleContainer,
   EagleImage,
   Description,
   FlyingPoints,
   SlapEmoji,
-  PointsDisplay, // Import new styled component
+  PointsDisplay, // Correctly import the styled components
 } from './HomePageStyles';
 
 function HomePage() {
@@ -112,7 +115,11 @@ function HomePage() {
   return (
     <HomeContainer>
       <UserInfo />
-      <PointsDisplay $animate={pointsAnimation}>🦅 {points.toFixed(2)}</PointsDisplay> {/* Big box showing points */}
+      <PointsDisplayContainer>
+        {/* <PointsDisplay $animate={pointsAnimation}><DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}</PointsDisplay> */}
+        <PointsDisplay><DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}</PointsDisplay>
+        {/* Dollar logo next to points */}
+      </PointsDisplayContainer>
       <MiddleSection>
         <Message>{getMessage()}</Message>
         <EagleContainer>

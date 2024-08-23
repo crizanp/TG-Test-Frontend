@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
 
 const UserInfoContainer = styled.div`
-  background-color: #4caf50;
+  background-color: white;
+  color: black;
   padding: 10px 20px;
   border-radius: 15px;
   margin-top: 15px;
@@ -25,13 +26,12 @@ const UserInfoContainer = styled.div`
 `;
 
 const Username = styled.div`
-  color: white;
-  margin-right: 20px;
+  color: black;
 `;
 
-const Points = styled.div`
-  color: white;
-`;
+// const Points = styled.div`
+//   color: black;
+// `;
 
 const UserInfo = () => {
   const { userID, points } = usePoints(); // Access userID and points from context
@@ -39,7 +39,7 @@ const UserInfo = () => {
   return (
     <UserInfoContainer>
       <Username>UId: {userID}</Username>
-      <Points> IGH : {Math.floor(points)}</Points>
+      {/* <Points> IGH : {Math.floor(points)}</Points> */}
     </UserInfoContainer>
   );
 };

@@ -11,7 +11,7 @@ export const TaskContainer = styled.div`
   color: white;
   padding-bottom: 80px;
   font-family: 'Orbitron', sans-serif;
-  min-height: 100vh;
+  min-height: 87vh;
 
   @media (max-width: 768px) {
     padding: 15px;
