@@ -126,9 +126,9 @@ function BottomMenu() {
           <FaGift size={20} />
           <MenuLabel>Airdrop</MenuLabel>
         </MenuItem>
-        <MenuItem to="/ecosystem">
+        <MenuItem to="/games">
           <FaGlobe size={20} />
-          <MenuLabel>Play</MenuLabel>
+          <MenuLabel>Games</MenuLabel>
         </MenuItem>
       </MenuItems>
     </BottomMenuContainer>

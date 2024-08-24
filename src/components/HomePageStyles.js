@@ -71,6 +71,8 @@ export const PointsDisplayContainer = styled.div`
 export const PointsDisplay = styled.div`
   font-size: 50px;
   color: white;
+  display: flex;
+  align-items: center;
   font-weight: bold;
   animation: ${({ $animate }) =>
     $animate &&
@@ -82,7 +84,7 @@ export const PointsDisplay = styled.div`
 export const DollarIcon = styled.img`
   width: 48px;
   height: 48px;
-  margin-left: 10px;
+  margin-right: 10px;
 `;
 
 

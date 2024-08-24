@@ -1,5 +1,5 @@
-import styled, { keyframes } from 'styled-components';
-import { GiClockwork } from 'react-icons/gi';
+import styled, { keyframes, css } from "styled-components"; // Import css from styled-components
+import { GiClockwork } from "react-icons/gi";
 
 export const TaskContainer = styled.div`
   display: flex;
@@ -7,10 +7,9 @@ export const TaskContainer = styled.div`
   align-items: center;
   gap: 20px;
   padding: 20px;
-  background: linear-gradient(135deg, #0072ff, #00c6ff);
   color: white;
   padding-bottom: 80px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: "Orbitron", sans-serif;
   min-height: 87vh;
 
   @media (max-width: 768px) {
@@ -32,13 +31,13 @@ export const TaskCategory = styled.div`
 `;
 
 export const TaskTitle = styled.h3`
-  color: #241d12;
-  margin-bottom: 20px;
-  margin-top: 4px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 22px;
-  text-transform: uppercase;
+  color: #c2beb9;
+    margin-bottom: 20px;
+    margin-top: 4px;
+    /* text-align: center; */
+    font-weight: bold;
+    font-size: 18px;
+    text-transform: uppercase;
 `;
 
 export const CoinLogo = styled.div`
@@ -48,6 +47,31 @@ export const CoinLogo = styled.div`
   margin-top: 45px;
   margin-bottom: 10px;
   font-size: 64px;
+`;
+export const PointsDisplayContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 85px;
+`;
+
+export const PointsDisplay = styled.div`
+  font-size: 50px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  animation: ${({ $animate }) =>
+    $animate &&
+    css`
+      ${pointsAnimation} 1s ease-in-out;
+    `};
+`;
+
+export const DollarIcon = styled.img`
+  width: 48px;
+  height: 48px;
+  margin-right: 10px;
 `;
 
 export const CoinText = styled.div`
@@ -280,18 +304,18 @@ export const ProofInput = styled.input`
 
 export const PointsContainer = styled.div`
   background-color: #4caf50;
-    padding: 10px 20px;
-    border-radius: 15px;
-    margin-top: 15px;
-    max-width: 400px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-    position: fixed;
-    top: 0;
-    z-index: 10;
+  padding: 10px 20px;
+  border-radius: 15px;
+  margin-top: 15px;
+  max-width: 400px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  z-index: 10;
 
   @media (max-width: 480px) {
     padding: 10px 20px;
@@ -331,5 +355,17 @@ export const TimerText = styled.div`
 
   @media (max-width: 480px) {
     font-size: 16px;
+  }
+`;
+// Define the pointsAnimation keyframes
+const pointsAnimation = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
   }
 `;

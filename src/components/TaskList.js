@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { usePoints } from '../context/PointsContext';
 import { getUserID } from '../utils/getUserID';
-import { FaChevronRight } from 'react-icons/fa';
-
 import UserInfo from './UserInfo';
-
-// Import styled components for TaskList
+import { FaChevronRight } from 'react-icons/fa';
 import {
   TaskContainer,
   TaskCategory,
@@ -28,7 +25,11 @@ import {
   ProofInput,
   TimerIcon,
   TimerText,
+  PointsDisplayContainer,
+  PointsDisplay,          // Import the PointsDisplay component
+  DollarIcon   
 } from './TaskList.styles';
+import dollarImage from '../assets/dollar-homepage.png'; // Import the dollar image
 
 const TaskList = () => {
   const { points, setPoints, userID, setUserID } = usePoints();
@@ -43,22 +44,20 @@ const TaskList = () => {
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
-      const userID = await getUserID(setUserID); // Ensure user is created if not existing
+      const userID = await getUserID(setUserID);
       setUserID(userID);
 
       try {
-        // Fetch the existing user data
         const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
         const userData = userResponse.data;
 
         setPoints(userData.points);
 
         const completedTasksMap = {};
-        userData.tasksCompleted.forEach(taskId => {
+        userData.tasksCompleted.forEach((taskId) => {
           completedTasksMap[taskId] = true;
         });
         setCompletedTasks(completedTasksMap);
-  
       } catch (error) {
         console.error('Unexpected error fetching user data:', error);
       }
@@ -66,23 +65,22 @@ const TaskList = () => {
       try {
         const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
         const data = tasksResponse.data;
-  
+
         const categorizedTasks = {
-          special: data.filter(task => task.category === 'Special'),
-          daily: data.filter(task => task.category === 'Daily'),
-          lists: data.filter(task => task.category === 'Lists'),
+          special: data.filter((task) => task.category === 'Special'),
+          daily: data.filter((task) => task.category === 'Daily'),
+          lists: data.filter((task) => task.category === 'Lists'),
         };
-  
+
         setTasks(categorizedTasks);
       } catch (taskFetchError) {
         console.error('Error fetching tasks:', taskFetchError);
       }
     };
-  
+
     initializeUserAndFetchTasks();
   }, [setPoints, setUserID]);
 
-  // Start the countdown when the timer is started and not already claimable
   useEffect(() => {
     let countdown;
     if (selectedTask && timerStarted && !isClaimable && timer > 0) {
@@ -102,56 +100,53 @@ const TaskList = () => {
       setProof('');
       setIsClaimable(false);
       setUnderModeration(false);
-      setTimer(10); // Reset the timer to 10 seconds
-      setTimerStarted(false); // Ensure the timer doesn't start immediately
+      setTimer(10);
+      setTimerStarted(false);
     }
   };
 
   const handleStartTask = () => {
     window.open(selectedTask.link, '_blank');
-    setTimerStarted(true); // Start the timer when the task is started
+    setTimerStarted(true);
   };
 
   const handleClaimReward = async () => {
     setUnderModeration(true);
 
     try {
-        // Add points for the completed task
-        await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`, {
-            pointsToAdd: selectedTask.points,
-        });
+      await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`, {
+        pointsToAdd: selectedTask.points,
+      });
 
-        // After the backend successfully updates the points, fetch the updated points
-        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
-        setPoints(userResponse.data.points); // Update points dynamically with the latest value from the backend
+      const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+      setPoints(userResponse.data.points);
 
-        // Mark the task as completed
-        await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
-            userID,
-            tasksCompleted: [selectedTask._id],
-            taskHistory: [
-                {
-                    taskId: selectedTask._id,
-                    pointsEarned: selectedTask.points,
-                    completedAt: new Date(),
-                },
-            ],
-        });
+      await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
+        userID,
+        tasksCompleted: [selectedTask._id],
+        taskHistory: [
+          {
+            taskId: selectedTask._id,
+            pointsEarned: selectedTask.points,
+            completedAt: new Date(),
+          },
+        ],
+      });
 
-        setCompletedTasks((prevTasks) => ({
-            ...prevTasks,
-            [selectedTask._id]: true,
-        }));
+      setCompletedTasks((prevTasks) => ({
+        ...prevTasks,
+        [selectedTask._id]: true,
+      }));
 
-        alert('Points awarded!');
-        setSelectedTask(null);
+      alert('Points awarded!');
+      setSelectedTask(null);
     } catch (error) {
-        console.error('Error claiming reward:', error);
-        alert('An error occurred while claiming the reward.');
+      console.error('Error claiming reward:', error);
+      alert('An error occurred while claiming the reward.');
     } finally {
-        setUnderModeration(false);
+      setUnderModeration(false);
     }
-};
+  };
 
   const handleClose = () => {
     setSelectedTask(null);
@@ -159,10 +154,15 @@ const TaskList = () => {
 
   return (
     <>
-      <UserInfo userID={userID} points={points} />
+      <PointsDisplayContainer>
+        <UserInfo userID={userID} points={points} />
+        <PointsDisplay>
+          <DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}
+        </PointsDisplay>
+      </PointsDisplayContainer>
 
       <TaskContainer>
-        <CoinLogo>🪙</CoinLogo>
+        {/* <CoinLogo>🪙</CoinLogo> */}
         <CoinText>Earn more tokens by completing tasks</CoinText>
 
         {Object.keys(tasks).map((category) => (
@@ -173,7 +173,6 @@ const TaskList = () => {
                 key={task._id}
                 $completed={completedTasks[task._id]}
                 onClick={() => handleTaskClick(task)}
-                disabled={completedTasks[task._id]} // Disable the task if it is completed
               >
                 <TaskDetails>
                   <TaskItemTitle>{task.name}</TaskItemTitle>

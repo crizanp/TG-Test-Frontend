@@ -158,7 +158,6 @@ export const NextButton = styled.button`
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-top: 20px;
 
   &:hover {
     background-color: #66bb6a;
