@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import eagleImage from '../assets/eagle.png';
-import dollarImage from '../assets/dollar-homepage.png'; // Correctly import the dollar image
+import dollarImage from '../assets/dollar-homepage.png';
 import { usePoints } from '../context/PointsContext';
 import UserInfo from './UserInfo';
 import axios from 'axios';
@@ -16,8 +16,9 @@ import {
   Description,
   FlyingPoints,
   SlapEmoji,
-  PointsDisplay, // Correctly import the styled components
+  PointsDisplay,
 } from './HomePageStyles';
+import { throttle } from 'lodash';
 
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
@@ -26,14 +27,19 @@ function HomePage() {
   const [flyingPoints, setFlyingPoints] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
-  const [pointsAnimation, setPointsAnimation] = useState(false); // State for points animation
+  const [pointsAnimation, setPointsAnimation] = useState(false);
+  const [offlinePoints, setOfflinePoints] = useState(0); // State for offline points
 
   useEffect(() => {
     const initializeUser = async () => {
       await getUserID(setUserID);
+      const savedPoints = localStorage.getItem(`points_${userID}`);
+      if (savedPoints) {
+        setPoints(parseFloat(savedPoints));
+      }
     };
     initializeUser();
-  }, [setUserID]);
+  }, [setUserID, setPoints, userID]);
 
   const getMessage = () => {
     if (tapCount >= 150) return "He's feeling it! Keep going!";
@@ -52,7 +58,21 @@ function HomePage() {
     }
   };
 
-  const handleTap = async (e) => {
+  const syncPointsWithServer = async (totalPointsToAdd) => {
+    try {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`, {
+        pointsToAdd: totalPointsToAdd,
+      });
+
+      setPoints(response.data.points);
+      localStorage.setItem(`points_${userID}`, response.data.points); // Update local storage with user-specific key
+      setOfflinePoints(0); // Reset offline points after sync
+    } catch (error) {
+      console.error('Error syncing points with server:', error);
+    }
+  };
+
+  const handleTap = throttle(async (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
@@ -68,21 +88,17 @@ function HomePage() {
     setLastTapTime(currentTime);
 
     setAnimate(true);
-    setPointsAnimation(true); // Trigger points animation
-    setTimeout(() => setPointsAnimation(false), 1000); // Reset animation after 1s
+    setPointsAnimation(true);
+    setTimeout(() => setPointsAnimation(false), 1000);
 
     const addedPoints = pointsToAdd * tapSpeedMultiplier;
 
-    try {
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`, {
-        pointsToAdd: addedPoints,
-      });
-
-      setPoints(response.data.points); // Update points dynamically
-    } catch (error) {
-      console.error('Error updating points:', error);
-      alert('Failed to update points. Please try again.');
-    }
+    // Update points locally with user-specific key
+    setPoints((prevPoints) => {
+      const newPoints = prevPoints + addedPoints;
+      localStorage.setItem(`points_${userID}`, newPoints);
+      return newPoints;
+    });
 
     setTapCount((prevTapCount) => prevTapCount + 1);
 
@@ -96,8 +112,15 @@ function HomePage() {
       { id: Date.now(), x: e.clientX, y: e.clientY },
     ]);
 
+    setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
+
     setTimeout(() => setAnimate(false), 300);
-  };
+
+    // Sync points with server if online
+    if (navigator.onLine) {
+      syncPointsWithServer(offlinePoints + addedPoints);
+    }
+  }, 300); // Throttle the function, allowing it to be invoked at most once every 300ms
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -116,9 +139,7 @@ function HomePage() {
     <HomeContainer>
       <UserInfo />
       <PointsDisplayContainer>
-        {/* <PointsDisplay $animate={pointsAnimation}><DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}</PointsDisplay> */}
         <PointsDisplay><DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}</PointsDisplay>
-        {/* Dollar logo next to points */}
       </PointsDisplayContainer>
       <MiddleSection>
         <Message>{getMessage()}</Message>
