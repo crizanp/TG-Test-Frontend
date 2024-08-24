@@ -18,7 +18,7 @@ const GamesContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 40px 20px;
-  background-color: #0d2457;
+  background-color: #05173e;
   color: white;
   min-height: 87vh;
   text-align: center;
@@ -54,7 +54,7 @@ const GameItem = styled(Link)`
 
   &:hover {
     transform: translateY(-10px);
-    background-color: #ff9800;
+    background-color: black;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
   }
 
@@ -80,7 +80,7 @@ const GameTitle = styled.h2`
 
 const GameDescription = styled.p`
   font-size: 20px; /* Increased font size */
-  color: #ff9800;
+  color:#ffffff;
   max-width: 600px;
 `;
 

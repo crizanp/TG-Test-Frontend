@@ -47,7 +47,7 @@ const pointsAnimation = keyframes`
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: white;
-  background-color: #0d2457;
+  background-color: #061639;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -112,8 +112,6 @@ export const Message = styled.div`
 `;
 
 export const EagleContainer = styled.div`
-  background-color: black;
-  padding: 20px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -122,7 +120,7 @@ export const EagleContainer = styled.div`
 `;
 
 export const EagleImage = styled.img`
-  width: 200px;
+  width: 270px;
   height: auto;
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
@@ -149,8 +147,7 @@ export const Description = styled.div`
   text-align: center;
 
   & span {
-    color: #ffd700;
-    font-weight: bold;
+    font-weight: bolder;
   }
 
   @media (max-width: 480px) {

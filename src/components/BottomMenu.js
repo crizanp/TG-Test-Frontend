@@ -22,7 +22,6 @@ const BottomMenuContainer = styled.div`
   }
 
   @media (max-width: 480px) {
-    padding: 6px 0;
     font-size: 10px;
   }
 `;

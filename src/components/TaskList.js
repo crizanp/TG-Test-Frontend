@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { usePoints } from '../context/PointsContext';
-import { getUserID } from '../utils/getUserID';
-import UserInfo from './UserInfo';
-import { FaChevronRight } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { usePoints } from "../context/PointsContext";
+import { getUserID } from "../utils/getUserID";
+import UserInfo from "./UserInfo";
+import { FaChevronRight } from "react-icons/fa";
 import {
   TaskContainer,
   TaskCategory,
@@ -26,16 +26,16 @@ import {
   TimerIcon,
   TimerText,
   PointsDisplayContainer,
-  PointsDisplay,          // Import the PointsDisplay component
-  DollarIcon   
-} from './TaskList.styles';
-import dollarImage from '../assets/dollar-homepage.png'; // Import the dollar image
+  PointsDisplay, // Import the PointsDisplay component
+  DollarIcon,
+} from "./TaskList.styles";
+import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
 
 const TaskList = () => {
   const { points, setPoints, userID, setUserID } = usePoints();
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
-  const [proof, setProof] = useState('');
+  const [proof, setProof] = useState("");
   const [isClaimable, setIsClaimable] = useState(false);
   const [underModeration, setUnderModeration] = useState(false);
   const [completedTasks, setCompletedTasks] = useState({});
@@ -48,7 +48,9 @@ const TaskList = () => {
       setUserID(userID);
 
       try {
-        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        const userResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+        );
         const userData = userResponse.data;
 
         setPoints(userData.points);
@@ -59,22 +61,24 @@ const TaskList = () => {
         });
         setCompletedTasks(completedTasksMap);
       } catch (error) {
-        console.error('Unexpected error fetching user data:', error);
+        console.error("Unexpected error fetching user data:", error);
       }
 
       try {
-        const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
+        const tasksResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`
+        );
         const data = tasksResponse.data;
 
         const categorizedTasks = {
-          special: data.filter((task) => task.category === 'Special'),
-          daily: data.filter((task) => task.category === 'Daily'),
-          lists: data.filter((task) => task.category === 'Lists'),
+          special: data.filter((task) => task.category === "Special"),
+          daily: data.filter((task) => task.category === "Daily"),
+          lists: data.filter((task) => task.category === "Lists"),
         };
 
         setTasks(categorizedTasks);
       } catch (taskFetchError) {
-        console.error('Error fetching tasks:', taskFetchError);
+        console.error("Error fetching tasks:", taskFetchError);
       }
     };
 
@@ -97,7 +101,7 @@ const TaskList = () => {
   const handleTaskClick = (task) => {
     if (!completedTasks[task._id]) {
       setSelectedTask(task);
-      setProof('');
+      setProof("");
       setIsClaimable(false);
       setUnderModeration(false);
       setTimer(10);
@@ -106,7 +110,7 @@ const TaskList = () => {
   };
 
   const handleStartTask = () => {
-    window.open(selectedTask.link, '_blank');
+    window.open(selectedTask.link, "_blank");
     setTimerStarted(true);
   };
 
@@ -114,11 +118,16 @@ const TaskList = () => {
     setUnderModeration(true);
 
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`, {
-        pointsToAdd: selectedTask.points,
-      });
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
+        {
+          pointsToAdd: selectedTask.points,
+        }
+      );
 
-      const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+      const userResponse = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+      );
       setPoints(userResponse.data.points);
 
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
@@ -138,11 +147,11 @@ const TaskList = () => {
         [selectedTask._id]: true,
       }));
 
-      alert('Points awarded!');
+      alert("Points awarded!");
       setSelectedTask(null);
     } catch (error) {
-      console.error('Error claiming reward:', error);
-      alert('An error occurred while claiming the reward.');
+      console.error("Error claiming reward:", error);
+      alert("An error occurred while claiming the reward.");
     } finally {
       setUnderModeration(false);
     }
@@ -154,12 +163,13 @@ const TaskList = () => {
 
   return (
     <>
-      <PointsDisplayContainer>
-        <UserInfo userID={userID} points={points} />
-        <PointsDisplay>
-          <DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}
-        </PointsDisplay>
-      </PointsDisplayContainer>
+      <PointsDisplayContainer id="pointsDisplay">
+  <UserInfo userID={userID} points={points} />
+  <PointsDisplay>
+    <DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}
+  </PointsDisplay>
+</PointsDisplayContainer>
+
 
       <TaskContainer>
         {/* <CoinLogo>🪙</CoinLogo> */}
@@ -167,7 +177,9 @@ const TaskList = () => {
 
         {Object.keys(tasks).map((category) => (
           <TaskCategory key={category}>
-            <TaskTitle>{category.charAt(0).toUpperCase() + category.slice(1)} Tasks</TaskTitle>
+            <TaskTitle>
+              {category.charAt(0).toUpperCase() + category.slice(1)} Tasks
+            </TaskTitle>
             {tasks[category].map((task) => (
               <TaskItem
                 key={task._id}
@@ -179,7 +191,7 @@ const TaskList = () => {
                   <TaskPoints>{task.points} pts</TaskPoints>
                 </TaskDetails>
                 <TaskIcon $completed={completedTasks[task._id]}>
-                  {completedTasks[task._id] ? 'Done' : <FaChevronRight />}
+                  {completedTasks[task._id] ? "Done" : <FaChevronRight />}
                 </TaskIcon>
               </TaskItem>
             ))}
@@ -193,9 +205,7 @@ const TaskList = () => {
               <ModalHeader>{selectedTask.name}</ModalHeader>
               <ModalContent>{selectedTask.description}</ModalContent>
               {!timerStarted && !isClaimable && !underModeration ? (
-                <ModalButton onClick={handleStartTask}>
-                  Start Task
-                </ModalButton>
+                <ModalButton onClick={handleStartTask}>Start Task</ModalButton>
               ) : null}
 
               {timerStarted && !isClaimable && !underModeration ? (
@@ -224,9 +234,7 @@ const TaskList = () => {
 
               {underModeration && (
                 <>
-                  <ModalContent>
-                    Task under moderation...
-                  </ModalContent>
+                  <ModalContent>Task under moderation...</ModalContent>
                   <TimerIcon />
                 </>
               )}

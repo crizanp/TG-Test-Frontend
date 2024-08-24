@@ -25,7 +25,7 @@ export const TaskContainer = styled.div`
 export const TaskCategory = styled.div`
   width: 100%;
   max-width: 600px;
-  background-color: #00000026;
+  background-color: #fffbfb0a;
   padding: 20px;
   margin-bottom: 20px;
 `;

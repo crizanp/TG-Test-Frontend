@@ -38,7 +38,7 @@ const UserInfo = () => {
 
   return (
     <UserInfoContainer>
-      <Username>UId: {userID}</Username>
+      <Username>UId: {userID} | IGH: {Math.floor(points)}</Username>
       {/* <Points> IGH : {Math.floor(points)}</Points> */}
     </UserInfoContainer>
   );

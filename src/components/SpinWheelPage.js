@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { usePoints } from "../context/PointsContext";
 import UserInfo from "./UserInfo";
 import axios from "axios";
@@ -24,11 +24,7 @@ const WheelContainer = styled.div`
   width: 300px;
   height: 300px;
   position: relative;
-`;
-
-const rotateAnimation = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  overflow: hidden;
 `;
 
 const Wheel = styled.div`
@@ -41,6 +37,17 @@ const Wheel = styled.div`
   position: absolute;
   transition: transform 4s ease-out;
   transform: ${({ rotate }) => `rotate(${rotate}deg)`};
+  z-index: 2; /* Ensure the outer wheel is above the inner wheel */
+`;
+
+const InnerWheel = styled.img`
+  position: absolute;
+    width: 155%;
+    height: 103%;
+    top: -6px;
+    left: -87px;
+    pointer-events: none;
+    z-index: 1;
 `;
 
 const SpinButton = styled.button`
@@ -52,7 +59,6 @@ const SpinButton = styled.button`
   cursor: pointer;
   font-size: 18px;
   font-weight: bold;
-  margin-top: 20px;
   transition: background-color 0.3s;
 
   &:hover {
@@ -70,11 +76,10 @@ const PointsDisplayContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 40px;
-
 `;
 
 const PointsDisplay = styled.div`
- font-size: 50px;
+  font-size: 50px;
   color: white;
   font-weight: bold;
   display: flex;
@@ -83,7 +88,7 @@ const PointsDisplay = styled.div`
 `;
 
 const DollarIcon = styled.img`
- width: 48px;
+  width: 48px;
   height: 48px;
   margin-right: 10px;
 `;
@@ -91,7 +96,7 @@ const DollarIcon = styled.img`
 const PrizeText = styled.div`
   font-size: 24px;
   margin-top: 20px;
-  color: #ffd700;
+  color: #ffffff;
   font-weight: bold;
 `;
 
@@ -117,7 +122,7 @@ const ActionButton = styled.a`
 
 const Message = styled.div`
   font-size: 18px;
-  color: #ffd700;
+  color: #ffffff;
   margin-top: 20px;
   text-align: center;
 `;
@@ -140,7 +145,7 @@ function SpinWheelPage() {
   const [actionType, setActionType] = useState("twitter"); // twitter, telegram, none
   const [timeLeft, setTimeLeft] = useState(0); // State to hold the countdown timer
 
-  const segments = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 200]; // Points on the wheel
+  const segments = [150, 10, 30, 40, 50, 60, 70, 80, 90, 120, 100, 20];
   const segmentDegrees = 360 / segments.length; // Calculate degrees per segment
 
   const SPIN_COOLDOWN_TIME = 30 * 60 * 1000; // 30 minutes in milliseconds
@@ -190,7 +195,6 @@ function SpinWheelPage() {
       setTimeLeft(0);
     }
   }, [timeLeft, spinLocked]);
-
   const spinWheel = () => {
     if (spinning || spinLocked) return;
 
@@ -201,23 +205,31 @@ function SpinWheelPage() {
     setSpinning(true);
 
     setTimeout(() => {
-      const prizePoints = segments[randomSpin];
-      setPrize(prizePoints);
+        const actualRotation = newRotation % 360; // Normalize to a 360-degree rotation
+        let prizeIndex = Math.floor((actualRotation + segmentDegrees / 2) / segmentDegrees) % segments.length;
 
-      // Update points in the backend
-      updatePoints(prizePoints);
+        // Adjust if needed (we observe the exact behavior)
+        const prizePoints = segments[prizeIndex];
 
-      setSpinning(false);
+        setPrize(prizePoints);
 
-      // Save the current time as the last spin time
-      if (!extraSpinUsed) {
-        localStorage.setItem("lastSpinTime", Date.now().toString());
-        setSpinLocked(true);
-        setTimeLeft(SPIN_COOLDOWN_TIME);
-      }
-      setExtraSpinUsed(true);
+        // Update points in the backend
+        updatePoints(prizePoints);
+
+        setSpinning(false);
+
+        // Save the current time as the last spin time
+        if (!extraSpinUsed) {
+            localStorage.setItem("lastSpinTime", Date.now().toString());
+            setSpinLocked(true);
+            setTimeLeft(SPIN_COOLDOWN_TIME);
+        }
+        setExtraSpinUsed(true);
     }, 4000); // 4 seconds spin time
-  };
+};
+
+
+
 
   const updatePoints = async (pointsToAdd) => {
     try {
@@ -273,8 +285,12 @@ function SpinWheelPage() {
       <h2>Spin the Wheel and Earn!</h2>
       <WheelContainer>
         <Wheel rotate={rotateDegrees}>
-          <img src="https://i.postimg.cc/4NXqLLvc/spin.png" alt="Spin Wheel" />
+          <img src="https://i.postimg.cc/T11czMNZ/10-3.png" alt="Spin Wheel" />
         </Wheel>
+        <InnerWheel
+          src="https://i.postimg.cc/zvSCg2gd/10-2.png"
+          alt="Inner Wheel"
+        />
       </WheelContainer>
       <SpinButton onClick={spinWheel} disabled={spinning || spinLocked}>
         {spinning
