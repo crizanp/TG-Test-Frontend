@@ -1,22 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
+import UserInfo from './UserInfo'; // Assuming you have a UserInfo component
+import dollarImage from '../assets/dollar-homepage.png'; // Correctly import the dollar image
+
+// Main container that centers the content vertically and horizontally
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(145deg, #11204f, #11204f);
+  padding: 20px;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+`;
+
+const StickyUserInfo = styled.div`
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: #11204f;
+  z-index: 1000;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+`;
 
 const ReferralContainer = styled.div`
-  color: #ffffff;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(145deg, #11204f, #11204f);
-    padding: 20px;
-    /* border-radius: 15px; */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    width: 90%;
-    max-width: 400px;
-    margin: 25% auto;
-    text-align: center;
+  background: linear-gradient(145deg, #1b346f, #1b346f);
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  border-radius: 10px;
+`;
+
+const PointsDisplayContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const PointsDisplay = styled.div`
+  font-size: 32px;
+  font-weight: bold;
+  color: #ffcc00;
+  display: flex;
+  align-items: center;
+`;
+
+const DollarIcon = styled.img`
+  width: 31px;
+  height: 31px;
+  margin-right: 8px;
 `;
 
 const Title = styled.h2`
-  color: #ffcc00; /* Bright yellow for the title */
+  color: #ffffff;
   margin-bottom: 15px;
   font-size: 24px;
   text-transform: uppercase;
@@ -37,7 +81,7 @@ const ReferralLinkContainer = styled.div`
   margin-top: 15px;
 `;
 
-const ReferralLink = styled.p`
+const ReferralLink = styled.a`
   background-color: #162447; /* Darker blue for the referral link */
   padding: 10px;
   border-radius: 8px;
@@ -47,6 +91,11 @@ const ReferralLink = styled.p`
   color: #ffffff;
   font-size: 14px;
   letter-spacing: 0.5px;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const CopyButton = styled.button`
@@ -77,9 +126,16 @@ const ReferralStats = styled.div`
   color: #ffcc00; /* Match the accent color */
 `;
 
-function ReferralPage() {
-  const { userID } = usePoints();
-  const [referralLink] = useState(`${window.location.origin}/?ref=IGH${userID}`);
+function FriendPage() {
+  const { points, userID } = usePoints();
+  const [referralLink, setReferralLink] = useState('');
+
+  useEffect(() => {
+    if (userID) {
+      setReferralLink(`https://t.me/IGHGamebot?ref=IGH${userID}`);
+    }
+  }, [userID]);
+
   const [copySuccess, setCopySuccess] = useState('');
 
   const handleCopyLink = () => {
@@ -95,22 +151,33 @@ function ReferralPage() {
   const totalReferrals = 3; // Replace with actual logic to get total referrals from backend
 
   return (
-    <ReferralContainer>
-      <Title>Refer & Earn More Rewards!</Title>
-      <PointsNotice>Refer more than 3 friends for additional surprice!</PointsNotice>
+    <MainContainer>
+      <StickyUserInfo>
+        <UserInfo />
+      </StickyUserInfo>
+      <ReferralContainer>
+        <PointsDisplayContainer>
+          <PointsDisplay><DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}</PointsDisplay>
+        </PointsDisplayContainer>
 
-      <ReferralLinkContainer>
-        <ReferralLink>{referralLink}</ReferralLink>
-        <CopyButton onClick={handleCopyLink}>Copy Link</CopyButton>
-        {copySuccess && <Notice>{copySuccess}</Notice>}
-      </ReferralLinkContainer>
+        <Title>Refer & Earn More Rewards!</Title>
+        <PointsNotice>Refer more than 3 friends for additional surprises!</PointsNotice>
 
-      <ReferralStats>
-        <h3>Your Total Referrals: {totalReferrals}</h3>
-        <Notice>Keep sharing your link to earn more rewards!</Notice>
-      </ReferralStats>
-    </ReferralContainer>
+        <ReferralLinkContainer>
+          <ReferralLink href={referralLink} target="_blank" rel="noopener noreferrer">
+            {referralLink || 'Generating your referral link...'}
+          </ReferralLink>
+          <CopyButton onClick={handleCopyLink} disabled={!referralLink}>Copy Link</CopyButton>
+          {copySuccess && <Notice>{copySuccess}</Notice>}
+        </ReferralLinkContainer>
+
+        <ReferralStats>
+          <h3>Your Total Referrals: {totalReferrals}</h3>
+          <Notice>Keep sharing your link to earn more rewards!</Notice>
+        </ReferralStats>
+      </ReferralContainer>
+    </MainContainer>
   );
 }
 
-export default ReferralPage;
+export default FriendPage;
