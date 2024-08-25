@@ -48,14 +48,8 @@ function HomePage() {
     return "Slap this eagle, he took my golden cheek!";
   };
 
-  const calculatePoints = (clickY, height, clickX, width) => {
-    if (clickY < height * 0.3) {
-      return 1;
-    } else if (clickY >= height * 0.3 && clickX >= width * 0.2 && clickX <= width * 0.8) {
-      return 0.75;
-    } else {
-      return 0.25;
-    }
+  const calculatePoints = () => {
+    return 3; // Always return 3 points for each tap within the eagle
   };
 
   const syncPointsWithServer = async (totalPointsToAdd) => {
@@ -79,46 +73,48 @@ function HomePage() {
     const height = rect.height;
     const width = rect.width;
 
-    const pointsToAdd = calculatePoints(clickY, height, clickX, width);
+    if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
+      const pointsToAdd = calculatePoints();
 
-    const currentTime = Date.now();
-    const timeDiff = currentTime - lastTapTime;
-    const tapSpeedMultiplier = Math.max(1, 500 / timeDiff);
+      const currentTime = Date.now();
+      const timeDiff = currentTime - lastTapTime;
+      const tapSpeedMultiplier = Math.max(1, 500 / timeDiff);
 
-    setLastTapTime(currentTime);
+      setLastTapTime(currentTime);
 
-    setAnimate(true);
-    setPointsAnimation(true);
-    setTimeout(() => setPointsAnimation(false), 1000);
+      setAnimate(true);
+      setPointsAnimation(true);
+      setTimeout(() => setPointsAnimation(false), 1000);
 
-    const addedPoints = pointsToAdd * tapSpeedMultiplier;
+      const addedPoints = pointsToAdd * tapSpeedMultiplier;
 
-    // Update points locally with user-specific key
-    setPoints((prevPoints) => {
-      const newPoints = prevPoints + addedPoints;
-      localStorage.setItem(`points_${userID}`, newPoints);
-      return newPoints;
-    });
+      // Update points locally with user-specific key
+      setPoints((prevPoints) => {
+        const newPoints = prevPoints + addedPoints;
+        localStorage.setItem(`points_${userID}`, newPoints);
+        return newPoints;
+      });
 
-    setTapCount((prevTapCount) => prevTapCount + 1);
+      setTapCount((prevTapCount) => prevTapCount + 1);
 
-    setFlyingPoints((prevFlyingPoints) => [
-      ...prevFlyingPoints,
-      { id: Date.now(), x: e.clientX, y: e.clientY, value: addedPoints },
-    ]);
+      setFlyingPoints((prevFlyingPoints) => [
+        ...prevFlyingPoints,
+        { id: Date.now(), x: e.clientX, y: e.clientY, value: addedPoints },
+      ]);
 
-    setSlapEmojis((prevEmojis) => [
-      ...prevEmojis,
-      { id: Date.now(), x: e.clientX, y: e.clientY },
-    ]);
+      setSlapEmojis((prevEmojis) => [
+        ...prevEmojis,
+        { id: Date.now(), x: e.clientX, y: e.clientY },
+      ]);
 
-    setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
+      setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
 
-    setTimeout(() => setAnimate(false), 300);
+      setTimeout(() => setAnimate(false), 300);
 
-    // Sync points with server if online
-    if (navigator.onLine) {
-      syncPointsWithServer(offlinePoints + addedPoints);
+      // Sync points with server if online
+      if (navigator.onLine) {
+        syncPointsWithServer(offlinePoints + addedPoints);
+      }
     }
   }, 300); // Throttle the function, allowing it to be invoked at most once every 300ms
 
@@ -163,7 +159,7 @@ function HomePage() {
         </FlyingPoints>
       ))}
       {slapEmojis.map((emoji) => (
-        <SlapEmoji key={emoji.id} x={emoji.x} y={emoji.y}>
+        <SlapEmoji key={emoji.id} x={emoji.x} y={emoji.y} style={{ color: 'white' }}>
           👋
         </SlapEmoji>
       ))}
