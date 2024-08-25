@@ -1,6 +1,69 @@
 import styled, { keyframes, css } from "styled-components"; // Import css from styled-components
 import { GiClockwork } from "react-icons/gi";
 
+// Keyframe for slide-in animation from the top right
+const slideIn = keyframes`
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
+// Keyframe for fade-out animation
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
+
+export const FloatingMessageContainer = styled.div`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: ${({ type }) => (type === 'success' ? '#4caf50' : '#f44336')}; /* Green for success, red for error */
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: ${slideIn} 0.5s ease-out forwards, ${({ $fade }) => $fade && css`${fadeOut} 0.5s ease-out forwards`};
+
+  @media (max-width: 480px) {
+    width: 50%;
+    right: 5%;
+    top: 10px;
+    padding: 10px 15px;
+  }
+`;
+
+export const MessageText = styled.div`
+  font-size: 16px;
+  margin-right: 10px;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
+`;
+
+export const CloseButton = styled.div`
+  cursor: pointer;
+  font-size: 20px;
+  color: white;
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 export const TaskContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -21,7 +84,25 @@ export const TaskContainer = styled.div`
     padding-bottom: 80px;
   }
 `;
+// Define the spin animation
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
 
+// Styled component for the loading spinner
+export const LoadingSpinner = styled.div`
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: ${spin} 2s linear infinite;
+  margin: 100px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 export const TaskCategory = styled.div`
   width: 100%;
   max-width: 600px;
@@ -32,12 +113,12 @@ export const TaskCategory = styled.div`
 
 export const TaskTitle = styled.h3`
   color: #c2beb9;
-    margin-bottom: 20px;
-    margin-top: 4px;
-    /* text-align: center; */
-    font-weight: bold;
-    font-size: 18px;
-    text-transform: uppercase;
+  margin-bottom: 20px;
+  margin-top: 4px;
+  /* text-align: center; */
+  font-weight: bold;
+  font-size: 18px;
+  text-transform: uppercase;
 `;
 
 export const CoinLogo = styled.div`
@@ -268,7 +349,7 @@ export const ClaimButton = styled(ModalButton)`
   }
 `;
 
-export const CloseButton = styled.div`
+export const CloseButtonModel = styled.div`
   position: absolute;
   top: 10px;
   right: 10px;

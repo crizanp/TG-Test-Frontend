@@ -61,26 +61,46 @@ export const QuestionText = styled.h3`
 `;
 
 export const Option = styled.div`
-  background-color: ${({ $correct, $wrong, $selected }) =>
-    $correct ? '#4caf50' : $wrong ? '#ff4d4d' : $selected ? '#333' : '#252525'};
+  background-color: ${({ $correct, $wrong, $selected, $submitted }) => {
+    if (!$submitted) {
+      return $selected ? '#444' : '#252525';
+    }
+    if ($correct) {
+      return '#4caf50'; // Green for correct answer
+    }
+    if ($wrong) {
+      return '#ff4d4d'; // Red for incorrect answer
+    }
+    return '#252525'; // Default color
+  }};
   color: white;
-  padding: 10px;
+  padding: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
   cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
   pointer-events: ${({ $isDisabled }) => ($isDisabled ? 'none' : 'auto')};
+  box-shadow: ${({ $selected }) => ($selected ? '0 0 10px rgba(0, 0, 0, 0.7)' : '0 2px 4px rgba(0, 0, 0, 0.5)')};
+  opacity: ${({ $selected }) => ($selected ? '1' : '0.9')};
+  transform: ${({ $selected }) => ($selected ? 'scale(1.02)' : 'scale(1)')};
+  border: 1px solid ${({ $selected }) => ($selected ? '#ff9800' : 'transparent')};
 
   &:hover {
-    background-color: ${({ $correct, $wrong, $selected, $isDisabled }) =>
-      $isDisabled ? '#252525' : $selected ? '#444' : '#333'};
+    background-color: ${({ $selected, $isDisabled }) =>
+      $isDisabled ? '#252525' : $selected ? '#555' : '#333'};
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 15px;
   }
 
   @media (max-width: 480px) {
     font-size: 14px;
-    padding: 8px;
+    padding: 12px;
   }
 `;
+
+
 
 
 export const SubmitButton = styled.button`

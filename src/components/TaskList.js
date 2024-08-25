@@ -4,11 +4,12 @@ import { usePoints } from "../context/PointsContext";
 import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
+import FloatingMessage from './FloatingMessage'; // Adjust the path accordingly
+
 import {
   TaskContainer,
   TaskCategory,
   TaskTitle,
-  CoinLogo,
   CoinText,
   TaskItem,
   TaskDetails,
@@ -26,8 +27,10 @@ import {
   TimerIcon,
   TimerText,
   PointsDisplayContainer,
-  PointsDisplay, // Import the PointsDisplay component
+  PointsDisplay,
   DollarIcon,
+  CloseButtonModel,
+  LoadingSpinner, // Import the LoadingSpinner component
 } from "./TaskList.styles";
 import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
 
@@ -41,9 +44,13 @@ const TaskList = () => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
+  const [loading, setLoading] = useState(true); // Loading state
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
+      setLoading(true); // Start loading
+
       const userID = await getUserID(setUserID);
       setUserID(userID);
 
@@ -79,6 +86,8 @@ const TaskList = () => {
         setTasks(categorizedTasks);
       } catch (taskFetchError) {
         console.error("Error fetching tasks:", taskFetchError);
+      } finally {
+        setLoading(false); // End loading after tasks are fetched
       }
     };
 
@@ -147,11 +156,11 @@ const TaskList = () => {
         [selectedTask._id]: true,
       }));
 
-      alert("Points awarded!");
+      setMessage({ text: 'Points awarded!', type: 'success' });
       setSelectedTask(null);
     } catch (error) {
       console.error("Error claiming reward:", error);
-      alert("An error occurred while claiming the reward.");
+      setMessage({ text: 'Error claiming the reward.', type: 'error' });
     } finally {
       setUnderModeration(false);
     }
@@ -163,6 +172,15 @@ const TaskList = () => {
 
   return (
     <>
+      {message && (
+        <FloatingMessage
+          message={message.text}
+          type={message.type}
+          duration={3000}
+          onClose={() => setMessage(null)}
+        />
+      )}
+
       <PointsDisplayContainer id="pointsDisplay">
         <UserInfo userID={userID} points={points} />
         <PointsDisplay>
@@ -171,77 +189,82 @@ const TaskList = () => {
         </PointsDisplay>
       </PointsDisplayContainer>
 
-      <TaskContainer>
-        {/* <CoinLogo>🪙</CoinLogo> */}
-        <CoinText>Earn more tokens by completing tasks</CoinText>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <TaskContainer>
+          <CoinText>Earn more tokens by completing tasks</CoinText>
 
-        {Object.keys(tasks).map((category) => (
-          <TaskCategory key={category}>
-            <TaskTitle>
-              {category.charAt(0).toUpperCase() + category.slice(1)} Tasks
-            </TaskTitle>
-            {tasks[category].map((task) => (
-              <TaskItem
-                key={task._id}
-                $completed={completedTasks[task._id]}
-                onClick={() => handleTaskClick(task)}
-              >
-                <TaskDetails>
-                  <TaskItemTitle>{task.name}</TaskItemTitle>
-                  <TaskPoints>{task.points} pts</TaskPoints>
-                </TaskDetails>
-                <TaskIcon $completed={completedTasks[task._id]}>
-                  {completedTasks[task._id] ? "Done" : <FaChevronRight />}
-                </TaskIcon>
-              </TaskItem>
-            ))}
-          </TaskCategory>
-        ))}
+          {Object.keys(tasks).map((category) => (
+            <TaskCategory key={category}>
+              <TaskTitle>
+                {category.charAt(0).toUpperCase() + category.slice(1)} Tasks
+              </TaskTitle>
+              {tasks[category].map((task) => (
+                <TaskItem
+                  key={task._id}
+                  $completed={completedTasks[task._id]}
+                  onClick={() => handleTaskClick(task)}
+                >
+                  <TaskDetails>
+                    <TaskItemTitle>{task.name}</TaskItemTitle>
+                    <TaskPoints>{task.points} pts</TaskPoints>
+                  </TaskDetails>
+                  <TaskIcon $completed={completedTasks[task._id]}>
+                    {completedTasks[task._id] ? "Done" : <FaChevronRight />}
+                  </TaskIcon>
+                </TaskItem>
+              ))}
+            </TaskCategory>
+          ))}
 
-        {selectedTask && (
-          <ModalOverlay>
-            <Modal>
-              <CloseButton onClick={handleClose}>❌</CloseButton>
-              <ModalHeader>{selectedTask.name}</ModalHeader>
-              <ModalContent>{selectedTask.description}</ModalContent>
-              {!timerStarted && !isClaimable && !underModeration ? (
-                <ModalButton onClick={handleStartTask}>Start Task</ModalButton>
-              ) : null}
+          {selectedTask && (
+            <ModalOverlay>
+              <Modal>
+                <CloseButtonModel onClick={handleClose}>❌</CloseButtonModel>
+                <ModalHeader>{selectedTask.name}</ModalHeader>
+                <ModalContent>{selectedTask.description}</ModalContent>
+                {!timerStarted && !isClaimable && !underModeration ? (
+                  <ModalButton onClick={handleStartTask}>
+                    Start Task
+                  </ModalButton>
+                ) : null}
 
-              {timerStarted && !isClaimable && !underModeration ? (
-                <>
-                  <TimerIcon />
-                  <TimerText>{timer} seconds</TimerText>
-                </>
-              ) : null}
+                {timerStarted && !isClaimable && !underModeration ? (
+                  <>
+                    <TimerIcon />
+                    <TimerText>{timer} seconds</TimerText>
+                  </>
+                ) : null}
 
-              {isClaimable && !underModeration ? (
-                <>
-                  <ProofInput
-                    type="text"
-                    placeholder= {selectedTask.proofPlaceholder}
-                    value={proof}
-                    onChange={(e) => setProof(e.target.value)}
-                  />
-                  <ClaimButton
-                    onClick={handleClaimReward}
-                    disabled={!proof.trim()}
-                  >
-                    Claim Reward
-                  </ClaimButton>
-                </>
-              ) : null}
+                {isClaimable && !underModeration ? (
+                  <>
+                    <ProofInput
+                      type="text"
+                      placeholder={selectedTask.proofPlaceholder}
+                      value={proof}
+                      onChange={(e) => setProof(e.target.value)}
+                    />
+                    <ClaimButton
+                      onClick={handleClaimReward}
+                      disabled={!proof.trim()}
+                    >
+                      Claim Reward
+                    </ClaimButton>
+                  </>
+                ) : null}
 
-              {underModeration && (
-                <>
-                  <ModalContent>Task under moderation...</ModalContent>
-                  <TimerIcon />
-                </>
-              )}
-            </Modal>
-          </ModalOverlay>
-        )}
-      </TaskContainer>
+                {underModeration && (
+                  <>
+                    <ModalContent>Task under moderation...</ModalContent>
+                    <TimerIcon />
+                  </>
+                )}
+              </Modal>
+            </ModalOverlay>
+          )}
+        </TaskContainer>
+      )}
     </>
   );
 };

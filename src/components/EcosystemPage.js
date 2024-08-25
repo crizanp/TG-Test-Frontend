@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { usePoints } from "../context/PointsContext";
 import UserInfo from "./UserInfo";
-import dollarImage from '../assets/dollar-homepage.png'; // Ensure you have this image in the assets folder
-import styled from "styled-components"; // Import styled from styled-components
+import dollarImage from "../assets/dollar-homepage.png";
+import styled from "styled-components";
+import FloatingMessage from "./FloatingMessage"; // Import the FloatingMessage component
 
 import {
   QuizContainer,
@@ -31,43 +32,43 @@ function EcosystemPage() {
   const [correctOption, setCorrectOption] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [noMoreQuizzes, setNoMoreQuizzes] = useState(false);
+  const [message, setMessage] = useState(null); // Add state for message
+
   const QuizContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 20px;
-  background-color: #0d2457;
-  color: white;
-  min-height: 87vh;
-  text-align: center;
-  background-image: url("/path-to-your-background-image.jpg"); // Update with your background image path
-  background-size: cover;
-  background-position: center;
-`;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: #0d2457;
+    color: white;
+    min-height: 87vh;
+    text-align: center;
+    background-image: url("/path-to-your-background-image.jpg"); // Update with your background image path
+    background-size: cover;
+    background-position: center;
+  `;
 
-const PointsDisplayContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 35Px;
-`;
+  const PointsDisplayContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 35px;
+  `;
 
-const PointsDisplay = styled.div`
-  font-size: 50px;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  const PointsDisplay = styled.div`
+    font-size: 50px;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `;
 
-`;
-
-const DollarIcon = styled.img`
-  width: 48px;
-  height: 48px;
-  margin-right: 10px;
-`;
-
+  const DollarIcon = styled.img`
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+  `;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -156,6 +157,14 @@ const DollarIcon = styled.img`
           : currentQuiz.options.findIndex((option) => option.isCorrect)
       );
       setShowFeedback(true); // Show feedback (correct/wrong option)
+
+      // Show the floating message
+      setMessage({
+        text: isCorrect
+          ? "Points awarded: Correct answer"
+          : "Points not added: Wrong answer",
+        type: isCorrect ? "success" : "error",
+      });
     } catch (error) {
       console.error("Error submitting quiz:", error);
     }
@@ -198,16 +207,16 @@ const DollarIcon = styled.img`
       setNoMoreQuizzes(true); // No more quizzes in this category
     }
   };
-  
-  
+
   return (
     <QuizContainer>
       <UserInfo />
       <PointsDisplayContainer>
-          <PointsDisplay>
-            <DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}
-          </PointsDisplay>
-        </PointsDisplayContainer>
+        <PointsDisplay>
+          <DollarIcon src={dollarImage} alt="Dollar Icon" />{" "}
+          {Math.floor(points)}
+        </PointsDisplay>
+      </PointsDisplayContainer>
       <HeaderText>Answer and Earn</HeaderText>
       <CategoryContainer>
         {categories.map((category) => (
@@ -235,12 +244,12 @@ const DollarIcon = styled.img`
             {currentQuiz.options.map((option, index) => (
               <Option
                 key={index}
-                selected={selectedOption === index}
-                correct={showFeedback && index === correctOption}
-                wrong={
+                $selected={selectedOption === index}
+                $correct={showFeedback && index === correctOption}
+                $wrong={
                   showFeedback && index === selectedOption && !option.isCorrect
                 }
-                isDisabled={disableSubmit}
+                $isDisabled={disableSubmit}
                 onClick={() => handleOptionSelect(index)}
               >
                 {option.text}
@@ -266,6 +275,14 @@ const DollarIcon = styled.img`
         <NextButton onClick={handleNextQuiz} disabled={loading}>
           Next
         </NextButton>
+      )}
+      {message && (
+        <FloatingMessage
+          message={message.text}
+          type={message.type}
+          duration={3000}
+          onClose={() => setMessage(null)}
+        />
       )}
     </QuizContainer>
   );
