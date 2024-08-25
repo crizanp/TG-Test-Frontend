@@ -1,27 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import styled, { keyframes } from "styled-components";
+
+// Import LoadingSpinner from the TaskList.styles.js file
+import { LoadingSpinner } from "./TaskList.styles";
 
 const AirdropContainer = styled.div`
   color: white;
-  background-color: #121212;
   padding: 20px;
-  height: 100%;
+  padding-bottom: 100px;
+  min-height: 100vh;
   font-family: 'Arial', sans-serif;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     padding: 15px;
+    padding-bottom: 100px;
   }
 
   @media (max-width: 480px) {
     padding: 10px;
+    padding-bottom: 100px;
   }
 `;
 
 const AirdropTitle = styled.h2`
-  color: #ff9800;
-  margin-bottom: 20px;
-  text-align: center;
+  color: #cac9c9;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  margin-left: 10px;
+  text-align: left;
   font-size: 20px;
+`;
+
+const AirdropDescription = styled.p`
+  color: #aaaaaa;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
 `;
 
 const AirdropList = styled.div`
@@ -55,10 +73,24 @@ const AirdropCard = styled.div`
   }
 `;
 
+const NameLogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const AirdropLogo = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 18%;
+`;
+
 const AirdropName = styled.h3`
-  color: #ff9800;
+  color: #ffffff;
   font-size: 18px;
-  margin: 0;
+  margin-left: 10px;
+  flex: 0 0 75%;
 `;
 
 const AirdropDesc = styled.p`
@@ -92,7 +124,7 @@ const CountdownContainer = styled.div`
 
 const CountdownTimer = styled.div`
   font-size: 14px;
-  color: ${({ active }) => (active ? '#ffeb3b' : '#ff9800')}; /* Yellow for active, orange for upcoming */
+  color: ${({ active }) => (active ? '#ffffff' : '#ffffff')};
 `;
 
 const blinkAnimation = keyframes`
@@ -103,52 +135,13 @@ const blinkAnimation = keyframes`
 
 const TickingClock = styled.div`
   font-size: 20px;
-  color: #ff9800;
+  color: #ffffff;
   animation: ${blinkAnimation} 1s linear infinite;
 `;
 
-const airdropsData = [
-  {
-    name: "Airdrop 1",
-    description: "Participate in Airdrop 1 for exclusive tokens.",
-    reward: "500 IGH Tokens",
-    startTime: Date.now() + 3600000 * 14, // 14 hours from now
-    endTime: Date.now() + 3600000 * 48, // 48 hours from now
-    link: "#",
-  },
-  {
-    name: "Airdrop 2",
-    description: "Join Airdrop 2 to earn free XYZ tokens.",
-    reward: "200 MOUSE Tokens",
-    startTime: Date.now() + 86400000 * 2, // 2 days from now
-    endTime: Date.now() + 86400000 * 7, // 7 days from now
-    link: "#",
-  },
-  {
-    name: "Airdrop 3",
-    description: "Get rewarded with ABC tokens in Airdrop 3.",
-    reward: "300 CAT Tokens",
-    startTime: Date.now() + 60000, // 1 minute from now
-    endTime: Date.now() + 86400000 * 3, // 3 days from now
-    link: "#",
-  },
-  {
-    name: "Airdrop 4",
-    description: "Earn DEF tokens by participating in Airdrop 4.",
-    reward: "150 DOG Tokens",
-    startTime: Date.now() + 86400000, // 1 day from now
-    endTime: Date.now() + 86400000 * 4, // 4 days from now
-    link: "#",
-  },
-  {
-    name: "Airdrop 5",
-    description: "Airdrop 5 offers you free GHI tokens.",
-    reward: "100 RAT Tokens",
-    startTime: Date.now() + 3600000 * 20, // 20 hours from now
-    endTime: Date.now() + 86400000 * 5, // 5 days from now
-    link: "#",
-  },
-];
+const Spacer = styled.div`
+  height: 50px;
+`;
 
 const formatTime = (milliseconds) => {
   if (milliseconds > 86400000) {
@@ -162,7 +155,25 @@ const formatTime = (milliseconds) => {
 };
 
 function AirdropPage() {
-  const [airdrops, setAirdrops] = useState(airdropsData);
+  const [airdrops, setAirdrops] = useState([]);
+  const [loadingActive, setLoadingActive] = useState(true);
+  const [loadingUpcoming, setLoadingUpcoming] = useState(true);
+
+  useEffect(() => {
+    const fetchAirdrops = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/airdrops`);
+        setAirdrops(response.data);
+      } catch (error) {
+        console.error('Error fetching airdrop data:', error);
+      } finally {
+        setLoadingActive(false);
+        setLoadingUpcoming(false);
+      }
+    };
+
+    fetchAirdrops();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -170,11 +181,11 @@ function AirdropPage() {
         prevAirdrops.map((airdrop) => {
           const now = Date.now();
           let status = 'upcoming';
-          let timeLeft = airdrop.startTime - now;
-          
-          if (now >= airdrop.startTime && now <= airdrop.endTime) {
+          let timeLeft = new Date(airdrop.startDate) - now;
+
+          if (now >= new Date(airdrop.startDate) && now <= new Date(airdrop.endDate)) {
             status = 'active';
-            timeLeft = airdrop.endTime - now;
+            timeLeft = new Date(airdrop.endDate) - now;
           }
 
           return { ...airdrop, status, timeLeft };
@@ -185,29 +196,67 @@ function AirdropPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const activeAirdrops = airdrops.filter(airdrop => airdrop.status === 'active');
+  const upcomingAirdrops = airdrops.filter(airdrop => airdrop.status === 'upcoming');
+
   return (
     <AirdropContainer>
-      <AirdropTitle>Active & Upcoming Airdrops</AirdropTitle>
+      <AirdropDescription>
+        These are the campaigns run within the IGH ecosystem, distributed according to the allocated amount. Please note that these campaigns are not managed within this mini app.
+      </AirdropDescription>
+      
+      <AirdropTitle>Active Airdrops Lists</AirdropTitle>
       <AirdropList>
-        {airdrops.map((airdrop, index) => (
+        {activeAirdrops.map((airdrop) => (
           <AirdropCard
-            key={index}
-            clickable={airdrop.status === 'active'}
-            onClick={() => airdrop.status === 'active' && window.open(airdrop.link, '_blank')}
+            key={airdrop._id}
+            clickable={true}
+            onClick={() => window.open('https://icogemhunters.com/hemeraai', '_blank')}
           >
-            <AirdropName>{airdrop.name}</AirdropName>
+            <NameLogoContainer>
+              <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
+              <AirdropName>{airdrop.name}</AirdropName>
+            </NameLogoContainer>
             <AirdropDesc>{airdrop.description}</AirdropDesc>
             <AirdropReward>Reward: {airdrop.reward}</AirdropReward>
             <CountdownContainer>
-              <CountdownTimer active={airdrop.status === 'active'}>
-                {airdrop.status === 'active' ? 'Ends in: ' : 'Starts in: '}
-                {formatTime(airdrop.timeLeft)}
+              <CountdownTimer active={true}>
+                Ends in: {formatTime(airdrop.timeLeft)}
               </CountdownTimer>
               <TickingClock>⏳</TickingClock>
             </CountdownContainer>
           </AirdropCard>
         ))}
       </AirdropList>
+
+      {loadingActive && <LoadingSpinner />}
+      
+      <AirdropTitle>Upcoming Airdrops Lists</AirdropTitle>
+      <AirdropList>
+        {upcomingAirdrops.map((airdrop) => (
+          <AirdropCard
+            key={airdrop._id}
+            clickable={false}
+          >
+            <NameLogoContainer>
+              <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
+              <AirdropName>{airdrop.name}</AirdropName>
+            </NameLogoContainer>
+            <AirdropDesc>{airdrop.description}</AirdropDesc>
+            <AirdropReward>Reward: {airdrop.reward}</AirdropReward>
+            <CountdownContainer>
+              <CountdownTimer active={false}>
+                Starts in: {formatTime(airdrop.timeLeft)}
+              </CountdownTimer>
+              <TickingClock>⏳</TickingClock>
+            </CountdownContainer>
+          </AirdropCard>
+        ))}
+      </AirdropList>
+
+      {loadingUpcoming && <LoadingSpinner />}
+      
+      <Spacer />
     </AirdropContainer>
   );
 }
