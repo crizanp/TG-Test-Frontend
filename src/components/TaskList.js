@@ -164,12 +164,12 @@ const TaskList = () => {
   return (
     <>
       <PointsDisplayContainer id="pointsDisplay">
-  <UserInfo userID={userID} points={points} />
-  <PointsDisplay>
-    <DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}
-  </PointsDisplay>
-</PointsDisplayContainer>
-
+        <UserInfo userID={userID} points={points} />
+        <PointsDisplay>
+          <DollarIcon src={dollarImage} alt="Dollar Icon" />{" "}
+          {Math.floor(points)}
+        </PointsDisplay>
+      </PointsDisplayContainer>
 
       <TaskContainer>
         {/* <CoinLogo>🪙</CoinLogo> */}
@@ -219,7 +219,7 @@ const TaskList = () => {
                 <>
                   <ProofInput
                     type="text"
-                    placeholder="Enter your proof"
+                    placeholder= {selectedTask.proofPlaceholder}
                     value={proof}
                     onChange={(e) => setProof(e.target.value)}
                   />
