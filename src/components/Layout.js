@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import BottomMenu from './BottomMenu';
 import LoadingPage from './LoadingPage';
+import restrictedBackgroundImage from '../assets/qr igh.jpg';
 
 const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
@@ -21,11 +22,15 @@ const Content = styled.div`
   padding-bottom: 60px;
 `;
 
-const RestrictedMessage = styled.div`
-  color: white;
-  text-align: center;
-  margin-top: 50%;
-  font-size: 20px;
+const RestrictedContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url(${restrictedBackgroundImage});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 function Layout({ children }) {
@@ -75,13 +80,7 @@ function Layout({ children }) {
   }
 
   if (restricted) {
-    return (
-      <LayoutContainer>
-        <RestrictedMessage>
-          Access is restricted to the Telegram mobile app. Please switch to the Telegram mobile app to use this service.
-        </RestrictedMessage>
-      </LayoutContainer>
-    );
+    return <RestrictedContainer />; // Show the background image if restricted
   }
 
   return (
