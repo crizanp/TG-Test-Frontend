@@ -1,7 +1,8 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FaUserFriends, FaCoins, FaGlobe, FaHome, FaGift } from 'react-icons/fa';
+import { FaDove, FaParachuteBox, FaGamepad, FaHome } from 'react-icons/fa';
+import { GiReceiveMoney, GiHiveMind } from 'react-icons/gi';
 
 const BottomMenuContainer = styled.div`
   background-color: #002a69;
@@ -13,7 +14,7 @@ const BottomMenuContainer = styled.div`
   bottom: 0;
   width: 100%;
   max-width: 400px;
-  padding: 0px 0px 10px  0px; /* Adjust padding as needed */
+  padding: 0px 0px 10px 0px; /* Adjust padding as needed */
   margin: 0 auto;
   z-index: 10;
 
@@ -110,11 +111,11 @@ function BottomMenu() {
       </PoweredBy>
       <MenuItems>
         <MenuItem to="/friend">
-          <FaUserFriends size={20} />
+          <FaDove size={20} />
           <MenuLabel>Friend</MenuLabel>
         </MenuItem>
         <MenuItem to="/earn">
-          <FaCoins size={20} />
+          <GiReceiveMoney size={20} />
           <MenuLabel>Earn</MenuLabel>
         </MenuItem>
         <HomeMenuItem to="/home">
@@ -122,11 +123,11 @@ function BottomMenu() {
           <MenuLabel>Home</MenuLabel>
         </HomeMenuItem>
         <MenuItem to="/airdrop">
-          <FaGift size={20} />
+          <FaParachuteBox size={20} />
           <MenuLabel>Airdrop</MenuLabel>
         </MenuItem>
         <MenuItem to="/games">
-          <FaGlobe size={20} />
+          <FaGamepad size={20} />
           <MenuLabel>Games</MenuLabel>
         </MenuItem>
       </MenuItems>
