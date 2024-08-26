@@ -20,21 +20,25 @@ const Content = styled.div`
 `;
 
 function Layout({ children }) {
-  const [showBottomMenu, setShowBottomMenu] = useState(true);
+  const [showBottomMenu, setShowBottomMenu] = useState(false); // Initially hide the menu
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
 
-    if (tg) {
-      tg.expand(); // Expand to fullscreen, hiding the bottom menu
-      setShowBottomMenu(false); // Hide the bottom menu
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      console.log('Confirmed: Running inside Telegram');
+      tg.expand(); // Expand to fullscreen, hiding the Telegram UI elements
+      setShowBottomMenu(true); // Show the bottom menu only if in Telegram
+    } else {
+      console.log('Not confirmed: Running outside Telegram');
+      setShowBottomMenu(false); // Ensure it remains hidden outside Telegram
     }
   }, []);
 
   return (
     <LayoutContainer>
       <Content>{children}</Content>
-      {showBottomMenu && <BottomMenu />}
+      {showBottomMenu && <BottomMenu />} {/* Render BottomMenu only if showBottomMenu is true */}
     </LayoutContainer>
   );
 }
