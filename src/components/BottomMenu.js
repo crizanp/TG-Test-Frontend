@@ -117,7 +117,7 @@ function BottomMenu() {
           <FaCoins size={20} />
           <MenuLabel>Earn</MenuLabel>
         </MenuItem>
-        <HomeMenuItem to="/">
+        <HomeMenuItem to="/home">
           <FaHome size={32} />
           <MenuLabel>Home</MenuLabel>
         </HomeMenuItem>
