@@ -15,14 +15,7 @@ const LayoutContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `;
-
-const Content = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  padding-bottom: 60px;
-`;
-
-const RestrictedContainer = styled.div`
+ const RestrictedContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,6 +24,19 @@ const RestrictedContainer = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 60px;
+`;
+
+const RestrictedMessage = styled.div`
+  color: white;
+  text-align: center;
+  margin-top: 50%;
+  font-size: 20px;
 `;
 
 function Layout({ children }) {
@@ -80,7 +86,9 @@ function Layout({ children }) {
   }
 
   if (restricted) {
-    return <RestrictedContainer />; // Show the background image if restricted
+    return (
+      <RestrictedContainer/>
+    );
   }
 
   return (
