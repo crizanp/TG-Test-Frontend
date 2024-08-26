@@ -1,4 +1,3 @@
-// src/components/UserInfo.js
 import React from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
