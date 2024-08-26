@@ -1,4 +1,3 @@
-// src/components/UserInfo.js
 import React from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
@@ -32,7 +31,7 @@ const Username = styled.div`
 const UserInfo = () => {
   const { userID, points } = usePoints();
 
-  // Retrieve the Telegram username from the global scope (set in LoadingPage.js)
+  // Retrieve the Telegram username from the global scope
   const telegramUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
   return (
