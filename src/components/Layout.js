@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BottomMenu from './BottomMenu';
 
@@ -20,10 +20,21 @@ const Content = styled.div`
 `;
 
 function Layout({ children }) {
+  const [showBottomMenu, setShowBottomMenu] = useState(true);
+
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.expand(); // Expand to fullscreen, hiding the bottom menu
+      setShowBottomMenu(false); // Hide the bottom menu
+    }
+  }, []);
+
   return (
     <LayoutContainer>
       <Content>{children}</Content>
-      <BottomMenu />
+      {showBottomMenu && <BottomMenu />}
     </LayoutContainer>
   );
 }

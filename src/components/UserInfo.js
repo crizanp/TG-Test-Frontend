@@ -29,17 +29,17 @@ const Username = styled.div`
   color: black;
 `;
 
-// const Points = styled.div`
-//   color: black;
-// `;
-
 const UserInfo = () => {
-  const { userID, points } = usePoints(); // Access userID and points from context
+  const { userID, points } = usePoints();
+
+  // Retrieve the Telegram username from the global scope (set in LoadingPage.js)
+  const telegramUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
   return (
     <UserInfoContainer>
-      <Username>UId: {userID} | IGH: {Math.floor(points)}</Username>
-      {/* <Points> IGH : {Math.floor(points)}</Points> */}
+      <Username>
+        UId: {userID} | Username: {telegramUsername || 'N/A'} | IGH: {Math.floor(points)}
+      </Username>
     </UserInfoContainer>
   );
 };

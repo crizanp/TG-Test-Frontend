@@ -7,9 +7,10 @@ import HomePage from './components/HomePage';
 import EcosystemPage from './components/EcosystemPage';
 import FriendPage from './components/FriendPage';
 import AirdropPage from './components/AirdropPage';
-import GamesPage from './components/GamesPage'; // Import the new GamesPage component
-import SpinWheelPage from './components/SpinWheelPage'; // Import the new SpinWheelPage
-
+import GamesPage from './components/GamesPage';
+import SpinWheelPage from './components/SpinWheelPage';
+import LoadingPage from './components/LoadingPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -17,14 +18,65 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/earn" element={<TaskList />} />
-            <Route path="/ecosystem" element={<EcosystemPage />} />
-            <Route path="/friend" element={<FriendPage />} />
-            <Route path="/airdrop" element={<AirdropPage />} />
-            <Route path="/games" element={<GamesPage />} /> {/* Add the route for the games page */}
-            <Route path="/spin-wheel" element={<SpinWheelPage />} /> {/* Add the route for the SpinWheelPage */}
+            <Route path="/" element={<LoadingPage />} />
 
+            {/* Protected Routes */}
+            <Route
+              path="/home"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/earn"
+              element={
+                <ProtectedRoute>
+                  <TaskList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ecosystem"
+              element={
+                <ProtectedRoute>
+                  <EcosystemPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/friend"
+              element={
+                <ProtectedRoute>
+                  <FriendPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/airdrop"
+              element={
+                <ProtectedRoute>
+                  <AirdropPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games"
+              element={
+                <ProtectedRoute>
+                  <GamesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/spin-wheel"
+              element={
+                <ProtectedRoute>
+                  <SpinWheelPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Layout>
       </Router>
