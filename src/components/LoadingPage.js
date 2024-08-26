@@ -9,7 +9,6 @@ const LoadingContainer = styled.div`
   align-items: center;
   height: 100vh;
   background-image: url(${backgroundImage});
-  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 `;
