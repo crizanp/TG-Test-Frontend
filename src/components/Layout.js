@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import BottomMenu from './BottomMenu';
 import LoadingPage from './LoadingPage';
-import restrictedBackgroundImage from '../assets/qr igh.jpg';
 
 const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
@@ -15,12 +14,13 @@ const LayoutContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `;
- const RestrictedContainer = styled.div`
+
+const RestrictedContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url(${restrictedBackgroundImage});
+  background-image: url('https://i.postimg.cc/qBX0zdSb/igh-tap-game-2.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -30,13 +30,6 @@ const Content = styled.div`
   flex: 1;
   overflow-y: auto;
   padding-bottom: 60px;
-`;
-
-const RestrictedMessage = styled.div`
-  color: white;
-  text-align: center;
-  margin-top: 50%;
-  font-size: 20px;
 `;
 
 function Layout({ children }) {
@@ -86,9 +79,7 @@ function Layout({ children }) {
   }
 
   if (restricted) {
-    return (
-      <RestrictedContainer/>
-    );
+    return <RestrictedContainer />; // Show the background image if restricted
   }
 
   return (
