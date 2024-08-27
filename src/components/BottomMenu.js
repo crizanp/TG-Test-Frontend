@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FaDove, FaParachuteBox, FaGamepad, FaHome } from 'react-icons/fa';
 import { GiReceiveMoney, GiHiveMind,GiEagleHead  } from 'react-icons/gi';
+ import { SiEagle } from "react-icons/si";
 
 const BottomMenuContainer = styled.div`
   background-color: black;
@@ -121,7 +122,7 @@ function BottomMenu() {
           <MenuLabel>Earn</MenuLabel>
         </MenuItem>
         <HomeMenuItem to="/home">
-          <GiEagleHead size={32} />
+          <SiEagle size={32} />
           <MenuLabel>Home</MenuLabel>
         </HomeMenuItem>
         <MenuItem to="/airdrop">
