@@ -7,7 +7,7 @@ const pointFlyingAnimation = keyframes`
   }
   100% {
     opacity: 0;
-    transform: translateY(-60px) scale(1.5);
+    transform: translateY(-60px) scale(2); /* Increased scale for larger points */
   }
 `;
 
@@ -47,7 +47,7 @@ const pointsAnimation = keyframes`
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: white;
-  background: radial-gradient(circle, #523B7A, #222325); /* Updated to gradient background */
+  background: radial-gradient(circle, #523B7A, #222325);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,7 +59,6 @@ export const HomeContainer = styled.div`
   padding: 20px 20px;
   position: relative;
 `;
-
 
 export const PointsDisplayContainer = styled.div`
   display: flex;
@@ -87,7 +86,6 @@ export const DollarIcon = styled.img`
   height: 48px;
   margin-right: 10px;
 `;
-
 
 export const MiddleSection = styled.div`
   display: flex;
@@ -158,7 +156,7 @@ export const Description = styled.div`
 
 export const FlyingPoints = styled.div`
   position: absolute;
-  font-size: 16px;
+  font-size: 28px; /* Increased font size for larger points */
   color: #ffd700;
   animation: ${pointFlyingAnimation} 1s ease-in-out;
   top: ${({ y }) => `${y}px`};
@@ -180,7 +178,7 @@ export const SlapEmoji = styled.div`
 `;
 
 export const HeaderText = styled.div`
-  background-color: #1ea53e; /* Green background */
+  background-color: #1ea53e;
   color: black;
   font-size: 18px;
   padding: 5px 10px;

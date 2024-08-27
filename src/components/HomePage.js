@@ -28,7 +28,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [pointsAnimation, setPointsAnimation] = useState(false);
-  const [offlinePoints, setOfflinePoints] = useState(0); // State for offline points
+  const [offlinePoints, setOfflinePoints] = useState(0);
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -49,7 +49,7 @@ function HomePage() {
   };
 
   const calculatePoints = () => {
-    return 3; // Always return 3 points for each tap within the eagle
+    return 3;
   };
 
   const syncPointsWithServer = async (totalPointsToAdd) => {
@@ -59,12 +59,19 @@ function HomePage() {
       });
 
       setPoints(response.data.points);
-      localStorage.setItem(`points_${userID}`, response.data.points); // Update local storage with user-specific key
-      setOfflinePoints(0); // Reset offline points after sync
+      localStorage.setItem(`points_${userID}`, response.data.points);
+      setOfflinePoints(0);
     } catch (error) {
       console.error('Error syncing points with server:', error);
     }
   };
+
+  const playVibrationSound = () => {
+    const audio = new Audio('/sounds/vibration-sound.mp3'); // Ensure the path to the sound file is correct
+    audio.volume = 0.05; // Set a very low volume for a softer sound
+    audio.play().catch(error => console.error('Failed to play sound:', error));
+  };
+  
 
   const handleTap = throttle(async (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -88,7 +95,6 @@ function HomePage() {
 
       const addedPoints = pointsToAdd * tapSpeedMultiplier;
 
-      // Update points locally with user-specific key
       setPoints((prevPoints) => {
         const newPoints = prevPoints + addedPoints;
         localStorage.setItem(`points_${userID}`, newPoints);
@@ -111,12 +117,13 @@ function HomePage() {
 
       setTimeout(() => setAnimate(false), 300);
 
-      // Sync points with server if online
+      playVibrationSound(); // Play the vibration sound on each tap
+
       if (navigator.onLine) {
         syncPointsWithServer(offlinePoints + addedPoints);
       }
     }
-  }, 300); // Throttle the function, allowing it to be invoked at most once every 300ms
+  }, 150); // Reduced throttle time to allow more frequent taps
 
   useEffect(() => {
     const interval = setInterval(() => {
