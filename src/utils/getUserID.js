@@ -1,9 +1,6 @@
 import axios from 'axios';
 
 export const getUserID = async (setUserID) => {
-  // Check if running on localhost
-  const isLocalhost = window.location.hostname === 'localhost';
-
   // Fetch userID from Telegram
   let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
 
@@ -37,14 +34,10 @@ export const getUserID = async (setUserID) => {
         throw error;  // Rethrow any other errors
       }
     }
-  } else if (isLocalhost) {
-    // If running on localhost, generate a dummy userID for testing
-    const dummyUserID = '12345678'; // You can change this to any 8-character string
-    setUserID(dummyUserID);
-    console.log('Using dummy userID:', dummyUserID);
-    return dummyUserID;
   } else {
     console.error('User ID not available from Telegram.');
     throw new Error('User ID not available from Telegram.');
   }
+
+  return tgUserID;
 };
