@@ -34,7 +34,6 @@ const Content = styled.div`
 
 function Layout({ children }) {
   const [showBottomMenu, setShowBottomMenu] = useState(false);
-  const [menuVisible, setMenuVisible] = useState(false);
   const [restricted, setRestricted] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -65,13 +64,6 @@ function Layout({ children }) {
       setLoading(true); // Continue showing the loading page if outside Telegram
       navigate('/'); // Ensure the user stays on the loading page
     }
-
-    // Delay showing the menu for 4 seconds
-    const menuTimer = setTimeout(() => {
-      setMenuVisible(true);
-    }, 4000);
-
-    return () => clearTimeout(menuTimer); // Clean up the timer if the component unmounts
   }, [navigate]);
 
   if (loading) {
@@ -85,7 +77,7 @@ function Layout({ children }) {
   return (
     <LayoutContainer>
       <Content>{children}</Content>
-      {showBottomMenu && menuVisible && <BottomMenu />} {/* Render BottomMenu after 4 seconds */}
+      {showBottomMenu && <BottomMenu />} {/* Render BottomMenu immediately if conditions are met */}
     </LayoutContainer>
   );
 }

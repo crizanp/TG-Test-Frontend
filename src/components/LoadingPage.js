@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import backgroundImage from '../assets/igh-tap-game.gif';
 
 const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url(${backgroundImage});
+  background-image: url('https://i.postimg.cc/0NRZhLDd/igh-tap-game.gif');
   background-position: center;
   background-repeat: no-repeat;
+  background-size: cover; /* Optionally cover the entire background */
 `;
 
 function LoadingPage() {
