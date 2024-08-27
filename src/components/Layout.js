@@ -47,7 +47,6 @@ function Layout({ children }) {
       console.log('Running on localhost:3000');
       setShowBottomMenu(true);
       setLoading(false); // Allow localhost and stop loading
-      setMenuVisible(true); // Show the menu immediately after loading on localhost
     } else if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
       const platform = tg.platform;
 
@@ -56,7 +55,6 @@ function Layout({ children }) {
         tg.expand(); // Expand to fullscreen, hiding the Telegram UI elements
         setShowBottomMenu(true); // Show the bottom menu if in Telegram mobile app
         setLoading(false); // Stop loading
-        setMenuVisible(true); // Show the menu immediately after loading on Telegram mobile app
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
         setRestricted(true); // Restrict access if not on mobile app
@@ -65,14 +63,15 @@ function Layout({ children }) {
     } else {
       console.log('Not confirmed: Running outside Telegram');
       setLoading(true); // Continue showing the loading page if outside Telegram
-
-      // Delay showing the menu for 4 seconds only on the loading page
-      const menuTimer = setTimeout(() => {
-        setMenuVisible(true);
-      }, 4000);
-
-      return () => clearTimeout(menuTimer); // Clean up the timer if the component unmounts
+      navigate('/'); // Ensure the user stays on the loading page
     }
+
+    // Delay showing the menu for 4 seconds
+    const menuTimer = setTimeout(() => {
+      setMenuVisible(true);
+    }, 4000);
+
+    return () => clearTimeout(menuTimer); // Clean up the timer if the component unmounts
   }, [navigate]);
 
   if (loading) {
@@ -86,7 +85,7 @@ function Layout({ children }) {
   return (
     <LayoutContainer>
       <Content>{children}</Content>
-      {showBottomMenu && menuVisible && <BottomMenu />} {/* Render BottomMenu after 4 seconds delay only on the loading page */}
+      {showBottomMenu && menuVisible && <BottomMenu />} {/* Render BottomMenu after 4 seconds */}
     </LayoutContainer>
   );
 }
