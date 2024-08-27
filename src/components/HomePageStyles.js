@@ -47,7 +47,7 @@ const pointsAnimation = keyframes`
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: white;
-  background-color: #061639;
+  background: radial-gradient(circle, #523B7A, #222325); /* Updated to gradient background */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,6 +59,7 @@ export const HomeContainer = styled.div`
   padding: 20px 20px;
   position: relative;
 `;
+
 
 export const PointsDisplayContainer = styled.div`
   display: flex;

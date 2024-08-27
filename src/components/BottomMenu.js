@@ -5,7 +5,7 @@ import { FaDove, FaParachuteBox, FaGamepad, FaHome } from 'react-icons/fa';
 import { GiReceiveMoney, GiHiveMind } from 'react-icons/gi';
 
 const BottomMenuContainer = styled.div`
-  background-color: #002a69;
+  background-color: black;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,7 +72,7 @@ const MenuItem = styled(Link)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: #dfcec0;
   font-size: 12px;
   text-decoration: none;
 
@@ -92,7 +92,9 @@ const HomeMenuItem = styled(MenuItem)`
 `;
 
 const MenuLabel = styled.div`
+  font-family: 'Poppins', sans-serif; /* Set the font family */
   font-size: 10px;
+  font-weight: 600; /* Optional: make the text slightly bolder */
   margin-top: 3px;
 
   @media (max-width: 480px) {
@@ -111,7 +113,7 @@ function BottomMenu() {
       </PoweredBy>
       <MenuItems>
         <MenuItem to="/friend">
-          <FaDove size={20} />
+          <GiHiveMind size={20} />
           <MenuLabel>Friend</MenuLabel>
         </MenuItem>
         <MenuItem to="/earn">
@@ -119,7 +121,7 @@ function BottomMenu() {
           <MenuLabel>Earn</MenuLabel>
         </MenuItem>
         <HomeMenuItem to="/home">
-          <FaHome size={32} />
+          <FaDove size={32} />
           <MenuLabel>Home</MenuLabel>
         </HomeMenuItem>
         <MenuItem to="/airdrop">
