@@ -13,6 +13,9 @@ const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  user-select: none; /* Disable text selection */
+  touch-action: none; /* Disable touch-based zooming */
+  overflow-x: hidden; /* Disable horizontal scrolling */
 `;
 
 const RestrictedContainer = styled.div`
@@ -24,12 +27,17 @@ const RestrictedContainer = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  user-select: none; /* Disable text selection */
+  touch-action: none; /* Disable touch-based zooming */
 `;
 
 const Content = styled.div`
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden; /* Disable horizontal scrolling */
   padding-bottom: 60px;
+  user-select: none; /* Disable text selection */
+  touch-action: none; /* Disable touch-based zooming */
 `;
 
 function Layout({ children }) {
@@ -71,7 +79,24 @@ function Layout({ children }) {
       setMenuVisible(true);
     }, 4000);
 
-    return () => clearTimeout(menuTimer); // Clean up the timer if the component unmounts
+    // Disable right-click context menu
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+    
+    // Disable long-press on mobile devices
+    const handleTouchStart = (e) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener('contextmenu', handleContextMenu);
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+    
+    return () => {
+      clearTimeout(menuTimer); // Clean up the timer if the component unmounts
+      window.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener('touchstart', handleTouchStart);
+    };
   }, [navigate]);
 
   if (loading) {
