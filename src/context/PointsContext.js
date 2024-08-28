@@ -10,23 +10,36 @@ export const usePoints = () => {
 export const PointsProvider = ({ children }) => {
   const [points, setPoints] = useState(0);
   const [userID, setUserID] = useState('');
+  const [referrals, setReferrals] = useState(0); // New state for storing total referrals
 
   useEffect(() => {
     const fetchPoints = async () => {
-      // Fetch userID from Telegram and take the first 8 characters
       let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
 
       if (tgUserID) {
-        tgUserID = tgUserID.toString().slice(0, 8); // Use only the first 8 characters
+        tgUserID = tgUserID.toString().slice(0, 8); // Slice to 8 characters
         setUserID(tgUserID);
 
         try {
-          // Try to fetch the user's points from the backend
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
-          setPoints(Math.round(response.data.points));  // Round to the nearest integer
+          setPoints(Math.round(response.data.points));
+          setReferrals(response.data.referrals || 0); // Set referrals count
+
+          // Check if there's a referrer ID in the URL and update it
+          const urlParams = new URLSearchParams(window.location.search);
+          const referrerID = urlParams.get('start');
+
+          if (referrerID && !response.data.referrer) {
+            await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
+              userID: tgUserID,
+              referrerID: referrerID.slice(0, 8), // Slice to 8 characters
+              points: 0, // Assuming new users start with 0 points
+              tasksCompleted: [],
+              taskHistory: [],
+            });
+          }
         } catch (error) {
           if (error.response && error.response.status === 404) {
-            // User not found on the backend, create a new user
             try {
               const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
                 userID: tgUserID,
@@ -34,7 +47,7 @@ export const PointsProvider = ({ children }) => {
                 tasksCompleted: [],
                 taskHistory: [],
               });
-              setPoints(Math.round(newUserResponse.data.points));  // Round to the nearest integer
+              setPoints(Math.round(newUserResponse.data.points));
             } catch (postError) {
               console.error('Error creating new user:', postError);
             }
@@ -51,7 +64,7 @@ export const PointsProvider = ({ children }) => {
   }, []);
 
   return (
-    <PointsContext.Provider value={{ points, setPoints, userID, setUserID }}>
+    <PointsContext.Provider value={{ points, setPoints, userID, setUserID, referrals }}>
       {children}
     </PointsContext.Provider>
   );

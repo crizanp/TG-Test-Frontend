@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
-import UserInfo from './UserInfo'; // Assuming you have a UserInfo component
-import dollarImage from '../assets/dollar-homepage.png'; // Correctly import the dollar image
+import UserInfo from './UserInfo';
+import dollarImage from '../assets/dollar-homepage.png';
 
 const MainContainer = styled.div`
   display: flex;
@@ -67,13 +67,13 @@ const Title = styled.h2`
 `;
 
 const PointsNotice = styled.div`
-  background-color: #1f4068; /* Deep blue for contrast */
+  background-color: #1f4068;
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
   font-size: 16px;
   font-weight: bold;
-  color: #f5f5f5; /* Light grey text */
+  color: #f5f5f5;
 `;
 
 const ReferralLinkContainer = styled.div`
@@ -81,7 +81,7 @@ const ReferralLinkContainer = styled.div`
 `;
 
 const ReferralLink = styled.a`
-  background-color: #162447; /* Darker blue for the referral link */
+  background-color: #162447;
   padding: 10px;
   border-radius: 8px;
   display: inline-block;
@@ -117,23 +117,23 @@ const CopyButton = styled.button`
 const Notice = styled.p`
   margin-top: 10px;
   font-size: 14px;
-  color: #f5f5f5; /* Light grey text */
+  color: #f5f5f5;
 `;
 
 const ReferralStats = styled.div`
   margin-top: 20px;
-  color: #ffcc00; /* Match the accent color */
+  color: #ffcc00;
 `;
 
 function FriendPage() {
-  const { points, userID } = usePoints();
+  const { points, userID, referrals } = usePoints();
   const [referralLink, setReferralLink] = useState('');
   const [copySuccess, setCopySuccess] = useState('');
 
   useEffect(() => {
     if (userID) {
       const baseLink = 'https://t.me/IGHGamebot?start=';
-      setReferralLink(`${baseLink}IGH${userID.slice(0, 8)}`); // Ensure the referral link uses the sliced userID
+      setReferralLink(`${baseLink}IGH${userID.slice(0, 8)}`);
     }
   }, [userID]);
 
@@ -147,8 +147,6 @@ function FriendPage() {
     });
   };
 
-  const totalReferrals = 3; // Replace with actual logic to get total referrals from backend
-
   return (
     <MainContainer>
       <StickyUserInfo>
@@ -159,7 +157,7 @@ function FriendPage() {
           <PointsDisplay><DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}</PointsDisplay>
         </PointsDisplayContainer>
 
-        <Title>Refer & Earn More Rewards !</Title>
+        <Title>Refer & Earn More Rewards!</Title>
         <PointsNotice>Refer more than 3 friends for additional surprises!</PointsNotice>
 
         <ReferralLinkContainer>
@@ -171,7 +169,7 @@ function FriendPage() {
         </ReferralLinkContainer>
 
         <ReferralStats>
-          <h3>Your Total Referrals: {totalReferrals}</h3>
+          <h3>Your Total Referrals: {referrals}</h3>
           <Notice>Keep sharing your link to earn more rewards!</Notice>
         </ReferralStats>
       </ReferralContainer>
