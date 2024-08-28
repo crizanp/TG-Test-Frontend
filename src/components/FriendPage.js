@@ -4,7 +4,6 @@ import { usePoints } from '../context/PointsContext';
 import UserInfo from './UserInfo'; // Assuming you have a UserInfo component
 import dollarImage from '../assets/dollar-homepage.png'; // Correctly import the dollar image
 
-// Main container that centers the content vertically and horizontally
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -129,14 +128,14 @@ const ReferralStats = styled.div`
 function FriendPage() {
   const { points, userID } = usePoints();
   const [referralLink, setReferralLink] = useState('');
+  const [copySuccess, setCopySuccess] = useState('');
 
   useEffect(() => {
     if (userID) {
-      setReferralLink(`https://t.me/IGHGamebot?ref=IGH${userID}`);
+      const baseLink = 'https://t.me/IGHGamebot?start=';
+      setReferralLink(`${baseLink}IGH${userID.slice(0, 8)}`); // Ensure the referral link uses the sliced userID
     }
   }, [userID]);
-
-  const [copySuccess, setCopySuccess] = useState('');
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink).then(() => {
