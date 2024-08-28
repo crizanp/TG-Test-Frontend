@@ -132,10 +132,11 @@ function FriendPage() {
 
   useEffect(() => {
     if (userID) {
-      const baseLink = 'https://t.me/IGHGamebot?start=';
-      setReferralLink(`${baseLink}${userID.slice(0, 8)}`); // No IGH prefix
+      const baseLink = 'https://t.me/IGHGamebot/start?startapp=';
+      setReferralLink(`${baseLink}${userID.slice(0, 8)}`);
     }
   }, [userID]);
+  
   
 
   const handleCopyLink = () => {
