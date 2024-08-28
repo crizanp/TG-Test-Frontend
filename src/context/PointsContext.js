@@ -21,17 +21,18 @@ export const PointsProvider = ({ children }) => {
         setUserID(tgUserID);
   
         const urlParams = new URLSearchParams(window.location.search);
-        const referrerID = urlParams.get('start')?.slice(0, 8); // Get the referrer ID from the URL
+        const referrerID = urlParams.get('start')?.slice(0, 8);  // Get the referrer ID from the URL
   
         try {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
           setPoints(Math.round(response.data.points));
           setReferrals(response.data.referrals || 0);
   
-          if (referrerID && !response.data.referrerID) {
+          if (referrerID && !response.data.referrer) {
+            // Create the user with the referrerID
             await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
               userID: tgUserID,
-              referrerID: referrerID, // Pass referrerID to the backend
+              referrerID: referrerID,  // Pass referrerID to the backend
               points: 0,
               tasksCompleted: [],
               taskHistory: [],
@@ -39,13 +40,14 @@ export const PointsProvider = ({ children }) => {
           }
         } catch (error) {
           if (error.response && error.response.status === 404) {
+            // Create a new user if not found
             try {
               const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
                 userID: tgUserID,
                 points: 0,
                 tasksCompleted: [],
                 taskHistory: [],
-                referrerID: referrerID || null, // Pass referrerID to the backend
+                referrerID: referrerID || null,  // Pass referrerID to the backend
               });
               setPoints(Math.round(newUserResponse.data.points));
             } catch (postError) {
@@ -62,6 +64,7 @@ export const PointsProvider = ({ children }) => {
   
     fetchPoints();
   }, []);
+  
   
 
   const updatePoints = async (pointsToAdd) => {
