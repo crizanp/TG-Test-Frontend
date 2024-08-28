@@ -45,7 +45,7 @@ function HomePage() {
     if (tapCount >= 150) return "He's feeling it! Keep going!";
     if (tapCount >= 100) return "Ouch! That's gotta hurt!";
     if (tapCount >= 50) return "Yeah, slap him more! :)";
-    return "Slap this eagle, he took my golden cheek!";
+    return "Slap this eagle, he took my Golden CHICK!";
   };
 
   const calculatePoints = () => {
