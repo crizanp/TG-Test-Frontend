@@ -15,23 +15,23 @@ export const PointsProvider = ({ children }) => {
   useEffect(() => {
     const fetchPoints = async () => {
       let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
-
+  
       if (tgUserID) {
         tgUserID = tgUserID.toString().slice(0, 8);
         setUserID(tgUserID);
-
+  
         const urlParams = new URLSearchParams(window.location.search);
-        const referrerID = urlParams.get('start')?.slice(0, 8);
-
+        const referrerID = urlParams.get('start')?.slice(0, 8); // Get the referrer ID from the URL
+  
         try {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
           setPoints(Math.round(response.data.points));
           setReferrals(response.data.referrals || 0);
-
+  
           if (referrerID && !response.data.referrerID) {
             await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
               userID: tgUserID,
-              referrerID: referrerID,
+              referrerID: referrerID, // Pass referrerID to the backend
               points: 0,
               tasksCompleted: [],
               taskHistory: [],
@@ -45,7 +45,7 @@ export const PointsProvider = ({ children }) => {
                 points: 0,
                 tasksCompleted: [],
                 taskHistory: [],
-                referrerID: referrerID || null,
+                referrerID: referrerID || null, // Pass referrerID to the backend
               });
               setPoints(Math.round(newUserResponse.data.points));
             } catch (postError) {
@@ -59,9 +59,10 @@ export const PointsProvider = ({ children }) => {
         console.error('User ID not available from Telegram.');
       }
     };
-
+  
     fetchPoints();
   }, []);
+  
 
   const updatePoints = async (pointsToAdd) => {
     try {
