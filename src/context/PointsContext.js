@@ -21,7 +21,7 @@ export const PointsProvider = ({ children }) => {
         setUserID(tgUserID);
   
         const urlParams = new URLSearchParams(window.location.search);
-        const referrerID = urlParams.get('start')?.slice(0, 8);  // Get the referrer ID from the URL
+        const referrerID = urlParams.get('start');  // Get the referrer ID from the URL
   
         try {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
