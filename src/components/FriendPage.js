@@ -159,7 +159,7 @@ function FriendPage() {
           <PointsDisplay><DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}</PointsDisplay>
         </PointsDisplayContainer>
 
-        <Title>Refer & Earn More Rewards!</Title>
+        <Title>Refer & Earn More Rewards !</Title>
         <PointsNotice>Refer more than 3 friends for additional surprises!</PointsNotice>
 
         <ReferralLinkContainer>
