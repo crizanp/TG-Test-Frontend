@@ -10,30 +10,29 @@ export const usePoints = () => {
 export const PointsProvider = ({ children }) => {
   const [points, setPoints] = useState(0);
   const [userID, setUserID] = useState('');
-  const [referrals, setReferrals] = useState(0); // New state for storing total referrals
+  const [referrals, setReferrals] = useState(0);
 
   useEffect(() => {
     const fetchPoints = async () => {
       let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
 
       if (tgUserID) {
-        tgUserID = tgUserID.toString().slice(0, 8); // Slice to 8 characters
+        tgUserID = tgUserID.toString().slice(0, 8);
         setUserID(tgUserID);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrerID = urlParams.get('start')?.slice(0, 8);
 
         try {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
           setPoints(Math.round(response.data.points));
-          setReferrals(response.data.referrals || 0); // Set referrals count
+          setReferrals(response.data.referrals || 0);
 
-          // Check if there's a referrer ID in the URL and update it
-          const urlParams = new URLSearchParams(window.location.search);
-          const referrerID = urlParams.get('start');
-
-          if (referrerID && !response.data.referrer) {
+          if (referrerID && !response.data.referrerID) {
             await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
               userID: tgUserID,
-              referrerID: referrerID.slice(0, 8), // Slice to 8 characters
-              points: 0, // Assuming new users start with 0 points
+              referrerID: referrerID,
+              points: 0,
               tasksCompleted: [],
               taskHistory: [],
             });
@@ -46,6 +45,7 @@ export const PointsProvider = ({ children }) => {
                 points: 0,
                 tasksCompleted: [],
                 taskHistory: [],
+                referrerID: referrerID || null,
               });
               setPoints(Math.round(newUserResponse.data.points));
             } catch (postError) {
@@ -63,8 +63,19 @@ export const PointsProvider = ({ children }) => {
     fetchPoints();
   }, []);
 
+  const updatePoints = async (pointsToAdd) => {
+    try {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/update-points/${userID}`, {
+        pointsToAdd,
+      });
+      setPoints(response.data.points);
+    } catch (error) {
+      console.error('Failed to update points:', error);
+    }
+  };
+
   return (
-    <PointsContext.Provider value={{ points, setPoints, userID, setUserID, referrals }}>
+    <PointsContext.Provider value={{ points, setPoints, userID, setUserID, referrals, updatePoints }}>
       {children}
     </PointsContext.Provider>
   );
