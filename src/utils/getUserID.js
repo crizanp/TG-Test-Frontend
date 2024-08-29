@@ -1,10 +1,14 @@
 import axios from 'axios';
 
 export const getUserID = async (setUserID, setUsername) => {
+  // Check if running on localhost
+  const isLocalhost = window.location.hostname === 'localhost';
+
+  // Fetch userID and username from Telegram
   const tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
   let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
-  const referrerID = window.Telegram.WebApp?.initDataUnsafe?.start_param; // Captures the referrer ID
 
+  // Set a default username if not provided by Telegram
   if (!tgUsername) {
     tgUsername = 'no-username';
   }
@@ -25,20 +29,27 @@ export const getUserID = async (setUserID, setUsername) => {
             userID: tgUserID,
             username: tgUsername,
             points: 0,
-            referrerID: referrerID || null, // Pass the referrerID here, ensuring it's nullable
             tasksCompleted: [],
             taskHistory: [],
           });
           return { userID: tgUserID, username: tgUsername };
         } catch (postError) {
           console.error('Error creating new user:', postError);
-          throw postError;
+          throw postError;  // Rethrow the error if user creation fails
         }
       } else {
         console.error('Error fetching user data:', error);
-        throw error;
+        throw error;  // Rethrow any other errors
       }
     }
+  } else if (isLocalhost) {
+    // If running on localhost, generate a dummy userID and username for testing
+    const dummyUserID = '12345678'; // You can change this to any string
+    const dummyUsername = 'tester';
+    setUserID(dummyUserID);
+    setUsername(dummyUsername);
+    console.log('Using dummy userID:', dummyUserID);
+    return { userID: dummyUserID, username: dummyUsername };
   } else {
     console.error('User ID not available from Telegram.');
     throw new Error('User ID not available from Telegram.');
