@@ -17,7 +17,7 @@ export const PointsProvider = ({ children }) => {
       let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
 
       if (tgUserID) {
-        tgUserID = tgUserID.toString().slice(0, 8); // Use only the first 8 characters
+        tgUserID = tgUserID.toString(); // Use only the first 8 characters
         setUserID(tgUserID);
 
         try {

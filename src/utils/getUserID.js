@@ -6,7 +6,7 @@ export const getUserID = async (setUserID) => {
 
   if (tgUserID) {
     // Take only the first 8 characters of the Telegram userID
-    tgUserID = tgUserID.toString().slice(0, 8);
+    tgUserID = tgUserID.toString();
     setUserID(tgUserID);
 
     try {
