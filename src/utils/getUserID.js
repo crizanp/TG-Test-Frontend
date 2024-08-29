@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 export const getUserID = async (setUserID) => {
-  // Fetch userID and username from Telegram
+  // Fetch userID from Telegram
   let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
-  let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
   if (tgUserID) {
-    // Set the full Telegram userID
+    // Take only the first 8 characters of the Telegram userID
+    tgUserID = tgUserID.toString().slice(0, 8);
     setUserID(tgUserID);
 
     try {
@@ -19,7 +19,6 @@ export const getUserID = async (setUserID) => {
         try {
           const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
-            username: tgUsername,
             points: 0,
             tasksCompleted: [],
             taskHistory: [],

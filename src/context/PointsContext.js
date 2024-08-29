@@ -10,18 +10,15 @@ export const usePoints = () => {
 export const PointsProvider = ({ children }) => {
   const [points, setPoints] = useState(0);
   const [userID, setUserID] = useState('');
-  const [username, setUsername] = useState('');
 
   useEffect(() => {
     const fetchPoints = async () => {
-      // Fetch userID and username from Telegram
+      // Fetch userID from Telegram and take the first 8 characters
       let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
-      let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
       if (tgUserID) {
-        // Set the full Telegram userID and username
+        tgUserID = tgUserID.toString().slice(0, 8); // Use only the first 8 characters
         setUserID(tgUserID);
-        setUsername(tgUsername);
 
         try {
           // Try to fetch the user's points from the backend
@@ -33,7 +30,6 @@ export const PointsProvider = ({ children }) => {
             try {
               const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
                 userID: tgUserID,
-                username: tgUsername,
                 points: 0,
                 tasksCompleted: [],
                 taskHistory: [],
@@ -55,7 +51,7 @@ export const PointsProvider = ({ children }) => {
   }, []);
 
   return (
-    <PointsContext.Provider value={{ points, setPoints, userID, username }}>
+    <PointsContext.Provider value={{ points, setPoints, userID, setUserID }}>
       {children}
     </PointsContext.Provider>
   );
