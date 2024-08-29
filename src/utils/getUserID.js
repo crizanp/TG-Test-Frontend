@@ -3,7 +3,7 @@ import axios from 'axios';
 export const getUserID = async (setUserID, setUsername) => {
   const tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
   let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
-  const referrerID = new URLSearchParams(window.location.search).get('start');
+  const referrerID = window.Telegram.WebApp?.initDataUnsafe?.start_param; // Captures the referrer ID
 
   if (!tgUsername) {
     tgUsername = 'no-username';
@@ -25,7 +25,7 @@ export const getUserID = async (setUserID, setUsername) => {
             userID: tgUserID,
             username: tgUsername,
             points: 0,
-            referrerID,
+            referrerID: referrerID || null, // Pass the referrerID here, ensuring it's nullable
             tasksCompleted: [],
             taskHistory: [],
           });
