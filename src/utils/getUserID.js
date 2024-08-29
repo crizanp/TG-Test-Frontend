@@ -3,7 +3,7 @@ import axios from 'axios';
 export const getUserID = async (setUserID, setUsername) => {
   const tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
   let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
-  const referrerID = new URLSearchParams(window.location.search).get('ref');
+  const referrerID = new URLSearchParams(window.location.search).get('start');
 
   if (!tgUsername) {
     tgUsername = 'no-username';
