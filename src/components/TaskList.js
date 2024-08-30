@@ -35,7 +35,7 @@ import {
 import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
 
 const TaskList = () => {
-  const { points, setPoints, userID, setUserID, username, setUsername } = usePoints();
+  const { points, setPoints, userID, setUserID, username, setUsername } = usePoints();  // Include username here
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
@@ -51,7 +51,7 @@ const TaskList = () => {
     const initializeUserAndFetchTasks = async () => {
       setLoading(true); // Start loading
 
-      const userID = await getUserID(setUserID,setUsername);
+      const userID = await getUserID(setUserID, setUsername);
       setUserID(userID);
 
       try {
@@ -92,7 +92,7 @@ const TaskList = () => {
     };
 
     initializeUserAndFetchTasks();
-  }, [setPoints, setUserID]);
+  }, [setPoints, setUserID, setUsername]);  // Ensure setUsername is a dependency
 
   useEffect(() => {
     let countdown;
@@ -126,11 +126,14 @@ const TaskList = () => {
   const handleClaimReward = async () => {
     setUnderModeration(true);
 
+    console.log("Claiming reward for user:", { userID, username });
+
     try {
       await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
         {
           pointsToAdd: selectedTask.points,
+          username, // Include username if needed
         }
       );
 
@@ -141,7 +144,7 @@ const TaskList = () => {
 
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
         userID,
-        username,
+        username, // Include username if needed
         tasksCompleted: [selectedTask._id],
         taskHistory: [
           {
