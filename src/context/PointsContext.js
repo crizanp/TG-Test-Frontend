@@ -19,14 +19,14 @@ export const PointsProvider = ({ children }) => {
       let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
       if (tgUserID && tgUsername) {
-        tgUserID = tgUserID.toString(); // Use the full userID (if needed, can be trimmed)
+        tgUserID = tgUserID.toString();
         setUserID(tgUserID);
         setUsername(tgUsername);
 
         try {
           // Try to fetch the user's points from the backend
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
-          setPoints(Math.round(response.data.points));  // Round to the nearest integer
+          setPoints(Math.round(response.data.points));
         } catch (error) {
           if (error.response && error.response.status === 404) {
             // User not found on the backend, create a new user
@@ -38,7 +38,7 @@ export const PointsProvider = ({ children }) => {
                 tasksCompleted: [],
                 taskHistory: [],
               });
-              setPoints(Math.round(newUserResponse.data.points));  // Round to the nearest integer
+              setPoints(Math.round(newUserResponse.data.points));
             } catch (postError) {
               console.error('Error creating new user:', postError);
             }
@@ -55,7 +55,7 @@ export const PointsProvider = ({ children }) => {
   }, []);
 
   return (
-    <PointsContext.Provider value={{ points, setPoints, userID, setUserID, username, setUsername }}>
+    <PointsContext.Provider value={{ points, setPoints, userID, setUserID, username }}>
       {children}
     </PointsContext.Provider>
   );

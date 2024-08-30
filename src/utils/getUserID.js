@@ -6,7 +6,6 @@ export const getUserID = async (setUserID, setUsername) => {
   let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
   if (tgUserID && tgUsername) {
-    // Take only the first 8 characters of the Telegram userID
     tgUserID = tgUserID.toString().slice(0, 8);
     setUserID(tgUserID);
     setUsername(tgUsername);
