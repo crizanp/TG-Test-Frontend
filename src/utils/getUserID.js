@@ -38,6 +38,4 @@ export const getUserID = async (setUserID) => {
     console.error('User ID not available from Telegram.');
     throw new Error('User ID not available from Telegram.');
   }
-
-  return tgUserID;
 };
