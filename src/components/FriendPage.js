@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+ 
 const FriendPage = () => {
     const [userData, setUserData] = useState(null);
     const [referralLink, setReferralLink] = useState('');
