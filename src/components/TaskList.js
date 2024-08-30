@@ -30,9 +30,9 @@ import {
   PointsDisplay,
   DollarIcon,
   CloseButtonModel,
-  LoadingSpinner,
+  LoadingSpinner, // Import the LoadingSpinner component
 } from "./TaskList.styles";
-import dollarImage from "../assets/dollar-homepage.png";
+import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
 
 const TaskList = () => {
   const { points, setPoints, userID, setUserID } = usePoints();
@@ -44,62 +44,55 @@ const TaskList = () => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Loading state
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
       setLoading(true); // Start loading
 
-      const { userID } = await getUserID(setUserID);
-      if (userID) {
-        try {
-          const userResponse = await axios.get(
-            `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-          );
-          const userData = userResponse.data;
+      const userID = await getUserID(setUserID);
+      setUserID(userID);
 
-          setPoints(userData.points);
+      try {
+        const userResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+        );
+        const userData = userResponse.data;
 
-          const completedTasksMap = {};
-          userData.tasksCompleted.forEach((taskId) => {
-            completedTasksMap[taskId] = true;
-          });
-          setCompletedTasks(completedTasksMap);
+        setPoints(userData.points);
 
-          const tasksResponse = await axios.get(
-            `${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`
-          );
-          const data = tasksResponse.data;
+        const completedTasksMap = {};
+        userData.tasksCompleted.forEach((taskId) => {
+          completedTasksMap[taskId] = true;
+        });
+        setCompletedTasks(completedTasksMap);
+      } catch (error) {
+        console.error("Unexpected error fetching user data:", error);
+      }
 
-          const categorizedTasks = {
-            special: data.filter((task) => task.category === "Special"),
-            daily: data.filter((task) => task.category === "Daily"),
-            lists: data.filter((task) => task.category === "Lists"),
-          };
+      try {
+        const tasksResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`
+        );
+        const data = tasksResponse.data;
 
-          setTasks(categorizedTasks);
-        } catch (error) {
-          console.error("Error fetching tasks or user data:", error);
-        } finally {
-          setLoading(false); // End loading after tasks are fetched
-        }
-      } else {
-        console.error("No userID available");
-        setLoading(false);
+        const categorizedTasks = {
+          special: data.filter((task) => task.category === "Special"),
+          daily: data.filter((task) => task.category === "Daily"),
+          lists: data.filter((task) => task.category === "Lists"),
+        };
+
+        setTasks(categorizedTasks);
+      } catch (taskFetchError) {
+        console.error("Error fetching tasks:", taskFetchError);
+      } finally {
+        setLoading(false); // End loading after tasks are fetched
       }
     };
 
-    if (userID) {
-      initializeUserAndFetchTasks();
-    } else {
-      getUserID(setUserID).then(({ userID }) => {
-        if (userID) {
-          initializeUserAndFetchTasks();
-        }
-      });
-    }
-  }, [userID, setPoints, setUserID]);
+    initializeUserAndFetchTasks();
+  }, [setPoints, setUserID]);
 
   useEffect(() => {
     let countdown;
