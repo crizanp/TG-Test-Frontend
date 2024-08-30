@@ -35,7 +35,7 @@ import {
 import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
 
 const TaskList = () => {
-  const { points, setPoints, userID, setUserID } = usePoints();
+  const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
@@ -51,7 +51,7 @@ const TaskList = () => {
     const initializeUserAndFetchTasks = async () => {
       setLoading(true); // Start loading
 
-      const userID = await getUserID(setUserID);
+      const userID = await getUserID(setUserID,setUsername);
       setUserID(userID);
 
       try {
