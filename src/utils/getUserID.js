@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-export const getUserInfo = async (setUserID, setUsername) => {
+export const getUserID = async (setUserID, setUsername) => {
   // Fetch userID and username from Telegram
   let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
   let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
   if (tgUserID && tgUsername) {
     // Take only the first 8 characters of the Telegram userID
-    tgUserID = tgUserID.toString();
+    tgUserID = tgUserID.toString().slice(0, 8);
     setUserID(tgUserID);
     setUsername(tgUsername);
 
