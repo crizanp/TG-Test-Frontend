@@ -35,7 +35,7 @@ import {
 import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
 
 const TaskList = () => {
-  const { points, setPoints, userID, setUserID, setUsername } = usePoints();
+  const { points, setPoints, userID, setUserID, username, setUsername } = usePoints();
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
@@ -141,6 +141,7 @@ const TaskList = () => {
 
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
         userID,
+        username,
         tasksCompleted: [selectedTask._id],
         taskHistory: [
           {
