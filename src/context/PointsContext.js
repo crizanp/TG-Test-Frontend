@@ -10,15 +10,18 @@ export const usePoints = () => {
 export const PointsProvider = ({ children }) => {
   const [points, setPoints] = useState(0);
   const [userID, setUserID] = useState('');
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
-    const fetchPoints = async () => {
-      // Fetch userID from Telegram and take the first 8 characters
+    const fetchUserInfo = async () => {
+      // Fetch userID and username from Telegram
       let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
+      let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
-      if (tgUserID) {
-        tgUserID = tgUserID.toString(); // Use only the first 8 characters
+      if (tgUserID && tgUsername) {
+        tgUserID = tgUserID.toString(); // Use the full userID (if needed, can be trimmed)
         setUserID(tgUserID);
+        setUsername(tgUsername);
 
         try {
           // Try to fetch the user's points from the backend
@@ -30,6 +33,7 @@ export const PointsProvider = ({ children }) => {
             try {
               const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
                 userID: tgUserID,
+                username: tgUsername,
                 points: 0,
                 tasksCompleted: [],
                 taskHistory: [],
@@ -43,15 +47,15 @@ export const PointsProvider = ({ children }) => {
           }
         }
       } else {
-        console.error('User ID not available from Telegram.');
+        console.error('User ID or username not available from Telegram.');
       }
     };
 
-    fetchPoints();
+    fetchUserInfo();
   }, []);
 
   return (
-    <PointsContext.Provider value={{ points, setPoints, userID, setUserID }}>
+    <PointsContext.Provider value={{ points, setPoints, userID, setUserID, username, setUsername }}>
       {children}
     </PointsContext.Provider>
   );
