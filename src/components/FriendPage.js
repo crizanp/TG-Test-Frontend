@@ -102,6 +102,7 @@ const FriendPage = () => {
   const [points, setPoints] = useState(0); // Current user's points
   const [referralLink, setReferralLink] = useState('');
   const [copySuccess, setCopySuccess] = useState('');
+  const [referralCount, setReferralCount] = useState(0); // State to hold referral count
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -126,12 +127,22 @@ const FriendPage = () => {
       }
     };
 
+    const fetchReferralStats = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/referrals/stats/${userID}`);
+        setReferralCount(response.data.referralCount); // Set the referral count
+      } catch (error) {
+        console.error('Error fetching referral stats:', error);
+      }
+    };
+
     // Example way to get the userID, replace with your actual implementation
     const getUserID = async () => {
       const tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
       if (tgUserID) {
         setUserID(tgUserID);
         fetchReferralLink(); // Generate the referral link after getting the userID
+        fetchReferralStats(); // Fetch referral stats after getting the userID
       } else {
         console.error('User ID not available from Telegram.');
       }
@@ -168,7 +179,7 @@ const FriendPage = () => {
         </ReferralLinkContainer>
 
         <ReferralStats>
-          <h3>Your Total Referrals: 0</h3>
+          <h3>Your Total Referrals: {referralCount}</h3> {/* Display referral count */}
           <Notice>Keep sharing your link to earn more rewards!</Notice>
         </ReferralStats>
       </ReferralContainer>
