@@ -9,32 +9,29 @@ const FriendPage = () => {
   useEffect(() => {
     // Initialize Telegram Web App
     window.Telegram.WebApp.ready();
-
+  
     // Access Telegram Web App initialization data
     const telegramInitData = window.Telegram.WebApp.initDataUnsafe;
     const openerTelegramId = telegramInitData.user?.id; // Get user's Telegram ID
     const username = telegramInitData.user?.username; // Get user's Telegram username
-
+  
     if (!openerTelegramId) {
       console.error('Telegram ID not available');
       setLoading(false);
       return;
     }
-
+  
     // Register or fetch user information from the backend
     axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
       userID: openerTelegramId,
       username,
-      points: 0, // Initialize with 0 points
-      tasksCompleted: [],
-      taskHistory: [],
     })
     .then(response => {
       setUserData(response.data); // Store user data in state
-
+  
       // Create referral link using the user's userID
       const botUsername = 'cizantest_bot'; // Replace with your actual bot username
-      const link = `https://t.me/${botUsername}?start=${openerTelegramId}`;
+      const link = `https://t.me/${botUsername}?start=${response.data.userID}`;
       setReferralLink(link);
     })
     .catch(error => {
