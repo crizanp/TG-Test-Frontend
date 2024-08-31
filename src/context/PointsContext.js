@@ -22,13 +22,13 @@ export const PointsProvider = ({ children }) => {
 
         try {
           // Try to fetch the user's points from the backend
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user-info/${tgUserID}`);
           setPoints(Math.round(response.data.points));  // Round to the nearest integer
         } catch (error) {
           if (error.response && error.response.status === 404) {
             // User not found on the backend, create a new user
             try {
-              const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
+              const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/api/user-info/register`, {
                 userID: tgUserID,
                 points: 0,
                 tasksCompleted: [],

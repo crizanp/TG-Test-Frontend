@@ -22,7 +22,7 @@ const FriendPage = () => {
     }
   
     // Register or fetch user information from the backend
-    axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
+    axios.post(`${process.env.REACT_APP_API_URL}/api/user-info/register`, {
       userID: openerTelegramId,
       username,
     })
