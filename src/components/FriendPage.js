@@ -107,50 +107,51 @@ const FriendPage = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        // Fetch user info from the backend
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user-info/${userID}`);
         setPoints(response.data.points);
       } catch (error) {
         console.error('Error fetching user info:', error);
       }
     };
-
+  
     const fetchReferralLink = async () => {
       if (userID) {
         try {
-          // Set the referral link using the user's Telegram ID
           setReferralLink(`https://t.me/cizantest_bot?start=${userID}`);
-          fetchUserInfo(); // Fetch user info once userID is set
+          fetchUserInfo();
         } catch (error) {
           console.error('Error generating referral link:', error);
         }
       }
     };
-
+  
     const fetchReferralStats = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/referrals/stats/${userID}`);
-        setReferralCount(response.data.referralCount); // Set the referral count
-      } catch (error) {
-        console.error('Error fetching referral stats:', error);
+      if (userID) { // Ensure userID is not null before making the call
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/referrals/stats/${userID}`);
+          setReferralCount(response.data.referralCount);
+        } catch (error) {
+          console.error('Error fetching referral stats:', error);
+        }
+      } else {
+        console.error('userID is null, skipping fetchReferralStats');
       }
     };
-
-    // Example way to get the userID, replace with your actual implementation
+  
     const getUserID = async () => {
       const tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
       if (tgUserID) {
         setUserID(tgUserID);
-        fetchReferralLink(); // Generate the referral link after getting the userID
-        fetchReferralStats(); // Fetch referral stats after getting the userID
+        fetchReferralLink();
+        fetchReferralStats();
       } else {
         console.error('User ID not available from Telegram.');
       }
     };
-
+  
     getUserID();
   }, [userID]);
-
+  
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink).then(() => {
       setCopySuccess('Referral link copied!');
