@@ -107,7 +107,7 @@ const FriendPage = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user-info/${userID}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
         setPoints(response.data.points);
       } catch (error) {
         console.error('Error fetching user info:', error);
@@ -128,7 +128,7 @@ const FriendPage = () => {
     const fetchReferralStats = async () => {
       if (userID) { // Ensure userID is not null before making the call
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/referrals/stats/${userID}`);
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/referrals/stats/${userID}`);
           setReferralCount(response.data.referralCount);
         } catch (error) {
           console.error('Error fetching referral stats:', error);
