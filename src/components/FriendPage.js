@@ -33,23 +33,13 @@ const Title = styled.h2`
   letter-spacing: 1px;
 `;
 
-const PointsDisplayContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
 const PointsDisplay = styled.div`
   font-size: 32px;
   font-weight: bold;
   color: #ffcc00;
   display: flex;
   align-items: center;
-`;
-
-const ReferralLinkContainer = styled.div`
-  margin-top: 15px;
+  margin-bottom: 20px;
 `;
 
 const ReferralLink = styled.a`
@@ -57,11 +47,10 @@ const ReferralLink = styled.a`
   padding: 10px;
   border-radius: 8px;
   display: inline-block;
-  margin: 0;
+  margin-top: 15px;
   word-break: break-all;
   color: #ffffff;
   font-size: 14px;
-  letter-spacing: 0.5px;
   text-decoration: none;
 
   &:hover {
@@ -79,7 +68,6 @@ const CopyButton = styled.button`
   cursor: pointer;
   font-weight: bold;
   font-size: 14px;
-  transition: background-color 0.3s ease;
 
   &:hover {
     background-color: #e6b800;
@@ -98,65 +86,56 @@ const ReferralStats = styled.div`
 `;
 
 const FriendPage = () => {
-  const [userID, setUserID] = useState(null); // Assume you have a way to get the current user's ID
-  const [points, setPoints] = useState(0); // Current user's points
+  const [userID, setUserID] = useState(null);
+  const [points, setPoints] = useState(0);
   const [referralLink, setReferralLink] = useState('');
   const [copySuccess, setCopySuccess] = useState('');
-  const [referralCount, setReferralCount] = useState(0); // State to hold referral count
+  const [referralCount, setReferralCount] = useState(0);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
-        setPoints(response.data.points);
-      } catch (error) {
-        console.error('Error fetching user info:', error);
+    const getUserID = async () => {
+      const tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
+      if (tgUserID) {
+        setUserID(tgUserID);
+      } else {
+        console.error('User ID not available from Telegram.');
       }
     };
-  
-    const fetchReferralLink = async () => {
-      if (userID) {
+
+    getUserID();
+  }, []);
+
+  useEffect(() => {
+    if (userID) {
+      const fetchUserInfo = async () => {
         try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+          setPoints(response.data.points);
           setReferralLink(`https://t.me/cizantest_bot?start=${userID}`);
-          fetchUserInfo();
         } catch (error) {
-          console.error('Error generating referral link:', error);
+          console.error('Error fetching user info:', error);
         }
-      }
-    };
-  
-    const fetchReferralStats = async () => {
-      if (userID) { // Ensure userID is not null before making the call
+      };
+
+      const fetchReferralStats = async () => {
         try {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/referrals/stats/${userID}`);
           setReferralCount(response.data.referralCount);
         } catch (error) {
           console.error('Error fetching referral stats:', error);
         }
-      } else {
-        console.error('userID is null, skipping fetchReferralStats');
-      }
-    };
-  
-    const getUserID = async () => {
-      const tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
-      if (tgUserID) {
-        setUserID(tgUserID);
-        fetchReferralLink();
-        fetchReferralStats();
-      } else {
-        console.error('User ID not available from Telegram.');
-      }
-    };
-  
-    getUserID();
+      };
+
+      fetchUserInfo();
+      fetchReferralStats();
+    }
   }, [userID]);
-  
+
   const handleCopyLink = () => {
     navigator.clipboard.writeText(referralLink).then(() => {
       setCopySuccess('Referral link copied!');
       setTimeout(() => setCopySuccess(''), 3000);
-    }, () => {
+    }).catch(() => {
       setCopySuccess('Failed to copy.');
       setTimeout(() => setCopySuccess(''), 3000);
     });
@@ -165,22 +144,18 @@ const FriendPage = () => {
   return (
     <MainContainer>
       <ReferralContainer>
-        <PointsDisplayContainer>
-          <PointsDisplay>{Math.floor(points)} Points</PointsDisplay>
-        </PointsDisplayContainer>
+        <PointsDisplay>{points} Points</PointsDisplay>
 
         <Title>Refer & Earn More Rewards!</Title>
 
-        <ReferralLinkContainer>
-          <ReferralLink href={referralLink} target="_blank" rel="noopener noreferrer">
-            {referralLink || 'Generating your referral link...'}
-          </ReferralLink>
-          <CopyButton onClick={handleCopyLink} disabled={!referralLink}>Copy Link</CopyButton>
-          {copySuccess && <Notice>{copySuccess}</Notice>}
-        </ReferralLinkContainer>
+        <ReferralLink href={referralLink} target="_blank" rel="noopener noreferrer">
+          {referralLink || 'Generating your referral link...'}
+        </ReferralLink>
+        <CopyButton onClick={handleCopyLink} disabled={!referralLink}>Copy Link</CopyButton>
+        {copySuccess && <Notice>{copySuccess}</Notice>}
 
         <ReferralStats>
-          <h3>Your Total Referrals: {referralCount}</h3> {/* Display referral count */}
+          <h3>Your Total Referrals: {referralCount}</h3>
           <Notice>Keep sharing your link to earn more rewards!</Notice>
         </ReferralStats>
       </ReferralContainer>
