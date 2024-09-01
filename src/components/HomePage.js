@@ -4,7 +4,7 @@ import { usePoints } from '../context/PointsContext';
 import styled from 'styled-components';
 import { debounce, throttle } from 'lodash';
 import UserInfo from './UserInfo';
-
+import { getUserID } from '../utils/getUserID';
 // Styled components
 const HomeContainer = styled.div`
   display: flex;
