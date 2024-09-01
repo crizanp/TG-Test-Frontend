@@ -29,7 +29,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(null); // Initially null to differentiate from 0 or full energy
+  const [energy, setEnergy] = useState(1000); // Start with 1000, will be overwritten by localStorage if available
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -45,8 +45,6 @@ function HomePage() {
       const savedEnergy = localStorage.getItem(`energy_${userID}`);
       if (savedEnergy !== null) {
         setEnergy(parseFloat(savedEnergy));
-      } else {
-        setEnergy(1000); // Set to full only if there's no saved value
       }
     };
     initializeUser();
@@ -147,18 +145,16 @@ function HomePage() {
 
   // Regenerate energy over time
   useEffect(() => {
-    if (energy !== null) {
-      const regenInterval = setInterval(() => {
-        setEnergy((prevEnergy) => {
-          const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
-          localStorage.setItem(`energy_${userID}`, newEnergy);
-          return newEnergy;
-        });
-      }, 1000);
+    const regenInterval = setInterval(() => {
+      setEnergy((prevEnergy) => {
+        const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
+        localStorage.setItem(`energy_${userID}`, newEnergy);
+        return newEnergy;
+      });
+    }, 1000);
 
-      return () => clearInterval(regenInterval);
-    }
-  }, [energy, userID]);
+    return () => clearInterval(regenInterval);
+  }, [userID]);
 
   useEffect(() => {
     const interval = setInterval(() => {
