@@ -15,7 +15,7 @@ import {
   SlapEmoji,
   EnergyBarContainer,
   EnergyBar,
-} from './HomePageStyles'; // Import your styled components
+} from './HomePageStyles';
 import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png';
@@ -29,7 +29,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(1000); // Default energy level
+  const [energy, setEnergy] = useState(null); // Initially null to differentiate from 0 or full energy
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -43,19 +43,18 @@ function HomePage() {
 
       // Retrieve energy level from localStorage
       const savedEnergy = localStorage.getItem(`energy_${userID}`);
-      if (savedEnergy) {
+      if (savedEnergy !== null) {
         setEnergy(parseFloat(savedEnergy));
       } else {
-        // If no saved energy, set to full (1000)
-        setEnergy(1000);
+        setEnergy(1000); // Set to full only if there's no saved value
       }
     };
     initializeUser();
   }, [setUserID, setUsername, setPoints, userID]);
 
   useEffect(() => {
-    // Save energy level to localStorage whenever it changes
-    if (userID) {
+    if (energy !== null && userID) {
+      // Save energy level to localStorage whenever it changes
       localStorage.setItem(`energy_${userID}`, energy);
     }
   }, [energy, userID]);
@@ -148,16 +147,18 @@ function HomePage() {
 
   // Regenerate energy over time
   useEffect(() => {
-    const regenInterval = setInterval(() => {
-      setEnergy((prevEnergy) => {
-        const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
-        localStorage.setItem(`energy_${userID}`, newEnergy);
-        return newEnergy;
-      });
-    }, 1000);
+    if (energy !== null) {
+      const regenInterval = setInterval(() => {
+        setEnergy((prevEnergy) => {
+          const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
+          localStorage.setItem(`energy_${userID}`, newEnergy);
+          return newEnergy;
+        });
+      }, 1000);
 
-    return () => clearInterval(regenInterval);
-  }, [userID]);
+      return () => clearInterval(regenInterval);
+    }
+  }, [energy, userID]);
 
   useEffect(() => {
     const interval = setInterval(() => {
