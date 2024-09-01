@@ -13,20 +13,18 @@ import {
   Description,
   FlyingNumber,
   SlapEmoji,
-} from './HomePageStyles'; // Import your styled components
+} from './HomePageStyles';
 import { debounce, throttle } from 'lodash';
 import UserInfo from './UserInfo';
-import eagleImage from '../assets/eagle.png'; // Your existing eagle image
-import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
-import { getUserID } from '../utils/getUserID';
+import eagleImage from '../assets/eagle.png';
+import dollarImage from '../assets/dollar-homepage.png';
+
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tapCount, setTapCount] = useState(0);
-  const [animate, setAnimate] = useState(false);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
-  const [offlinePoints, setOfflinePoints] = useState(0);
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -35,8 +33,18 @@ function HomePage() {
       if (savedPoints) {
         setPoints(parseFloat(savedPoints));
       }
+
+      // Sync offline data if any
+      if (navigator.onLine) {
+        syncOfflineData(userID);
+      }
     };
     initializeUser();
+
+    window.addEventListener('online', () => syncOfflineData(userID));
+    return () => {
+      window.removeEventListener('online', () => syncOfflineData(userID));
+    };
   }, [setUserID, setUsername, setPoints, userID]);
 
   const getMessage = useMemo(() => {
@@ -46,41 +54,43 @@ function HomePage() {
     return "Slap this eagle, he took my Golden CHICK!";
   }, [tapCount]);
 
-  const calculatePoints = () => {
-    return 3;
+  const calculatePoints = () => 3;
+
+  const storeOfflineData = (data) => {
+    let offlineData = JSON.parse(localStorage.getItem('offlineData')) || [];
+    offlineData.push(data);
+    localStorage.setItem('offlineData', JSON.stringify(offlineData));
   };
 
-  const syncPointsWithServer = useCallback(
-    debounce(async (totalPointsToAdd) => {
-      try {
-        const response = await axios.put(
+  const syncOfflineData = async (userID) => {
+    let offlineData = JSON.parse(localStorage.getItem('offlineData')) || [];
+    if (offlineData.length === 0) return;
+
+    try {
+      for (let data of offlineData) {
+        await axios.put(
           `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
-          { pointsToAdd: totalPointsToAdd }
+          { pointsToAdd: data.points }
         );
-        setPoints(response.data.points);
-        localStorage.setItem(`points_${userID}`, response.data.points);
-        setOfflinePoints(0);
-      } catch (error) {
-        console.error('Error syncing points with server:', error);
       }
-    }, 1000),
-    [userID, setPoints]
-  );
+      localStorage.removeItem('offlineData'); // Clear offline data after sync
+    } catch (error) {
+      console.error('Error syncing offline data with server:', error);
+    }
+  };
 
   const handleTap = useCallback(
-    (e) => {
+    throttle((e) => {
       const rect = e.currentTarget.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
-      const width = rect.width;
-      const height = rect.height;
 
-      if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
+      if (clickX >= 0 && clickX <= rect.width && clickY >= 0 && clickY <= rect.height) {
         const pointsToAdd = calculatePoints();
 
         const currentTime = Date.now();
         const timeDiff = currentTime - lastTapTime;
-        const tapSpeedMultiplier = Math.max(1, 500 / timeDiff);
+        const tapSpeedMultiplier = Math.max(1, 300 / timeDiff);
 
         setLastTapTime(currentTime);
 
@@ -104,17 +114,14 @@ function HomePage() {
           { id: Date.now(), x: e.clientX, y: e.clientY },
         ]);
 
-        setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
-
         if (navigator.onLine) {
-          syncPointsWithServer(offlinePoints + addedPoints);
+          syncOfflineData(userID);
+        } else {
+          storeOfflineData({ points: addedPoints });
         }
-
-        setAnimate(true);
-        setTimeout(() => setAnimate(false), 300);
       }
-    },
-    [lastTapTime, syncPointsWithServer, setPoints, offlinePoints, userID]
+    }, 100),
+    [lastTapTime, setPoints, userID]
   );
 
   useEffect(() => {
@@ -125,7 +132,7 @@ function HomePage() {
       setSlapEmojis((prevEmojis) =>
         prevEmojis.filter((emoji) => Date.now() - emoji.id < 600)
       );
-    }, 100);
+    }, 50);
 
     return () => clearInterval(interval);
   }, []);
@@ -134,7 +141,7 @@ function HomePage() {
     <HomeContainer>
       <UserInfo />
       <PointsDisplayContainer>
-        <PointsDisplay $animate={animate}>
+        <PointsDisplay>
           <DollarIcon src={dollarImage} alt="Dollar Icon" />
           {Math.floor(points)}
         </PointsDisplay>
@@ -146,7 +153,6 @@ function HomePage() {
             src={eagleImage}
             alt="Eagle"
             onClick={handleTap}
-            $animate={animate ? 1 : 0}
           />
         </EagleContainer>
         <Description>
