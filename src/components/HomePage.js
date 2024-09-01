@@ -1,95 +1,25 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { usePoints } from '../context/PointsContext';
-import styled from 'styled-components';
+import {
+  HomeContainer,
+  PointsDisplayContainer,
+  PointsDisplay,
+  DollarIcon,
+  MiddleSection,
+  Message,
+  EagleContainer,
+  EagleImage,
+  Description,
+  FlyingPoints,
+  SlapEmoji,
+  HeaderText,
+} from './HomePageStyles'; // Import your styled components
 import { debounce, throttle } from 'lodash';
 import UserInfo from './UserInfo';
+import eagleImage from '../assets/eagle.png';
+import dollarImage from '../assets/dollar-homepage.png';
 import { getUserID } from '../utils/getUserID';
-// Styled components
-const HomeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f0f0f0;
-`;
-
-const MiddleSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-`;
-
-const PointsDisplayContainer = styled.div`
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background-color: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 18px;
-  font-weight: bold;
-`;
-
-const EagleImage = styled.img`
-  width: 150px;
-  height: 150px;
-  cursor: pointer;
-  transition: transform 0.2s;
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-const FlyingPoints = styled.div`
-  position: absolute;
-  font-size: 20px;
-  color: green;
-  animation: fly 1s ease-out forwards;
-  
-  @keyframes fly {
-    to {
-      transform: translateY(-100px);
-      opacity: 0;
-    }
-  }
-`;
-
-const SlapEmoji = styled.div`
-  position: absolute;
-  font-size: 30px;
-  animation: slap 0.6s ease-out forwards;
-
-  @keyframes slap {
-    to {
-      transform: translateY(-50px);
-      opacity: 0;
-    }
-  }
-`;
-
-const Message = styled.div`
-  margin-top: 20px;
-  font-size: 16px;
-  color: #333;
-  text-align: center;
-`;
-
-const Description = styled.div`
-  margin-top: 10px;
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  span {
-    font-weight: bold;
-    color: #333;
-  }
-`;
-
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tapCount, setTapCount] = useState(0);
@@ -206,16 +136,21 @@ function HomePage() {
     <HomeContainer>
       <UserInfo />
       <PointsDisplayContainer>
-        <div>{Math.floor(points)}</div>
+        <PointsDisplay $animate={animate}>
+          <DollarIcon src={dollarImage} alt="Dollar Icon" />
+          {Math.floor(points)}
+        </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
         <Message>{getMessage}</Message>
-        <EagleImage
-          src="eagle.png"
-          alt="Eagle"
-          onClick={handleTap}
-          $animate={animate ? 1 : 0}
-        />
+        <EagleContainer>
+          <EagleImage
+            src={eagleImage}
+            alt="Eagle"
+            onClick={handleTap}
+            $animate={animate ? 1 : 0}
+          />
+        </EagleContainer>
         <Description>
           Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
           Stay tuned for <span>updates</span> and <span>rewards</span>!
