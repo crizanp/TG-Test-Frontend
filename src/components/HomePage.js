@@ -13,8 +13,9 @@ import {
   Description,
   FlyingNumber,
   SlapEmoji,
+  EnergyDisplay, // New styled component for energy display
 } from './HomePageStyles'; // Import your styled components
-import { debounce, throttle } from 'lodash';
+import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png'; // Your existing eagle image
 import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
@@ -27,6 +28,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
+  const [energy, setEnergy] = useState(1000); // Initial energy level
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -69,6 +71,11 @@ function HomePage() {
 
   const handleTap = useCallback(
     (e) => {
+      if (energy <= 0) {
+        // Do not allow tapping if energy is depleted
+        return;
+      }
+
       const rect = e.currentTarget.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
@@ -106,13 +113,25 @@ function HomePage() {
 
         setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
 
+        // Reduce energy on tap
+        setEnergy((prevEnergy) => Math.max(prevEnergy - 10, 0));
+
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + addedPoints);
         }
       }
     },
-    [lastTapTime, syncPointsWithServer, setPoints, offlinePoints, userID]
+    [lastTapTime, syncPointsWithServer, setPoints, offlinePoints, energy, userID]
   );
+
+  // Regenerate energy over time
+  useEffect(() => {
+    const regenInterval = setInterval(() => {
+      setEnergy((prevEnergy) => Math.min(prevEnergy + 1, 1000)); // Regenerate 1 energy point per second
+    }, 1000);
+
+    return () => clearInterval(regenInterval);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -135,6 +154,7 @@ function HomePage() {
           <DollarIcon src={dollarImage} alt="Dollar Icon" />
           {Math.floor(points)}
         </PointsDisplay>
+        <EnergyDisplay>{`Energy: ${energy}/1000`}</EnergyDisplay> {/* Display energy level */}
       </PointsDisplayContainer>
       <MiddleSection>
         <Message>{getMessage}</Message>
