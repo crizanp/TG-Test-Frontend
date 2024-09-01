@@ -14,7 +14,7 @@ import {
   FlyingNumber,
   SlapEmoji,
 } from './HomePageStyles'; // Import your styled components
-import { debounce } from 'lodash';
+import { debounce, throttle } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png'; // Your existing eagle image
 import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
@@ -34,16 +34,6 @@ function HomePage() {
       const savedPoints = localStorage.getItem(`points_${userID}`);
       if (savedPoints) {
         setPoints(parseFloat(savedPoints));
-      } else {
-        // Fetch points from the server on the first load
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
-          const initialPoints = response.data.points;
-          setPoints(initialPoints);
-          localStorage.setItem(`points_${userID}`, initialPoints);
-        } catch (error) {
-          console.error('Error fetching points from server:', error);
-        }
       }
     };
     initializeUser();
@@ -61,17 +51,20 @@ function HomePage() {
   };
 
   const syncPointsWithServer = useCallback(
-    debounce(async (totalPoints) => {
+    debounce(async (totalPointsToAdd) => {
       try {
-        await axios.put(
+        const response = await axios.put(
           `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
-          { points: totalPoints }
+          { pointsToAdd: totalPointsToAdd }
         );
+        setPoints(response.data.points);
+        localStorage.setItem(`points_${userID}`, response.data.points);
+        setOfflinePoints(0);
       } catch (error) {
         console.error('Error syncing points with server:', error);
       }
     }, 1000),
-    [userID]
+    [userID, setPoints]
   );
 
   const handleTap = useCallback(
@@ -115,7 +108,6 @@ function HomePage() {
 
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + addedPoints);
-          setOfflinePoints(0); // Reset offline points after syncing
         }
       }
     },
