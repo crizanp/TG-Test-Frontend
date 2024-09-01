@@ -173,3 +173,24 @@ export const SlapEmoji = styled.div`
   transform: translate(-50%, -50%);
   animation: ${slapEffectAnimation} 0.6s ease forwards;
 `;
+export const EnergyDisplay = styled.div`
+  margin-top: 10px;
+  font-size: 18px;
+  color: #ffcc00;  // Adjust color to match your theme
+  font-weight: bold;
+`;
+export const EnergyBarContainer = styled.div`
+  width: 100%;
+  height: 10px;
+  background-color: #444; /* Background color of the bar */
+  border-radius: 5px;
+  margin-top: 10px;
+  overflow: hidden; /* Ensures the inner bar doesn't overflow */
+`;
+
+export const EnergyBar = styled.div`
+  height: 100%;
+  background-color: #ffcc00; /* Color of the energy bar */
+  width: ${(props) => props.energy}%; /* Dynamic width based on energy level */
+  transition: width 0.3s ease-in-out; /* Smooth transition for energy changes */
+`;
