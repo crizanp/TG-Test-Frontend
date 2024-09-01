@@ -13,15 +13,14 @@ import {
   Description,
   FlyingNumber,
   SlapEmoji,
-  EnergyIconContainer,  // Import the EnergyIconContainer styled component
-  EnergyIcon,  // Import the EnergyIcon styled component
+  EnergyIconContainer,
+  EnergyIcon,
   EnergyCounter,
 } from './HomePageStyles';
 import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png';
 import dollarImage from '../assets/dollar-homepage.png';
-import { getUserID } from '../utils/getUserID';
 
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
@@ -190,7 +189,7 @@ function HomePage() {
         </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
-        <Message>{getMessage()}</Message>
+        <Message>{getMessage}</Message> {/* Use getMessage directly without parentheses */}
         <EagleContainer>
           <EagleImage
             src={eagleImage}
