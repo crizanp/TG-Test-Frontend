@@ -14,7 +14,7 @@ import {
   FlyingNumber,
   SlapEmoji,
 } from './HomePageStyles'; // Import your styled components
-import { debounce, throttle } from 'lodash';
+import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png'; // Your existing eagle image
 import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
@@ -67,6 +67,20 @@ function HomePage() {
     [userID, setPoints]
   );
 
+  const incrementPointsSmoothly = (start, end, setPoints) => {
+    if (start >= end) return;
+
+    const step = () => {
+      start += 1;
+      setPoints(start);
+      if (start < end) {
+        requestAnimationFrame(step); // Call the function on the next frame for smooth animation
+      }
+    };
+
+    step();
+  };
+
   const handleTap = useCallback(
     (e) => {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -84,13 +98,11 @@ function HomePage() {
 
         setLastTapTime(currentTime);
 
-        const addedPoints = pointsToAdd * tapSpeedMultiplier;
+        const addedPoints = Math.floor(pointsToAdd * tapSpeedMultiplier);
 
-        setPoints((prevPoints) => {
-          const newPoints = prevPoints + addedPoints;
-          localStorage.setItem(`points_${userID}`, newPoints);
-          return newPoints;
-        });
+        const startPoints = Math.floor(points);
+
+        incrementPointsSmoothly(startPoints, startPoints + addedPoints, setPoints);
 
         setTapCount((prevTapCount) => prevTapCount + 1);
 
