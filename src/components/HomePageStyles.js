@@ -1,4 +1,5 @@
 import styled, { keyframes, css } from 'styled-components';
+import { FaBolt } from 'react-icons/fa'; // Import the FaBolt icon from React Icons
 
 // Define the missing keyframes animations
 const slapEffectAnimation = keyframes`
@@ -176,21 +177,32 @@ export const SlapEmoji = styled.div`
 export const EnergyDisplay = styled.div`
   margin-top: 10px;
   font-size: 18px;
-  color: #ffcc00;  // Adjust color to match your theme
+  color: #ffcc00;  
   font-weight: bold;
 `;
-export const EnergyBarContainer = styled.div`
-  width: 100%;
-  height: 10px;
-  background-color: #444; /* Background color of the bar */
-  border-radius: 5px;
-  margin-top: 10px;
-  overflow: hidden; /* Ensures the inner bar doesn't overflow */
+export const EnergyIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #282c34;
+  border-radius: 50%;
+  width: 50px; /* Adjust size as needed */
+  height: 50px;
+  margin-right: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
-export const EnergyBar = styled.div`
-  height: 100%;
-  background-color: #ffcc00; /* Color of the energy bar */
-  width: ${(props) => props.energy}%; /* Dynamic width based on energy level */
-  transition: width 0.3s ease-in-out; /* Smooth transition for energy changes */
+export const EnergyIcon = styled(FaBolt)`
+  width: 30px;  /* Adjust size as needed */
+  height: 30px;
+  color: #ffcc00; /* Yellow color for energy */
+  opacity: ${(props) => props.energy / 1000}; /* Opacity based on energy level */
+  transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity changes */
+`;
+
+export const EnergyCounter = styled.div`
+  font-size: 14px;
+  color: #fff;
+  margin-left: 10px;
+  white-space: nowrap;
 `;

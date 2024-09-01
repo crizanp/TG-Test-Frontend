@@ -13,8 +13,9 @@ import {
   Description,
   FlyingNumber,
   SlapEmoji,
-  EnergyBarContainer,
-  EnergyBar,
+  EnergyIconContainer,  // Import the EnergyIconContainer styled component
+  EnergyIcon,  // Import the EnergyIcon styled component
+  EnergyCounter,
 } from './HomePageStyles';
 import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
@@ -41,10 +42,17 @@ function HomePage() {
         setPoints(parseFloat(savedPoints));
       }
 
-      // Retrieve energy level from localStorage
+      // Retrieve energy level and last update time from localStorage
       const savedEnergy = localStorage.getItem(`energy_${userID}`);
-      if (savedEnergy !== null) {
-        setEnergy(parseFloat(savedEnergy));
+      const lastUpdate = localStorage.getItem(`lastUpdate_${userID}`);
+
+      if (savedEnergy !== null && lastUpdate !== null) {
+        const timeElapsed = (Date.now() - parseInt(lastUpdate, 10)) / 1000;
+        const regeneratedEnergy = Math.min(1000, parseFloat(savedEnergy) + timeElapsed);
+        setEnergy(regeneratedEnergy);
+        localStorage.setItem(`energy_${userID}`, regeneratedEnergy);
+      } else {
+        setEnergy(1000); // Set to full if there's no saved value
       }
     };
     initializeUser();
@@ -52,8 +60,9 @@ function HomePage() {
 
   useEffect(() => {
     if (energy !== null && userID) {
-      // Save energy level to localStorage whenever it changes
+      // Save energy level and current time to localStorage whenever it changes
       localStorage.setItem(`energy_${userID}`, energy);
+      localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
     }
   }, [energy, userID]);
 
@@ -72,15 +81,15 @@ function HomePage() {
     debounce(async (totalPointsToAdd) => {
       try {
         const response = await axios.put(
-          `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
-          { pointsToAdd: totalPointsToAdd }
-        );
-        setPoints(response.data.points);
-        localStorage.setItem(`points_${userID}`, response.data.points);
-        setOfflinePoints(0);
-      } catch (error) {
-        console.error('Error syncing points with server:', error);
-      }
+        `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
+        { pointsToAdd: totalPointsToAdd }
+      );
+      setPoints(response.data.points);
+      localStorage.setItem(`points_${userID}`, response.data.points);
+      setOfflinePoints(0);
+    } catch (error) {
+      console.error('Error syncing points with server:', error);
+    }
     }, 1000),
     [userID, setPoints]
   );
@@ -132,6 +141,7 @@ function HomePage() {
         setEnergy((prevEnergy) => {
           const newEnergy = Math.max(prevEnergy - 10, 0);
           localStorage.setItem(`energy_${userID}`, newEnergy);
+          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
           return newEnergy;
         });
 
@@ -149,6 +159,7 @@ function HomePage() {
       setEnergy((prevEnergy) => {
         const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
         localStorage.setItem(`energy_${userID}`, newEnergy);
+        localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         return newEnergy;
       });
     }, 1000);
@@ -179,7 +190,7 @@ function HomePage() {
         </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
-        <Message>{getMessage}</Message>
+        <Message>{getMessage()}</Message>
         <EagleContainer>
           <EagleImage
             src={eagleImage}
@@ -187,9 +198,12 @@ function HomePage() {
             onClick={handleTap}
           />
         </EagleContainer>
-        <EnergyBarContainer>
-          <EnergyBar energy={(energy / 1000) * 100} />
-        </EnergyBarContainer>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <EnergyIconContainer>
+            <EnergyIcon energy={energy} />
+          </EnergyIconContainer>
+          <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
+        </div>
         <Description>
           Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
           Stay tuned for <span>updates</span> and <span>rewards</span>!
