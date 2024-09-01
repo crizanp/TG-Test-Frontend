@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const getUserID = async (setUserID, setUsername) => {
   // Fetch userID and username from Telegram
   let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
