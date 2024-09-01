@@ -34,6 +34,16 @@ function HomePage() {
       const savedPoints = localStorage.getItem(`points_${userID}`);
       if (savedPoints) {
         setPoints(parseFloat(savedPoints));
+      } else {
+        // Fetch points from the server on the first load
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+          const initialPoints = response.data.points;
+          setPoints(initialPoints);
+          localStorage.setItem(`points_${userID}`, initialPoints);
+        } catch (error) {
+          console.error('Error fetching points from server:', error);
+        }
       }
     };
     initializeUser();
@@ -51,35 +61,18 @@ function HomePage() {
   };
 
   const syncPointsWithServer = useCallback(
-    debounce(async (totalPointsToAdd) => {
+    debounce(async (totalPoints) => {
       try {
-        const response = await axios.put(
+        await axios.put(
           `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
-          { pointsToAdd: totalPointsToAdd }
+          { points: totalPoints }
         );
-        setPoints(response.data.points);
-        localStorage.setItem(`points_${userID}`, response.data.points);
-        setOfflinePoints(0);
       } catch (error) {
         console.error('Error syncing points with server:', error);
       }
     }, 1000),
-    [userID, setPoints]
+    [userID]
   );
-
-  const incrementPointsSmoothly = (start, end, setPoints) => {
-    if (start >= end) return;
-
-    const step = () => {
-      start += 1;
-      setPoints(start);
-      if (start < end) {
-        requestAnimationFrame(step); // Call the function on the next frame for smooth animation
-      }
-    };
-
-    step();
-  };
 
   const handleTap = useCallback(
     (e) => {
@@ -98,11 +91,13 @@ function HomePage() {
 
         setLastTapTime(currentTime);
 
-        const addedPoints = Math.floor(pointsToAdd * tapSpeedMultiplier);
+        const addedPoints = pointsToAdd * tapSpeedMultiplier;
 
-        const startPoints = Math.floor(points);
-
-        incrementPointsSmoothly(startPoints, startPoints + addedPoints, setPoints);
+        setPoints((prevPoints) => {
+          const newPoints = prevPoints + addedPoints;
+          localStorage.setItem(`points_${userID}`, newPoints);
+          return newPoints;
+        });
 
         setTapCount((prevTapCount) => prevTapCount + 1);
 

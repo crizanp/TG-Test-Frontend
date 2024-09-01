@@ -1,5 +1,51 @@
 import styled, { keyframes, css } from 'styled-components';
 
+// Define the missing keyframes animations
+const slapEffectAnimation = keyframes`
+  0% {
+    transform: scale(1) translateY(0) translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) translateY(-8px) translateX(8px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5) translateY(-16px) translateX(-16px);
+    opacity: 0;
+  }
+`;
+
+const bounceAnimation = keyframes`
+  0% { transform: scale(1); }
+  25% { transform: scale(1.02); }
+  50% { transform: scale(1); }
+`;
+
+const pointsAnimation = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+`;
+
+const pointFlyingAnimation = keyframes`
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(1.5); /* Increased scale for better visibility */
+  }
+`;
+
+// Styled components with animations
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: white;
@@ -79,6 +125,12 @@ export const EagleImage = styled.img`
   &:hover {
     transform: scale(1.05);
   }
+
+  ${({ $animate }) =>
+    $animate &&
+    css`
+      animation: ${bounceAnimation} 0.3s ease-in-out;
+    `}
 `;
 
 export const Description = styled.div`
@@ -101,23 +153,14 @@ export const Description = styled.div`
 
 export const FlyingNumber = styled.div`
   position: absolute;
-  font-size: 28px;
+  font-size: 28px; /* Increased font size for better visibility */
   color: #ffd700;
+  animation: ${pointFlyingAnimation} 1s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
   z-index: 10;
   pointer-events: none;
   transform: translate(-50%, -100%);
-  animation: ${keyframes`
-    0% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(-30px);
-    }
-  `} 1s ease-in-out forwards;
 `;
 
 export const SlapEmoji = styled.div`
@@ -128,18 +171,5 @@ export const SlapEmoji = styled.div`
   color: #ffffff;
   z-index: 10;
   transform: translate(-50%, -50%);
-  animation: ${keyframes`
-    0% {
-      transform: scale(1) translateY(0) translateX(0);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.2) translateY(-8px) translateX(8px);
-      opacity: 0.8;
-    }
-    100% {
-      transform: scale(1.5) translateY(-16px) translateX(-16px);
-      opacity: 0;
-    }
-  `} 0.6s ease forwards;
+  animation: ${slapEffectAnimation} 0.6s ease forwards;
 `;
