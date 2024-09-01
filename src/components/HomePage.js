@@ -19,10 +19,10 @@ import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png'; // Your existing eagle image
 import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
 import { getUserID } from '../utils/getUserID';
+
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tapCount, setTapCount] = useState(0);
-  const [animate, setAnimate] = useState(false);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
@@ -109,9 +109,6 @@ function HomePage() {
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + addedPoints);
         }
-
-        setAnimate(true);
-        setTimeout(() => setAnimate(false), 300);
       }
     },
     [lastTapTime, syncPointsWithServer, setPoints, offlinePoints, userID]
@@ -134,7 +131,7 @@ function HomePage() {
     <HomeContainer>
       <UserInfo />
       <PointsDisplayContainer>
-        <PointsDisplay $animate={animate}>
+        <PointsDisplay>
           <DollarIcon src={dollarImage} alt="Dollar Icon" />
           {Math.floor(points)}
         </PointsDisplay>
@@ -146,7 +143,6 @@ function HomePage() {
             src={eagleImage}
             alt="Eagle"
             onClick={handleTap}
-            $animate={animate ? 1 : 0}
           />
         </EagleContainer>
         <Description>

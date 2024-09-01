@@ -1,16 +1,6 @@
 import styled, { keyframes, css } from 'styled-components';
 
-const numberFlyingAnimation = keyframes`
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-60px) scale(1.5); /* Slightly larger as it moves up */
-  }
-`;
-
+// Define the missing keyframes animations
 const slapEffectAnimation = keyframes`
   0% {
     transform: scale(1) translateY(0) translateX(0);
@@ -27,10 +17,35 @@ const slapEffectAnimation = keyframes`
 `;
 
 const bounceAnimation = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0% { transform: scale(1); }
+  25% { transform: scale(1.02); }
+  50% { transform: scale(1); }
 `;
 
+const pointsAnimation = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+`;
+
+const pointFlyingAnimation = keyframes`
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(1.5); /* Increased scale for better visibility */
+  }
+`;
+
+// Styled components with animations
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: white;
@@ -43,7 +58,7 @@ export const HomeContainer = styled.div`
   min-height: 87vh;
   overflow: hidden;
   user-select: none;
-  padding: 20px;
+  padding: 20px 20px;
   position: relative;
 `;
 
@@ -61,11 +76,6 @@ export const PointsDisplay = styled.div`
   display: flex;
   align-items: center;
   font-weight: bold;
-  animation: ${({ $animate }) =>
-    $animate &&
-    css`
-      ${bounceAnimation} 0.5s ease-in-out;
-    `};
 `;
 
 export const DollarIcon = styled.img`
@@ -143,9 +153,9 @@ export const Description = styled.div`
 
 export const FlyingNumber = styled.div`
   position: absolute;
-  font-size: 28px;
+  font-size: 28px; /* Increased font size for better visibility */
   color: #ffd700;
-  animation: ${numberFlyingAnimation} 1s ease-in-out;
+  animation: ${pointFlyingAnimation} 1s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
   z-index: 10;
