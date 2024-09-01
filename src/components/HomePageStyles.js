@@ -1,13 +1,13 @@
 import styled, { keyframes, css } from 'styled-components';
 
-const pointFlyingAnimation = keyframes`
+const eagleFlyingAnimation = keyframes`
   0% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) translateX(0) scale(0.8);
   }
   100% {
     opacity: 0;
-    transform: translateY(-60px) scale(2); /* Increased scale for larger points */
+    transform: translateY(-120px) translateX(100px) scale(1.2);
   }
 `;
 
@@ -27,21 +27,8 @@ const slapEffectAnimation = keyframes`
 `;
 
 const bounceAnimation = keyframes`
-  0% { transform: scale(1); }
-  25% { transform: scale(1.02); }
-  50% { transform: scale(1); }
-`;
-
-const pointsAnimation = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5) rotate(10deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 `;
 
 export const HomeContainer = styled.div`
@@ -56,7 +43,7 @@ export const HomeContainer = styled.div`
   min-height: 87vh;
   overflow: hidden;
   user-select: none;
-  padding: 20px 20px;
+  padding: 20px;
   position: relative;
 `;
 
@@ -77,7 +64,7 @@ export const PointsDisplay = styled.div`
   animation: ${({ $animate }) =>
     $animate &&
     css`
-      ${pointsAnimation} 1s ease-in-out;
+      ${bounceAnimation} 0.5s ease-in-out;
     `};
 `;
 
@@ -154,16 +141,19 @@ export const Description = styled.div`
   }
 `;
 
-export const FlyingPoints = styled.div`
+export const FlyingEagle = styled.div`
   position: absolute;
-  font-size: 28px; /* Increased font size for larger points */
-  color: #ffd700;
-  animation: ${pointFlyingAnimation} 1s ease-in-out;
+  animation: ${eagleFlyingAnimation} 1.5s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
   z-index: 10;
   pointer-events: none;
   transform: translate(-50%, -100%);
+
+  img {
+    width: 50px;
+    height: auto;
+  }
 `;
 
 export const SlapEmoji = styled.div`
@@ -175,19 +165,4 @@ export const SlapEmoji = styled.div`
   z-index: 10;
   transform: translate(-50%, -50%);
   animation: ${slapEffectAnimation} 0.6s ease forwards;
-`;
-
-export const HeaderText = styled.div`
-  background-color: #1ea53e;
-  color: black;
-  font-size: 18px;
-  padding: 5px 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 80%;
-  max-width: 300px;
 `;

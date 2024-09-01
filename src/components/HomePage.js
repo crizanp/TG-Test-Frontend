@@ -11,25 +11,25 @@ import {
   EagleContainer,
   EagleImage,
   Description,
-  FlyingPoints,
+  FlyingEagle,
   SlapEmoji,
-  HeaderText,
 } from './HomePageStyles'; // Import your styled components
 import { debounce, throttle } from 'lodash';
 import UserInfo from './UserInfo';
-import eagleImage from '../assets/eagle.png';
-import dollarImage from '../assets/dollar-homepage.png';
+import eagleImage from '../assets/eagle.png'; // Your existing eagle image
+import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
 import { getUserID } from '../utils/getUserID';
+const flyingEagleImage = "https://i.postimg.cc/tT2fFdfj/IGH-Tap-Mini-Apps-3.png";
+
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tapCount, setTapCount] = useState(0);
   const [animate, setAnimate] = useState(false);
-  const [flyingPoints, setFlyingPoints] = useState([]);
+  const [flyingEagles, setFlyingEagles] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
 
-  // Initialize user and fetch points only once
   useEffect(() => {
     const initializeUser = async () => {
       const userID = await getUserID(setUserID, setUsername);
@@ -96,8 +96,8 @@ function HomePage() {
 
         setTapCount((prevTapCount) => prevTapCount + 1);
 
-        setFlyingPoints((prevFlyingPoints) => [
-          ...prevFlyingPoints,
+        setFlyingEagles((prevEagles) => [
+          ...prevEagles,
           { id: Date.now(), x: e.clientX, y: e.clientY, value: addedPoints },
         ]);
 
@@ -121,8 +121,8 @@ function HomePage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFlyingPoints((prevFlyingPoints) =>
-        prevFlyingPoints.filter((point) => Date.now() - point.id < 1000)
+      setFlyingEagles((prevEagles) =>
+        prevEagles.filter((eagle) => Date.now() - eagle.id < 2000)
       );
       setSlapEmojis((prevEmojis) =>
         prevEmojis.filter((emoji) => Date.now() - emoji.id < 600)
@@ -157,10 +157,10 @@ function HomePage() {
         </Description>
       </MiddleSection>
 
-      {flyingPoints.map((point) => (
-        <FlyingPoints key={point.id} x={point.x} y={point.y}>
-          +{point.value.toFixed(2)}
-        </FlyingPoints>
+      {flyingEagles.map((eagle) => (
+        <FlyingEagle key={eagle.id} x={eagle.x} y={eagle.y}>
+          <img src={flyingEagleImage} alt="Flying Eagle" />
+        </FlyingEagle>
       ))}
       {slapEmojis.map((emoji) => (
         <SlapEmoji key={emoji.id} x={emoji.x} y={emoji.y}>
