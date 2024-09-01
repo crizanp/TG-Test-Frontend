@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { debounce } from "lodash";
 
 // Styled components for better UI/UX
 const MainContainer = styled.div`
@@ -131,36 +132,39 @@ const FriendPage = () => {
     getUserID();
   }, []);
 
-  useEffect(() => {
-    if (userID) {
-      const fetchUserInfo = async () => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-          );
-          setPoints(response.data.points);
-          setReferralLink(`https://t.me/cizantest_bot?start=${userID}`);
-        } catch (error) {
-          console.error("Error fetching user info:", error);
-        }
-      };
+  const fetchUserInfo = useCallback(
+    debounce(async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        setPoints(response.data.points);
+        setReferralLink(`https://t.me/cizantest_bot?start=${userID}`);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    }, 1000), [userID]);
 
-      const fetchReferralStats = async () => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/referrals/stats/${userID}`
-          );
-          setReferralCount(response.data.referralCount);
-          setReferrals(response.data.referrals); // Assuming the backend returns { referralCount, referrals }
-        } catch (error) {
+  const fetchReferralStats = useCallback(
+    debounce(async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/referrals/stats/${userID}`);
+        setReferralCount(response.data.referralCount);
+        setReferrals(response.data.referrals);
+      } catch (error) {
+        if (error.response && error.response.status === 409) {
+          console.warn("Conflict detected. Retrying...");
+          setTimeout(fetchReferralStats, 1000); // Retry after 1 second
+        } else {
           console.error("Error fetching referral stats:", error);
         }
-      };
+      }
+    }, 1000), [userID]);
 
+  useEffect(() => {
+    if (userID) {
       fetchUserInfo();
       fetchReferralStats();
     }
-  }, [userID]);
+  }, [userID, fetchUserInfo, fetchReferralStats]);
 
   const handleCopyLink = () => {
     navigator.clipboard
