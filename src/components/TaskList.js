@@ -6,6 +6,7 @@ import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from './FloatingMessage';
 
+// Importing required styles and images
 import {
   TaskContainer,
   TaskCategory,
@@ -50,11 +51,15 @@ const TaskList = () => {
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
       setLoading(true);
-
-      const userID = await getUserID(setUserID, setUsername);
-      setUserID(userID);
+      console.log("Initializing user...");
 
       try {
+        const userID = await getUserID(setUserID, setUsername);
+        console.log("UserID fetched:", userID);
+        console.log("Username set:", window.Telegram.WebApp?.initDataUnsafe?.user?.username);
+
+        setUserID(userID);
+
         const userResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/user-info/${userID}`
         );
@@ -88,12 +93,14 @@ const TaskList = () => {
         console.error("Error fetching tasks:", taskFetchError);
       } finally {
         setLoading(false);
+        console.log("Finished initialization.");
       }
     };
 
     initializeUserAndFetchTasks();
   }, [setPoints, setUserID, setUsername]);
 
+  // Other useEffect to handle the timer
   useEffect(() => {
     let countdown;
     if (selectedTask && timerStarted && !isClaimable && timer > 0) {
@@ -107,6 +114,7 @@ const TaskList = () => {
     return () => clearInterval(countdown);
   }, [selectedTask, timerStarted, isClaimable, timer]);
 
+  // Handle task click
   const handleTaskClick = (task) => {
     if (!completedTasks[task._id]) {
       setSelectedTask(task);
@@ -118,11 +126,13 @@ const TaskList = () => {
     }
   };
 
+  // Handle task start
   const handleStartTask = () => {
     window.open(selectedTask.link, "_blank");
     setTimerStarted(true);
   };
 
+  // Handle reward claim
   const handleClaimReward = async () => {
     setUnderModeration(true);
     const tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
