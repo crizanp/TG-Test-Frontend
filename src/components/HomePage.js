@@ -21,6 +21,7 @@ import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png';
 import dollarImage from '../assets/dollar-homepage.png';
+import { getUserID } from '../utils/getUserID';
 
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
