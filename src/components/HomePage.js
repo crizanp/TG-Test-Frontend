@@ -115,6 +115,7 @@ function HomePage() {
 
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + addedPoints);
+          setOfflinePoints(0); // Reset offline points after syncing
         }
       }
     },
