@@ -18,10 +18,10 @@ import {
   SlapEmoji,
   PointsDisplay,
 } from './HomePageStyles';
-import { throttle } from 'lodash';
+import { throttle, debounce } from 'lodash';
 
 function HomePage() {
-  const { points, setPoints, userID, setUserID } = usePoints();
+  const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tapCount, setTapCount] = useState(0);
   const [animate, setAnimate] = useState(false);
   const [flyingPoints, setFlyingPoints] = useState([]);
@@ -32,14 +32,14 @@ function HomePage() {
 
   useEffect(() => {
     const initializeUser = async () => {
-      await getUserID(setUserID);
+      await getUserID(setUserID, setUsername);
       const savedPoints = localStorage.getItem(`points_${userID}`);
       if (savedPoints) {
         setPoints(parseFloat(savedPoints));
       }
     };
     initializeUser();
-  }, [setUserID, setPoints, userID]);
+  }, [setUserID, setUsername, setPoints, userID]);
 
   const getMessage = () => {
     if (tapCount >= 150) return "He's feeling it! Keep going!";
@@ -52,7 +52,7 @@ function HomePage() {
     return 3;
   };
 
-  const syncPointsWithServer = async (totalPointsToAdd) => {
+  const syncPointsWithServer = debounce(async (totalPointsToAdd) => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`, {
         pointsToAdd: totalPointsToAdd,
@@ -64,7 +64,7 @@ function HomePage() {
     } catch (error) {
       console.error('Error syncing points with server:', error);
     }
-  };
+  }, 1000);
 
   const playVibrationSound = () => {
     const audio = new Audio('/sounds/vibration-sound.mp3'); // Ensure the path to the sound file is correct
@@ -72,7 +72,6 @@ function HomePage() {
     audio.play().catch(error => console.error('Failed to play sound:', error));
   };
   
-
   const handleTap = throttle(async (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
@@ -123,7 +122,7 @@ function HomePage() {
         syncPointsWithServer(offlinePoints + addedPoints);
       }
     }
-  }, 150); // Reduced throttle time to allow more frequent taps
+  }, 150);
 
   useEffect(() => {
     const interval = setInterval(() => {

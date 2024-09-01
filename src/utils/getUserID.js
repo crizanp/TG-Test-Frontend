@@ -1,24 +1,23 @@
 import axios from 'axios';
 
-export const getUserID = async (setUserID) => {
-  // Fetch userID from Telegram
+export const getUserID = async (setUserID, setUsername) => {
   let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
+  const tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
   if (tgUserID) {
-    // Take only the first 8 characters of the Telegram userID
     tgUserID = tgUserID.toString();
     setUserID(tgUserID);
+    setUsername(tgUsername);
 
     try {
-      // Try to fetch the user's data from the backend
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
       return tgUserID;
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        // If the user is not found, create a new user on the backend
         try {
           const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
+            username: tgUsername,
             points: 0,
             tasksCompleted: [],
             taskHistory: [],
@@ -27,11 +26,11 @@ export const getUserID = async (setUserID) => {
           return tgUserID;
         } catch (postError) {
           console.error('Error creating new user:', postError);
-          throw postError;  // Rethrow the error if user creation fails
+          throw postError;
         }
       } else {
         console.error('Error fetching user data:', error);
-        throw error;  // Rethrow any other errors
+        throw error;
       }
     }
   } else {

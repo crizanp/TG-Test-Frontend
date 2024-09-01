@@ -4,7 +4,7 @@ import { usePoints } from "../context/PointsContext";
 import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
-import FloatingMessage from './FloatingMessage'; // Adjust the path accordingly
+import FloatingMessage from './FloatingMessage';
 
 import {
   TaskContainer,
@@ -30,12 +30,12 @@ import {
   PointsDisplay,
   DollarIcon,
   CloseButtonModel,
-  LoadingSpinner, // Import the LoadingSpinner component
+  LoadingSpinner,
 } from "./TaskList.styles";
-import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
+import dollarImage from "../assets/dollar-homepage.png";
 
 const TaskList = () => {
-  const { points, setPoints, userID, setUserID } = usePoints();
+  const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
@@ -44,14 +44,14 @@ const TaskList = () => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
 
-      const userID = await getUserID(setUserID);
+      const userID = await getUserID(setUserID, setUsername);
       setUserID(userID);
 
       try {
@@ -87,12 +87,12 @@ const TaskList = () => {
       } catch (taskFetchError) {
         console.error("Error fetching tasks:", taskFetchError);
       } finally {
-        setLoading(false); // End loading after tasks are fetched
+        setLoading(false);
       }
     };
 
     initializeUserAndFetchTasks();
-  }, [setPoints, setUserID]);
+  }, [setPoints, setUserID, setUsername]);
 
   useEffect(() => {
     let countdown;
@@ -125,12 +125,14 @@ const TaskList = () => {
 
   const handleClaimReward = async () => {
     setUnderModeration(true);
+    const tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
     try {
       await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
         {
           pointsToAdd: selectedTask.points,
+          username: tgUsername,
         }
       );
 
