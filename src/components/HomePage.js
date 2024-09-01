@@ -11,21 +11,19 @@ import {
   EagleContainer,
   EagleImage,
   Description,
-  FlyingEagle,
+  FlyingNumber,
   SlapEmoji,
 } from './HomePageStyles'; // Import your styled components
 import { debounce, throttle } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png'; // Your existing eagle image
 import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
-import { getUserID } from '../utils/getUserID';
-const flyingEagleImage = "https://i.postimg.cc/tT2fFdfj/IGH-Tap-Mini-Apps-3.png";
 
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tapCount, setTapCount] = useState(0);
   const [animate, setAnimate] = useState(false);
-  const [flyingEagles, setFlyingEagles] = useState([]);
+  const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
@@ -96,8 +94,8 @@ function HomePage() {
 
         setTapCount((prevTapCount) => prevTapCount + 1);
 
-        setFlyingEagles((prevEagles) => [
-          ...prevEagles,
+        setFlyingNumbers((prevNumbers) => [
+          ...prevNumbers,
           { id: Date.now(), x: e.clientX, y: e.clientY, value: addedPoints },
         ]);
 
@@ -121,8 +119,8 @@ function HomePage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFlyingEagles((prevEagles) =>
-        prevEagles.filter((eagle) => Date.now() - eagle.id < 2000)
+      setFlyingNumbers((prevNumbers) =>
+        prevNumbers.filter((number) => Date.now() - number.id < 1000)
       );
       setSlapEmojis((prevEmojis) =>
         prevEmojis.filter((emoji) => Date.now() - emoji.id < 600)
@@ -157,10 +155,10 @@ function HomePage() {
         </Description>
       </MiddleSection>
 
-      {flyingEagles.map((eagle) => (
-        <FlyingEagle key={eagle.id} x={eagle.x} y={eagle.y}>
-          <img src={flyingEagleImage} alt="Flying Eagle" />
-        </FlyingEagle>
+      {flyingNumbers.map((number) => (
+        <FlyingNumber key={number.id} x={number.x} y={number.y}>
+          +{number.value.toFixed(2)}
+        </FlyingNumber>
       ))}
       {slapEmojis.map((emoji) => (
         <SlapEmoji key={emoji.id} x={emoji.x} y={emoji.y}>

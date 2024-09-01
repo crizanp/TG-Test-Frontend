@@ -1,13 +1,13 @@
 import styled, { keyframes, css } from 'styled-components';
 
-const eagleFlyingAnimation = keyframes`
+const numberFlyingAnimation = keyframes`
   0% {
     opacity: 1;
-    transform: translateY(0) translateX(0) scale(0.8);
+    transform: translateY(0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translateY(-120px) translateX(100px) scale(1.2);
+    transform: translateY(-60px) scale(1.5); /* Slightly larger as it moves up */
   }
 `;
 
@@ -141,19 +141,16 @@ export const Description = styled.div`
   }
 `;
 
-export const FlyingEagle = styled.div`
+export const FlyingNumber = styled.div`
   position: absolute;
-  animation: ${eagleFlyingAnimation} 1.5s ease-in-out;
+  font-size: 28px;
+  color: #ffd700;
+  animation: ${numberFlyingAnimation} 1s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
   z-index: 10;
   pointer-events: none;
   transform: translate(-50%, -100%);
-
-  img {
-    width: 50px;
-    height: auto;
-  }
 `;
 
 export const SlapEmoji = styled.div`
