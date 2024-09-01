@@ -14,7 +14,7 @@ import {
   FlyingNumber,
   SlapEmoji,
   EnergyBarContainer,
-  EnergyBar, // Import the new EnergyBar components
+  EnergyBar,
 } from './HomePageStyles'; // Import your styled components
 import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
@@ -29,18 +29,36 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(1000);
+  const [energy, setEnergy] = useState(1000); // Default energy level
 
   useEffect(() => {
     const initializeUser = async () => {
       const userID = await getUserID(setUserID, setUsername);
+
+      // Retrieve points from localStorage
       const savedPoints = localStorage.getItem(`points_${userID}`);
       if (savedPoints) {
         setPoints(parseFloat(savedPoints));
       }
+
+      // Retrieve energy level from localStorage
+      const savedEnergy = localStorage.getItem(`energy_${userID}`);
+      if (savedEnergy) {
+        setEnergy(parseFloat(savedEnergy));
+      } else {
+        // If no saved energy, set to full (1000)
+        setEnergy(1000);
+      }
     };
     initializeUser();
   }, [setUserID, setUsername, setPoints, userID]);
+
+  useEffect(() => {
+    // Save energy level to localStorage whenever it changes
+    if (userID) {
+      localStorage.setItem(`energy_${userID}`, energy);
+    }
+  }, [energy, userID]);
 
   const getMessage = useMemo(() => {
     if (tapCount >= 150) return "He's feeling it! Keep going!";
@@ -113,8 +131,12 @@ function HomePage() {
 
         setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
 
-        // Reduce energy on tap
-        setEnergy((prevEnergy) => Math.max(prevEnergy - 10, 0));
+        // Reduce energy on tap and save to localStorage
+        setEnergy((prevEnergy) => {
+          const newEnergy = Math.max(prevEnergy - 10, 0);
+          localStorage.setItem(`energy_${userID}`, newEnergy);
+          return newEnergy;
+        });
 
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + addedPoints);
@@ -127,11 +149,15 @@ function HomePage() {
   // Regenerate energy over time
   useEffect(() => {
     const regenInterval = setInterval(() => {
-      setEnergy((prevEnergy) => Math.min(prevEnergy + 1, 1000)); // Regenerate 1 energy point per second
+      setEnergy((prevEnergy) => {
+        const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
+        localStorage.setItem(`energy_${userID}`, newEnergy);
+        return newEnergy;
+      });
     }, 1000);
 
     return () => clearInterval(regenInterval);
-  }, []);
+  }, [userID]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -156,7 +182,7 @@ function HomePage() {
         </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
-        <Message>{getMessage()}</Message>
+        <Message>{getMessage}</Message>
         <EagleContainer>
           <EagleImage
             src={eagleImage}
@@ -165,7 +191,7 @@ function HomePage() {
           />
         </EagleContainer>
         <EnergyBarContainer>
-          <EnergyBar energy={(energy / 1000) * 100} /> {/* Energy percentage */}
+          <EnergyBar energy={(energy / 1000) * 100} />
         </EnergyBarContainer>
         <Description>
           Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
