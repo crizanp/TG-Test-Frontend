@@ -1,3 +1,5 @@
+// src/utils/getUserID.js
+
 import axios from 'axios';
 
 export const getUserID = async (setUserID, setUsername) => {
@@ -23,7 +25,7 @@ export const getUserID = async (setUserID, setUsername) => {
         try {
           const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
-            username: tgUsername,  // Include username here
+            username: tgUsername,
             points: 0,
             tasksCompleted: [],
             taskHistory: [],
