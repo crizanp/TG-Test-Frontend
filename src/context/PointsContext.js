@@ -1,49 +1,30 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { getUserID } from '../utils/getUserID';
-
-const PointsContext = createContext();
-
-export const usePoints = () => {
-  return useContext(PointsContext);
-};
-
-export const PointsProvider = ({ children }) => {
+const PointsProvider = ({ children }) => {
   const [points, setPoints] = useState(0);
   const [userID, setUserID] = useState('');
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState('');  // New state for username
 
   useEffect(() => {
-    const fetchPoints = async () => {
+    const fetchUserData = async () => {
       try {
         const userID = await getUserID(setUserID, setUsername);
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user-info/${userID}`);
+        setUserID(userID);
+
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
         setPoints(Math.round(response.data.points));
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          try {
-            const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/api/user-info/register`, {
-              userID,
-              username,
-              points: 0,
-              tasksCompleted: [],
-              taskHistory: [],
-            });
-            setPoints(Math.round(newUserResponse.data.points));
-          } catch (postError) {
-            console.error('Error creating new user:', postError);
-          }
-        } else {
-          console.error('Error fetching user points:', error);
+
+        if (response.data.username) {
+          setUsername(response.data.username);  // Set the username from the response
         }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
       }
     };
 
-    fetchPoints();
-  }, [setUserID, setUsername]);
+    fetchUserData();
+  }, [setUserID, setPoints]);
 
   return (
-    <PointsContext.Provider value={{ points, setPoints, userID, setUserID, username, setUsername }}>
+    <PointsContext.Provider value={{ points, setPoints, userID, username }}>
       {children}
     </PointsContext.Provider>
   );
