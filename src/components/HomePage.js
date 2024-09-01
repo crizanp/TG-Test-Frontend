@@ -18,7 +18,7 @@ import { debounce, throttle } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png'; // Your existing eagle image
 import dollarImage from '../assets/dollar-homepage.png'; // Your existing dollar icon image
-
+import { getUserID } from '../utils/getUserID';
 function HomePage() {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tapCount, setTapCount] = useState(0);
