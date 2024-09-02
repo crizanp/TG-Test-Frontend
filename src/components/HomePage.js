@@ -30,7 +30,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(null); // Start as null until we fetch the correct value
+  const [energy, setEnergy] = useState(1000); // Start with 1000, will be overwritten by localStorage if available
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -47,15 +47,27 @@ function HomePage() {
       const lastUpdate = localStorage.getItem(`lastUpdate_${userID}`);
 
       if (savedEnergy !== null && lastUpdate !== null) {
-        const timeElapsed = (Date.now() - parseInt(lastUpdate, 10)) / 1000; // Time elapsed in seconds
-        const regeneratedEnergy = Math.min(1000, parseFloat(savedEnergy) + timeElapsed); // Regenerate energy over time
-        setEnergy(regeneratedEnergy);
+        const savedEnergyFloat = parseFloat(savedEnergy);
+        const lastUpdateInt = parseInt(lastUpdate, 10);
+        
+        if (!isNaN(savedEnergyFloat) && !isNaN(lastUpdateInt)) {
+          const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
+          const regeneratedEnergy = Math.min(1000, savedEnergyFloat + timeElapsed);
+
+          // Set the energy to the regenerated value
+          setEnergy(regeneratedEnergy);
+          localStorage.setItem(`energy_${userID}`, regeneratedEnergy);
+        } else {
+          // Fallback to full energy if parsing fails
+          setEnergy(1000);
+        }
       } else {
         setEnergy(1000); // Set to full if there's no saved value
       }
     };
+
     initializeUser();
-  }, [setUserID, setUsername, setPoints]);
+  }, [setUserID, setUsername, setPoints, userID]);
 
   useEffect(() => {
     if (energy !== null && userID) {
@@ -71,10 +83,6 @@ function HomePage() {
     if (tapCount >= 50) return "Yeah, slap him more! :)";
     return "Slap this eagle, he took my Golden CHICK!";
   }, [tapCount]);
-
-  const calculatePoints = () => {
-    return 3;
-  };
 
   const syncPointsWithServer = useCallback(
     debounce(async (totalPointsToAdd) => {
@@ -106,18 +114,12 @@ function HomePage() {
       const height = rect.height;
 
       if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
-        const pointsToAdd = calculatePoints();
+        const pointsToAdd = 1; // Each tap adds 1 point, regardless of tap speed or other factors
 
-        const currentTime = Date.now();
-        const timeDiff = currentTime - lastTapTime;
-        const tapSpeedMultiplier = Math.max(1, 500 / timeDiff);
-
-        setLastTapTime(currentTime);
-
-        const addedPoints = pointsToAdd * tapSpeedMultiplier;
+        setLastTapTime(Date.now());
 
         setPoints((prevPoints) => {
-          const newPoints = prevPoints + addedPoints;
+          const newPoints = prevPoints + pointsToAdd;
           localStorage.setItem(`points_${userID}`, newPoints);
           return newPoints;
         });
@@ -126,7 +128,7 @@ function HomePage() {
 
         setFlyingNumbers((prevNumbers) => [
           ...prevNumbers,
-          { id: Date.now(), x: e.clientX, y: e.clientY, value: addedPoints },
+          { id: Date.now(), x: e.clientX, y: e.clientY, value: pointsToAdd },
         ]);
 
         setSlapEmojis((prevEmojis) => [
@@ -134,7 +136,7 @@ function HomePage() {
           { id: Date.now(), x: e.clientX, y: e.clientY },
         ]);
 
-        setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
+        setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
 
         // Reduce energy on tap and save to localStorage
         setEnergy((prevEnergy) => {
@@ -145,7 +147,7 @@ function HomePage() {
         });
 
         if (navigator.onLine) {
-          syncPointsWithServer(offlinePoints + addedPoints);
+          syncPointsWithServer(offlinePoints + pointsToAdd);
         }
       }
     },
@@ -154,19 +156,17 @@ function HomePage() {
 
   // Regenerate energy over time
   useEffect(() => {
-    if (energy !== null) {
-      const regenInterval = setInterval(() => {
-        setEnergy((prevEnergy) => {
-          const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
-          localStorage.setItem(`energy_${userID}`, newEnergy);
-          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
-          return newEnergy;
-        });
-      }, 1000);
+    const regenInterval = setInterval(() => {
+      setEnergy((prevEnergy) => {
+        const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
+        localStorage.setItem(`energy_${userID}`, newEnergy);
+        localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
+        return newEnergy;
+      });
+    }, 1000);
 
-      return () => clearInterval(regenInterval);
-    }
-  }, [energy, userID]);
+    return () => clearInterval(regenInterval);
+  }, [userID]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -197,6 +197,9 @@ function HomePage() {
             src={eagleImage}
             alt="Eagle"
             onClick={handleTap}
+            onTouchStart={(e) => {
+              Array.from(e.touches).forEach((touch) => handleTap({ clientX: touch.clientX, clientY: touch.clientY, currentTarget: e.currentTarget }));
+            }}
           />
         </EagleContainer>
         <div style={{ display: 'flex', alignItems: 'center' }}>
