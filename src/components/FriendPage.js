@@ -2,15 +2,16 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { debounce } from "lodash";
+import UserInfo from './UserInfo';
+import dollarImage from '../assets/dollar-homepage.png';
 
 // Styled components for better UI/UX
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(145deg, #11204f, #1b346f);
+  min-height: 100vh;
+  background: linear-gradient(145deg, #0a2b4e, #1a3e68);
   padding: 20px;
   color: #ffffff;
   font-family: Arial, sans-serif;
@@ -24,6 +25,8 @@ const ReferralContainer = styled.div`
   max-width: 400px;
   text-align: center;
   border-radius: 10px;
+  animation: fadeIn 1s ease-in-out;
+  margin-top: 70px; /* To accommodate sticky user info */
 `;
 
 const Title = styled.h2`
@@ -43,6 +46,11 @@ const PointsDisplay = styled.div`
   margin-bottom: 20px;
 `;
 
+const DollarIcon = styled.img`
+  width: 30px;
+  margin-right: 10px;
+`;
+
 const ReferralLink = styled.a`
   background-color: #162447;
   padding: 10px;
@@ -53,9 +61,11 @@ const ReferralLink = styled.a`
   color: #ffffff;
   font-size: 14px;
   text-decoration: none;
+  transition: background-color 0.3s;
 
   &:hover {
     text-decoration: underline;
+    background-color: #1e4d85;
   }
 `;
 
@@ -69,9 +79,27 @@ const CopyButton = styled.button`
   cursor: pointer;
   font-weight: bold;
   font-size: 14px;
+  transition: background-color 0.3s;
 
   &:hover {
     background-color: #e6b800;
+  }
+`;
+
+const ForwardButton = styled.button`
+  background-color: #00c1ff;
+  color: #1f4068;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #00a7d1;
   }
 `;
 
@@ -109,6 +137,15 @@ const ReferralUsername = styled.div`
 const ReferralPoints = styled.div`
   font-size: 16px;
   color: #ffcc00;
+`;
+
+const StickyUserInfoContainer = styled.div`
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: #11204f;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 `;
 
 const FriendPage = () => {
@@ -179,11 +216,21 @@ const FriendPage = () => {
       });
   };
 
+  const handleForwardLink = () => {
+    window.Telegram.WebApp?.openTelegramLink(referralLink);
+  };
+
   return (
     <MainContainer>
-      <ReferralContainer>
-        <PointsDisplay>{points} Points</PointsDisplay>
+      <StickyUserInfoContainer>
+        <UserInfo />
+        <PointsDisplay>
+          <DollarIcon src={dollarImage} alt="Dollar Icon" />
+          {Math.floor(points)}
+        </PointsDisplay>
+      </StickyUserInfoContainer>
 
+      <ReferralContainer>
         <Title>Refer & Earn More Rewards!</Title>
 
         <ReferralLink
@@ -196,6 +243,9 @@ const FriendPage = () => {
         <CopyButton onClick={handleCopyLink} disabled={!referralLink}>
           Copy Link
         </CopyButton>
+        <ForwardButton onClick={handleForwardLink} disabled={!referralLink}>
+          Forward in Telegram
+        </ForwardButton>
         {copySuccess && <Notice>{copySuccess}</Notice>}
 
         <ReferralStats>
