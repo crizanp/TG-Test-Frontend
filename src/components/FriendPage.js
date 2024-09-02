@@ -26,7 +26,7 @@ const ReferralContainer = styled.div`
   text-align: center;
   border-radius: 10px;
   animation: fadeIn 1s ease-in-out;
-  margin-top: 70px; /* To accommodate sticky user info */
+  margin-top: 20px;
 `;
 
 const Title = styled.h2`
@@ -43,12 +43,20 @@ const PointsDisplay = styled.div`
   color: #ffcc00;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: center;
+  margin-top: 10px;
 `;
 
 const DollarIcon = styled.img`
   width: 30px;
   margin-right: 10px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
 `;
 
 const ReferralLink = styled.a`
@@ -75,7 +83,6 @@ const CopyButton = styled.button`
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
-  margin-top: 10px;
   cursor: pointer;
   font-weight: bold;
   font-size: 14px;
@@ -92,7 +99,6 @@ const ForwardButton = styled.button`
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
-  margin-top: 10px;
   cursor: pointer;
   font-weight: bold;
   font-size: 14px;
@@ -146,6 +152,8 @@ const StickyUserInfoContainer = styled.div`
   background: #11204f;
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 10px 0;
+  text-align: center;
 `;
 
 const FriendPage = () => {
@@ -217,7 +225,9 @@ const FriendPage = () => {
   };
 
   const handleForwardLink = () => {
-    window.Telegram.WebApp?.openTelegramLink(referralLink);
+    // Open Telegram's forwarding dialog for the referral link
+    const inviteLink = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=Join%20and%20earn%20rewards!`;
+    window.Telegram.WebApp?.openTelegramLink(inviteLink);
   };
 
   return (
@@ -240,12 +250,16 @@ const FriendPage = () => {
         >
           {referralLink || "Generating your referral link..."}
         </ReferralLink>
-        <CopyButton onClick={handleCopyLink} disabled={!referralLink}>
-          Copy Link
-        </CopyButton>
-        <ForwardButton onClick={handleForwardLink} disabled={!referralLink}>
-          Forward in Telegram
-        </ForwardButton>
+
+        <ButtonGroup>
+          <CopyButton onClick={handleCopyLink} disabled={!referralLink}>
+            Copy Link
+          </CopyButton>
+          <ForwardButton onClick={handleForwardLink} disabled={!referralLink}>
+            Forward in Telegram
+          </ForwardButton>
+        </ButtonGroup>
+
         {copySuccess && <Notice>{copySuccess}</Notice>}
 
         <ReferralStats>
