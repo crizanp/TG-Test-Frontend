@@ -30,7 +30,11 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(null); // Initially null to ensure proper initialization
+  const [energy, setEnergy] = useState(null);
+
+  const MAX_ENERGY = 1000;
+  const ENERGY_REGEN_RATE = 1; // 1 energy per second
+  const ENERGY_PER_TAP = 10;
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -49,20 +53,22 @@ function HomePage() {
       if (savedEnergy !== null && lastUpdate !== null) {
         const savedEnergyFloat = parseFloat(savedEnergy);
         const lastUpdateInt = parseInt(lastUpdate, 10);
-        
+
         if (!isNaN(savedEnergyFloat) && !isNaN(lastUpdateInt)) {
           const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
-          const regeneratedEnergy = Math.min(1000, savedEnergyFloat + timeElapsed);
+          const regeneratedEnergy = Math.min(MAX_ENERGY, savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE);
 
           // Set the energy to the regenerated value
           setEnergy(regeneratedEnergy);
-          localStorage.setItem(`energy_${userID}`, regeneratedEnergy);
+          localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
+          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         } else {
           // Fallback to previous saved value or 1000 if parsing fails
-          setEnergy(savedEnergyFloat || 1000);
+          setEnergy(savedEnergyFloat || MAX_ENERGY);
         }
       } else {
-        setEnergy(1000); // Set to full if there's no saved value
+        setEnergy(MAX_ENERGY); // Set to full if there's no saved value
+        localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
       }
     };
 
@@ -88,15 +94,15 @@ function HomePage() {
     debounce(async (totalPointsToAdd) => {
       try {
         const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
-        { pointsToAdd: totalPointsToAdd }
-      );
-      setPoints(response.data.points);
-      localStorage.setItem(`points_${userID}`, response.data.points);
-      setOfflinePoints(0);
-    } catch (error) {
-      console.error('Error syncing points with server:', error);
-    }
+          `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
+          { pointsToAdd: totalPointsToAdd }
+        );
+        setPoints(response.data.points);
+        localStorage.setItem(`points_${userID}`, response.data.points);
+        setOfflinePoints(0);
+      } catch (error) {
+        console.error('Error syncing points with server:', error);
+      }
     }, 1000),
     [userID, setPoints]
   );
@@ -140,7 +146,7 @@ function HomePage() {
 
         // Reduce energy on tap and save to localStorage
         setEnergy((prevEnergy) => {
-          const newEnergy = Math.max(prevEnergy - 10, 0);
+          const newEnergy = Math.max(prevEnergy - ENERGY_PER_TAP, 0);
           localStorage.setItem(`energy_${userID}`, newEnergy.toFixed(2));
           localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
           return newEnergy;
@@ -158,10 +164,13 @@ function HomePage() {
   useEffect(() => {
     const regenInterval = setInterval(() => {
       setEnergy((prevEnergy) => {
-        const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
-        localStorage.setItem(`energy_${userID}`, newEnergy.toFixed(2));
+        const timeElapsed = (Date.now() - parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10)) / 1000;
+        const regeneratedEnergy = Math.min(MAX_ENERGY, prevEnergy + timeElapsed * ENERGY_REGEN_RATE);
+
+        localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
         localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
-        return newEnergy;
+
+        return regeneratedEnergy;
       });
     }, 1000);
 
@@ -198,7 +207,9 @@ function HomePage() {
             alt="Eagle"
             onClick={handleTap}
             onTouchStart={(e) => {
-              Array.from(e.touches).forEach((touch) => handleTap({ clientX: touch.clientX, clientY: touch.clientY, currentTarget: e.currentTarget }));
+              Array.from(e.touches).forEach((touch) =>
+                handleTap({ clientX: touch.clientX, clientY: touch.clientY, currentTarget: e.currentTarget })
+              );
             }}
           />
         </EagleContainer>
