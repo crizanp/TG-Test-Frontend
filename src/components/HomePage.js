@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useEnergy } from '../context/EnergyContext';
 import { usePoints } from '../context/PointsContext';
 import eagleImage from '../assets/eagle.png'; // Ensure this image is in your assets folder
+import dollarImage from '../assets/dollar-homepage.png'; // Import the dollar image
 
 // Styling components (you can adapt these to your styling solution)
 import {
