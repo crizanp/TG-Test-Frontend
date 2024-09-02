@@ -30,7 +30,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(1000); // Start with 1000, will be overwritten by localStorage if available
+  const [energy, setEnergy] = useState(1000); // Default energy level
 
   useEffect(() => {
     const initializeUser = async () => {
