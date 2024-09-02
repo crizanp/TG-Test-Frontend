@@ -56,18 +56,24 @@ function HomePage() {
 
         if (!isNaN(savedEnergyFloat) && !isNaN(lastUpdateInt)) {
           const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
-          const regeneratedEnergy = Math.min(MAX_ENERGY, savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE);
+          const regeneratedEnergy = Math.min(
+            MAX_ENERGY,
+            savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE
+          );
 
-          // Set the energy to the regenerated value
-          setEnergy(regeneratedEnergy);
-          localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
+          // Set the energy to the regenerated value, but not less than 0
+          setEnergy(Math.max(0, regeneratedEnergy));
+          localStorage.setItem(`energy_${userID}`, Math.max(0, regeneratedEnergy).toFixed(2));
           localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         } else {
-          // Fallback to previous saved value or 1000 if parsing fails
-          setEnergy(savedEnergyFloat || MAX_ENERGY);
+          // Fallback to MAX_ENERGY if parsing fails or data is invalid
+          setEnergy(MAX_ENERGY);
+          localStorage.setItem(`energy_${userID}`, MAX_ENERGY.toFixed(2));
+          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         }
       } else {
         setEnergy(MAX_ENERGY); // Set to full if there's no saved value
+        localStorage.setItem(`energy_${userID}`, MAX_ENERGY.toFixed(2));
         localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
       }
     };
@@ -164,7 +170,8 @@ function HomePage() {
   useEffect(() => {
     const regenInterval = setInterval(() => {
       setEnergy((prevEnergy) => {
-        const timeElapsed = (Date.now() - parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10)) / 1000;
+        const lastUpdateInt = parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10);
+        const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
         const regeneratedEnergy = Math.min(MAX_ENERGY, prevEnergy + timeElapsed * ENERGY_REGEN_RATE);
 
         localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
