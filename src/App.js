@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { PointsProvider } from './context/PointsContext';
-import { EnergyProvider } from './context/EnergyContext';  // Ensure this is imported correctly
+import { EnergyProvider } from './context/EnergyContext'; // Import EnergyProvider
 import Layout from './components/Layout';
 import TaskList from './components/TaskList';
 import HomePage from './components/HomePage';
@@ -15,8 +15,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <EnergyProvider>
-      <PointsProvider>
+    <PointsProvider>
+      <EnergyProvider> {/* Wrap the entire app with EnergyProvider */}
         <Router>
           <Layout>
             <Routes>
@@ -82,8 +82,8 @@ function App() {
             </Routes>
           </Layout>
         </Router>
-      </PointsProvider>
-    </EnergyProvider>
+      </EnergyProvider>
+    </PointsProvider>
   );
 }
 
