@@ -28,9 +28,8 @@ function HomePage() {
   const [tapCount, setTapCount] = useState(0);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
-  const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(null);
+  const [energy, setEnergy] = useState(1000);
 
   const MAX_ENERGY = 1000;
   const ENERGY_REGEN_RATE = 1; // 1 energy per second
@@ -60,16 +59,15 @@ function HomePage() {
 
           // Set the energy to the regenerated value
           setEnergy(regeneratedEnergy);
-          localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
-          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         } else {
-          // Fallback to previous saved value or 1000 if parsing fails
           setEnergy(savedEnergyFloat || MAX_ENERGY);
         }
       } else {
-        setEnergy(MAX_ENERGY); // Set to full if there's no saved value
-        localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
+        setEnergy(MAX_ENERGY);
       }
+
+      // Update the timestamp in localStorage
+      localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
     };
 
     initializeUser();
@@ -122,8 +120,6 @@ function HomePage() {
       if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
         const pointsToAdd = 1; // Each tap adds 1 point
 
-        setLastTapTime(Date.now());
-
         setPoints((prevPoints) => {
           const newPoints = prevPoints + pointsToAdd;
           localStorage.setItem(`points_${userID}`, newPoints);
@@ -144,7 +140,7 @@ function HomePage() {
 
         setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
 
-        // Reduce energy on tap and save to localStorage
+        // Reduce energy on tap
         setEnergy((prevEnergy) => {
           const newEnergy = Math.max(prevEnergy - ENERGY_PER_TAP, 0);
           localStorage.setItem(`energy_${userID}`, newEnergy.toFixed(2));
@@ -157,14 +153,15 @@ function HomePage() {
         }
       }
     },
-    [lastTapTime, syncPointsWithServer, setPoints, offlinePoints, energy, userID]
+    [syncPointsWithServer, setPoints, offlinePoints, energy, userID]
   );
 
   // Regenerate energy over time
   useEffect(() => {
     const regenInterval = setInterval(() => {
       setEnergy((prevEnergy) => {
-        const timeElapsed = (Date.now() - parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10)) / 1000;
+        const lastUpdate = parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10);
+        const timeElapsed = (Date.now() - lastUpdate) / 1000;
         const regeneratedEnergy = Math.min(MAX_ENERGY, prevEnergy + timeElapsed * ENERGY_REGEN_RATE);
 
         localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
