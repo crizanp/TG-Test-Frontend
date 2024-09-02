@@ -233,7 +233,6 @@ const FriendPage = () => {
   return (
     <MainContainer>
       <StickyUserInfoContainer>
-        <UserInfo />
         <PointsDisplay>
           <DollarIcon src={dollarImage} alt="Dollar Icon" />
           {Math.floor(points)}
