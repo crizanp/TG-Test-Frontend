@@ -25,7 +25,7 @@ import dollarImage from '../assets/dollar-homepage.png';
 import { getUserID } from '../utils/getUserID';
 
 function HomePage() {
-  const { points, setPoints, userID } = usePoints();
+  const { points, setPoints, userID, setUserID } = usePoints(); // Include setUserID here
   const { energy, decreaseEnergy } = useEnergy(); // Access energy and decreaseEnergy from context
   const [tapCount, setTapCount] = useState(0);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
