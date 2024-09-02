@@ -30,7 +30,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(1000); // Default energy level
+  const [energy, setEnergy] = useState(null); // Start as null until we fetch the correct value
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -50,7 +50,6 @@ function HomePage() {
         const timeElapsed = (Date.now() - parseInt(lastUpdate, 10)) / 1000;
         const regeneratedEnergy = Math.min(1000, parseFloat(savedEnergy) + timeElapsed);
         setEnergy(regeneratedEnergy);
-        localStorage.setItem(`energy_${userID}`, regeneratedEnergy);
       } else {
         setEnergy(1000); // Set to full if there's no saved value
       }
