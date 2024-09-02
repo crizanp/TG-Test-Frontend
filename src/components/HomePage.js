@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { usePoints } from '../context/PointsContext';
 import {
@@ -28,14 +28,14 @@ function HomePage() {
   const [tapCount, setTapCount] = useState(0);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
-  const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(null);
+  const [energy, setEnergy] = useState(1000);
 
   const MAX_ENERGY = 1000;
   const ENERGY_REGEN_RATE = 1; // 1 energy per second
   const ENERGY_PER_TAP = 10;
 
+  // Initialize user and load energy from localStorage
   useEffect(() => {
     const initializeUser = async () => {
       const userID = await getUserID(setUserID, setUsername);
@@ -46,76 +46,56 @@ function HomePage() {
         setPoints(parseFloat(savedPoints));
       }
 
-      // Retrieve energy level and last update time from localStorage
+      // Load energy and calculate regeneration
       const savedEnergy = localStorage.getItem(`energy_${userID}`);
       const lastUpdate = localStorage.getItem(`lastUpdate_${userID}`);
-
+      
       if (savedEnergy !== null && lastUpdate !== null) {
         const savedEnergyFloat = parseFloat(savedEnergy);
         const lastUpdateInt = parseInt(lastUpdate, 10);
 
-        if (!isNaN(savedEnergyFloat) && !isNaN(lastUpdateInt)) {
-          const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
-          const regeneratedEnergy = Math.min(
-            MAX_ENERGY,
-            savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE
-          );
+        const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
+        const regeneratedEnergy = Math.min(
+          MAX_ENERGY,
+          savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE
+        );
 
-          // Set the energy to the regenerated value
-          setEnergy(Math.max(0, regeneratedEnergy));
-        } else {
-          // Fallback to MAX_ENERGY if parsing fails or data is invalid
-          setEnergy(MAX_ENERGY);
-        }
+        setEnergy(regeneratedEnergy);
       } else {
-        // Set to full if there's no saved value
-        setEnergy(MAX_ENERGY);
+        setEnergy(MAX_ENERGY); // Start at max if no saved energy
       }
 
-      // Update localStorage with the new energy level and current time
-      localStorage.setItem(`energy_${userID}`, Math.max(0, energy || MAX_ENERGY).toFixed(2));
       localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
     };
 
     initializeUser();
   }, [setUserID, setUsername, setPoints, userID]);
 
+  // Save energy to localStorage on change
   useEffect(() => {
-    if (energy !== null && userID) {
-      // Save energy level and current time to localStorage whenever it changes
+    if (userID) {
       localStorage.setItem(`energy_${userID}`, energy.toFixed(2));
       localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
     }
   }, [energy, userID]);
 
-  const getMessage = useMemo(() => {
-    if (tapCount >= 150) return "He's feeling it! Keep going!";
-    if (tapCount >= 100) return "Ouch! That's gotta hurt!";
-    if (tapCount >= 50) return "Yeah, slap him more! :)";
-    return "Slap this eagle, he took my Golden CHICK!";
-  }, [tapCount]);
+  // Regenerate energy over time
+  useEffect(() => {
+    const regenInterval = setInterval(() => {
+      setEnergy((prevEnergy) => {
+        const newEnergy = Math.min(prevEnergy + ENERGY_REGEN_RATE, MAX_ENERGY);
+        return newEnergy;
+      });
+    }, 1000); // 1 energy per second
 
-  const syncPointsWithServer = useCallback(
-    debounce(async (totalPointsToAdd) => {
-      try {
-        const response = await axios.put(
-          `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
-          { pointsToAdd: totalPointsToAdd }
-        );
-        setPoints(response.data.points);
-        localStorage.setItem(`points_${userID}`, response.data.points);
-        setOfflinePoints(0);
-      } catch (error) {
-        console.error('Error syncing points with server:', error);
-      }
-    }, 1000),
-    [userID, setPoints]
-  );
+    return () => clearInterval(regenInterval);
+  }, []);
 
+  // Handle tapping
   const handleTap = useCallback(
     (e) => {
-      if (energy <= 0) {
-        return; // Stop tapping if energy is depleted
+      if (energy < ENERGY_PER_TAP) {
+        return; // Stop tapping if energy is too low
       }
 
       const rect = e.currentTarget.getBoundingClientRect();
@@ -126,8 +106,6 @@ function HomePage() {
 
       if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
         const pointsToAdd = 1; // Each tap adds 1 point
-
-        setLastTapTime(Date.now());
 
         setPoints((prevPoints) => {
           const newPoints = prevPoints + pointsToAdd;
@@ -149,56 +127,39 @@ function HomePage() {
 
         setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
 
-        // Reduce energy on tap and save to localStorage
         setEnergy((prevEnergy) => {
           const newEnergy = Math.max(prevEnergy - ENERGY_PER_TAP, 0);
           localStorage.setItem(`energy_${userID}`, newEnergy.toFixed(2));
-          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
           return newEnergy;
         });
-
-        if (navigator.onLine) {
-          syncPointsWithServer(offlinePoints + pointsToAdd);
-        }
       }
     },
-    [lastTapTime, syncPointsWithServer, setPoints, offlinePoints, energy, userID]
+    [energy, setPoints, userID]
   );
 
-  // Regenerate energy over time
-  useEffect(() => {
-    const regenInterval = setInterval(() => {
-      const lastUpdateInt = parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10);
-      const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
-
-      setEnergy((prevEnergy) => {
-        const regeneratedEnergy = Math.min(
-          MAX_ENERGY,
-          prevEnergy + timeElapsed * ENERGY_REGEN_RATE
+  // Sync points with server (debounced)
+  const syncPointsWithServer = useCallback(
+    debounce(async (totalPointsToAdd) => {
+      try {
+        const response = await axios.put(
+          `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
+          { pointsToAdd: totalPointsToAdd }
         );
-
-        localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
-        localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
-
-        return regeneratedEnergy;
-      });
-    }, 1000);
-
-    return () => clearInterval(regenInterval);
-  }, [userID]);
+        setPoints(response.data.points);
+        localStorage.setItem(`points_${userID}`, response.data.points);
+        setOfflinePoints(0);
+      } catch (error) {
+        console.error('Error syncing points with server:', error);
+      }
+    }, 1000),
+    [userID, setPoints]
+  );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFlyingNumbers((prevNumbers) =>
-        prevNumbers.filter((number) => Date.now() - number.id < 1000)
-      );
-      setSlapEmojis((prevEmojis) =>
-        prevEmojis.filter((emoji) => Date.now() - emoji.id < 600)
-      );
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
+    if (navigator.onLine && offlinePoints > 0) {
+      syncPointsWithServer(offlinePoints);
+    }
+  }, [offlinePoints, syncPointsWithServer]);
 
   return (
     <HomeContainer>
@@ -210,7 +171,15 @@ function HomePage() {
         </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
-        <Message>{getMessage}</Message>
+        <Message>
+          {tapCount >= 150
+            ? "He's feeling it! Keep going!"
+            : tapCount >= 100
+            ? "Ouch! That's gotta hurt!"
+            : tapCount >= 50
+            ? "Yeah, slap him more! :)"
+            : "Slap this eagle, he took my Golden CHICK!"}
+        </Message>
         <EagleContainer>
           <EagleImage
             src={eagleImage}
