@@ -47,15 +47,15 @@ function HomePage() {
       const lastUpdate = localStorage.getItem(`lastUpdate_${userID}`);
 
       if (savedEnergy !== null && lastUpdate !== null) {
-        const timeElapsed = (Date.now() - parseInt(lastUpdate, 10)) / 1000;
-        const regeneratedEnergy = Math.min(1000, parseFloat(savedEnergy) + timeElapsed);
+        const timeElapsed = (Date.now() - parseInt(lastUpdate, 10)) / 1000; // Time elapsed in seconds
+        const regeneratedEnergy = Math.min(1000, parseFloat(savedEnergy) + timeElapsed); // Regenerate energy over time
         setEnergy(regeneratedEnergy);
       } else {
         setEnergy(1000); // Set to full if there's no saved value
       }
     };
     initializeUser();
-  }, [setUserID, setUsername, setPoints, userID]);
+  }, [setUserID, setUsername, setPoints]);
 
   useEffect(() => {
     if (energy !== null && userID) {
@@ -154,17 +154,19 @@ function HomePage() {
 
   // Regenerate energy over time
   useEffect(() => {
-    const regenInterval = setInterval(() => {
-      setEnergy((prevEnergy) => {
-        const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
-        localStorage.setItem(`energy_${userID}`, newEnergy);
-        localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
-        return newEnergy;
-      });
-    }, 1000);
+    if (energy !== null) {
+      const regenInterval = setInterval(() => {
+        setEnergy((prevEnergy) => {
+          const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
+          localStorage.setItem(`energy_${userID}`, newEnergy);
+          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
+          return newEnergy;
+        });
+      }, 1000);
 
-    return () => clearInterval(regenInterval);
-  }, [userID]);
+      return () => clearInterval(regenInterval);
+    }
+  }, [energy, userID]);
 
   useEffect(() => {
     const interval = setInterval(() => {
