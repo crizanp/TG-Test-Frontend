@@ -49,6 +49,8 @@ function HomePage() {
       const savedEnergy = localStorage.getItem(`energy_${userID}`);
       const lastUpdate = localStorage.getItem(`lastUpdate_${userID}`);
 
+      let initialEnergy = MAX_ENERGY;
+
       if (savedEnergy !== null && lastUpdate !== null) {
         const savedEnergyFloat = parseFloat(savedEnergy);
         const lastUpdateInt = parseInt(lastUpdate, 10);
@@ -56,18 +58,13 @@ function HomePage() {
         if (!isNaN(savedEnergyFloat) && !isNaN(lastUpdateInt)) {
           const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
           const regeneratedEnergy = Math.min(MAX_ENERGY, savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE);
-
-          // Set the energy to the regenerated value
-          setEnergy(regeneratedEnergy);
-        } else {
-          setEnergy(savedEnergyFloat || MAX_ENERGY);
+          initialEnergy = regeneratedEnergy;
         }
-      } else {
-        setEnergy(MAX_ENERGY);
       }
 
-      // Update the timestamp in localStorage
+      setEnergy(initialEnergy);
       localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
+      localStorage.setItem(`energy_${userID}`, initialEnergy.toFixed(2));
     };
 
     initializeUser();
