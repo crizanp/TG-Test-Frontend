@@ -61,21 +61,20 @@ function HomePage() {
             savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE
           );
 
-          // Set the energy to the regenerated value, but not less than 0
+          // Set the energy to the regenerated value
           setEnergy(Math.max(0, regeneratedEnergy));
-          localStorage.setItem(`energy_${userID}`, Math.max(0, regeneratedEnergy).toFixed(2));
-          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         } else {
           // Fallback to MAX_ENERGY if parsing fails or data is invalid
           setEnergy(MAX_ENERGY);
-          localStorage.setItem(`energy_${userID}`, MAX_ENERGY.toFixed(2));
-          localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         }
       } else {
-        setEnergy(MAX_ENERGY); // Set to full if there's no saved value
-        localStorage.setItem(`energy_${userID}`, MAX_ENERGY.toFixed(2));
-        localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
+        // Set to full if there's no saved value
+        setEnergy(MAX_ENERGY);
       }
+
+      // Update localStorage with the new energy level and current time
+      localStorage.setItem(`energy_${userID}`, Math.max(0, energy || MAX_ENERGY).toFixed(2));
+      localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
     };
 
     initializeUser();
@@ -169,10 +168,14 @@ function HomePage() {
   // Regenerate energy over time
   useEffect(() => {
     const regenInterval = setInterval(() => {
+      const lastUpdateInt = parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10);
+      const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
+
       setEnergy((prevEnergy) => {
-        const lastUpdateInt = parseInt(localStorage.getItem(`lastUpdate_${userID}`), 10);
-        const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
-        const regeneratedEnergy = Math.min(MAX_ENERGY, prevEnergy + timeElapsed * ENERGY_REGEN_RATE);
+        const regeneratedEnergy = Math.min(
+          MAX_ENERGY,
+          prevEnergy + timeElapsed * ENERGY_REGEN_RATE
+        );
 
         localStorage.setItem(`energy_${userID}`, regeneratedEnergy.toFixed(2));
         localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
