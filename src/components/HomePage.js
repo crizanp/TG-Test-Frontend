@@ -30,7 +30,7 @@ function HomePage() {
   const [slapEmojis, setSlapEmojis] = useState([]);
   const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
-  const [energy, setEnergy] = useState(1000); // Start with 1000, will be overwritten by localStorage if available
+  const [energy, setEnergy] = useState(null); // Initially null to ensure proper initialization
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -58,8 +58,8 @@ function HomePage() {
           setEnergy(regeneratedEnergy);
           localStorage.setItem(`energy_${userID}`, regeneratedEnergy);
         } else {
-          // Fallback to full energy if parsing fails
-          setEnergy(1000);
+          // Fallback to previous saved value or 1000 if parsing fails
+          setEnergy(savedEnergyFloat || 1000);
         }
       } else {
         setEnergy(1000); // Set to full if there's no saved value
@@ -72,7 +72,7 @@ function HomePage() {
   useEffect(() => {
     if (energy !== null && userID) {
       // Save energy level and current time to localStorage whenever it changes
-      localStorage.setItem(`energy_${userID}`, energy);
+      localStorage.setItem(`energy_${userID}`, energy.toFixed(2));
       localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
     }
   }, [energy, userID]);
@@ -114,7 +114,7 @@ function HomePage() {
       const height = rect.height;
 
       if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
-        const pointsToAdd = 1; // Each tap adds 1 point, regardless of tap speed or other factors
+        const pointsToAdd = 1; // Each tap adds 1 point
 
         setLastTapTime(Date.now());
 
@@ -141,7 +141,7 @@ function HomePage() {
         // Reduce energy on tap and save to localStorage
         setEnergy((prevEnergy) => {
           const newEnergy = Math.max(prevEnergy - 10, 0);
-          localStorage.setItem(`energy_${userID}`, newEnergy);
+          localStorage.setItem(`energy_${userID}`, newEnergy.toFixed(2));
           localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
           return newEnergy;
         });
@@ -159,7 +159,7 @@ function HomePage() {
     const regenInterval = setInterval(() => {
       setEnergy((prevEnergy) => {
         const newEnergy = Math.min(prevEnergy + 1, 1000); // Regenerate 1 energy point per second
-        localStorage.setItem(`energy_${userID}`, newEnergy);
+        localStorage.setItem(`energy_${userID}`, newEnergy.toFixed(2));
         localStorage.setItem(`lastUpdate_${userID}`, Date.now().toString());
         return newEnergy;
       });
@@ -191,7 +191,7 @@ function HomePage() {
         </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
-        <Message>{getMessage}</Message> {/* Use getMessage directly without parentheses */}
+        <Message>{getMessage}</Message>
         <EagleContainer>
           <EagleImage
             src={eagleImage}
