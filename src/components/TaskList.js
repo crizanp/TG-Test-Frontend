@@ -136,7 +136,7 @@ const TaskList = () => {
   const handleClaimReward = async () => {
     setUnderModeration(true);
     const tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
-
+  
     try {
       await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
@@ -145,12 +145,19 @@ const TaskList = () => {
           username: tgUsername,
         }
       );
-
+  
       const userResponse = await axios.get(
         `${process.env.REACT_APP_API_URL}/user-info/${userID}`
       );
       setPoints(userResponse.data.points);
-
+  
+      // Fetch completed tasks again
+      const completedTasksMap = {};
+      userResponse.data.tasksCompleted.forEach((taskId) => {
+        completedTasksMap[taskId] = true;
+      });
+      setCompletedTasks(completedTasksMap);
+  
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
         userID,
         tasksCompleted: [selectedTask._id],
@@ -162,12 +169,7 @@ const TaskList = () => {
           },
         ],
       });
-
-      setCompletedTasks((prevTasks) => ({
-        ...prevTasks,
-        [selectedTask._id]: true,
-      }));
-
+  
       setMessage({ text: 'Points awarded!', type: 'success' });
       setSelectedTask(null);
     } catch (error) {
@@ -177,7 +179,7 @@ const TaskList = () => {
       setUnderModeration(false);
     }
   };
-
+  
   const handleClose = () => {
     setSelectedTask(null);
   };
