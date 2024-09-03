@@ -47,52 +47,46 @@ const TaskList = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const [message, setMessage] = useState(null);
 
-  useEffect(() => {
-    const initializeUserAndFetchTasks = async () => {
-      setLoading(true); // Start loading
-
-      const userID = await getUserID(setUserID);
-      setUserID(userID);
-
-      try {
-        const userResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-        );
-        const userData = userResponse.data;
-
-        setPoints(userData.points);
-
-        const completedTasksMap = {};
-        userData.tasksCompleted.forEach((taskId) => {
-          completedTasksMap[taskId] = true;
-        });
-        setCompletedTasks(completedTasksMap);
-      } catch (error) {
-        console.error("Unexpected error fetching user data:", error);
-      }
-
-      try {
-        const tasksResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`
-        );
-        const data = tasksResponse.data;
-
-        const categorizedTasks = {
-          special: data.filter((task) => task.category === "Special"),
-          daily: data.filter((task) => task.category === "Daily"),
-          lists: data.filter((task) => task.category === "Lists"),
-        };
-
-        setTasks(categorizedTasks);
-      } catch (taskFetchError) {
-        console.error("Error fetching tasks:", taskFetchError);
-      } finally {
-        setLoading(false); // End loading after tasks are fetched
-      }
-    };
-
-    initializeUserAndFetchTasks();
-  }, [setPoints, setUserID]);
+    useEffect(() => {
+      const initializeUserAndFetchTasks = async () => {
+        setLoading(true);
+        try {
+          const userID = await getUserID(setUserID);
+          console.log("Fetched userID:", userID);
+          
+          const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+          console.log("User info response:", userResponse);
+          const userData = userResponse.data;
+    
+          setPoints(userData.points);
+    
+          const completedTasksMap = {};
+          userData.tasksCompleted.forEach((taskId) => {
+            completedTasksMap[taskId] = true;
+          });
+          setCompletedTasks(completedTasksMap);
+    
+          const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
+          console.log("Tasks response:", tasksResponse);
+          const data = tasksResponse.data;
+    
+          const categorizedTasks = {
+            special: data.filter((task) => task.category === "Special"),
+            daily: data.filter((task) => task.category === "Daily"),
+            lists: data.filter((task) => task.category === "Lists"),
+          };
+    
+          setTasks(categorizedTasks);
+        } catch (error) {
+          console.error("Unexpected error fetching data:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      initializeUserAndFetchTasks();
+    }, [setPoints, setUserID]);
+    
 
   useEffect(() => {
     let countdown;
