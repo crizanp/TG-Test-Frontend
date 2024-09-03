@@ -4,9 +4,8 @@ import { usePoints } from "../context/PointsContext";
 import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
-import FloatingMessage from './FloatingMessage';
+import FloatingMessage from './FloatingMessage'; // Adjust the path accordingly
 
-// Importing required styles and images
 import {
   TaskContainer,
   TaskCategory,
@@ -31,12 +30,12 @@ import {
   PointsDisplay,
   DollarIcon,
   CloseButtonModel,
-  LoadingSpinner,
+  LoadingSpinner, // Import the LoadingSpinner component
 } from "./TaskList.styles";
-import dollarImage from "../assets/dollar-homepage.png";
+import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
 
 const TaskList = () => {
-  const { points, setPoints, userID, setUserID, setUsername } = usePoints();
+  const { points, setPoints, userID, setUserID } = usePoints();
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
@@ -45,21 +44,17 @@ const TaskList = () => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Loading state
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
-      setLoading(true);
-      console.log("Initializing user...");
+      setLoading(true); // Start loading
+
+      const userID = await getUserID(setUserID);
+      setUserID(userID);
 
       try {
-        const userID = await getUserID(setUserID, setUsername);
-        console.log("UserID fetched:", userID);
-        console.log("Username set:", window.Telegram.WebApp?.initDataUnsafe?.user?.username);
-
-        setUserID(userID);
-
         const userResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/user-info/${userID}`
         );
@@ -92,15 +87,13 @@ const TaskList = () => {
       } catch (taskFetchError) {
         console.error("Error fetching tasks:", taskFetchError);
       } finally {
-        setLoading(false);
-        console.log("Finished initialization.");
+        setLoading(false); // End loading after tasks are fetched
       }
     };
 
     initializeUserAndFetchTasks();
-  }, [setPoints, setUserID, setUsername]);
+  }, [setPoints, setUserID]);
 
-  // Other useEffect to handle the timer
   useEffect(() => {
     let countdown;
     if (selectedTask && timerStarted && !isClaimable && timer > 0) {
@@ -114,38 +107,30 @@ const TaskList = () => {
     return () => clearInterval(countdown);
   }, [selectedTask, timerStarted, isClaimable, timer]);
 
-  // Handle task click
   const handleTaskClick = (task) => {
-    if (completedTasks[task._id]) {
-      setMessage({ text: 'Task already completed', type: 'error' });
-      return;
+    if (!completedTasks[task._id]) {
+      setSelectedTask(task);
+      setProof("");
+      setIsClaimable(false);
+      setUnderModeration(false);
+      setTimer(10);
+      setTimerStarted(false);
     }
-    
-    setSelectedTask(task);
-    setProof("");
-    setIsClaimable(false);
-    setUnderModeration(false);
-    setTimer(10);
-    setTimerStarted(false);
   };
 
-  // Handle task start
   const handleStartTask = () => {
     window.open(selectedTask.link, "_blank");
     setTimerStarted(true);
   };
 
-  // Handle reward claim
   const handleClaimReward = async () => {
     setUnderModeration(true);
-    const tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
 
     try {
       await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
         {
           pointsToAdd: selectedTask.points,
-          username: tgUsername,
         }
       );
 
@@ -153,10 +138,6 @@ const TaskList = () => {
         `${process.env.REACT_APP_API_URL}/user-info/${userID}`
       );
       setPoints(userResponse.data.points);
-
-      // Update completed tasks in the frontend
-      const updatedCompletedTasks = { ...completedTasks, [selectedTask._id]: true };
-      setCompletedTasks(updatedCompletedTasks);
 
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
         userID,
@@ -169,6 +150,11 @@ const TaskList = () => {
           },
         ],
       });
+
+      setCompletedTasks((prevTasks) => ({
+        ...prevTasks,
+        [selectedTask._id]: true,
+      }));
 
       setMessage({ text: 'Points awarded!', type: 'success' });
       setSelectedTask(null);
