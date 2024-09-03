@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { debounce } from "lodash";
-import UserInfo from './UserInfo';
 import dollarImage from '../assets/dollar-homepage.png';
 
 // Styled components for better UI/UX
@@ -145,6 +144,63 @@ const ReferralPoints = styled.div`
   color: #ffcc00;
 `;
 
+const TaskCategory = styled.div`
+  width: 100%;
+  max-width: 600px;
+  background-color: #fffbfb0a;
+  padding: 20px;
+  margin-bottom: 20px;
+`;
+
+const TaskTitle = styled.h3`
+  color: #c2beb9;
+  margin-bottom: 20px;
+  margin-top: 4px;
+  font-weight: bold;
+  font-size: 18px;
+  text-transform: uppercase;
+`;
+
+const TaskItem = styled.div`
+  background-color: #1e1e1e;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+  }
+`;
+
+const TaskDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const TaskItemTitle = styled.div`
+  font-size: 18px;
+  color: #ffffff;
+  margin-bottom: 5px;
+  font-weight: bold;
+`;
+
+const TaskPoints = styled.div`
+  background-color: #ff9800;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 16px;
+`;
+
 const StickyUserInfoContainer = styled.div`
   position: sticky;
   top: 0;
@@ -163,6 +219,7 @@ const FriendPage = () => {
   const [copySuccess, setCopySuccess] = useState("");
   const [referralCount, setReferralCount] = useState(0);
   const [referrals, setReferrals] = useState([]);
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     const getUserID = async () => {
@@ -181,7 +238,9 @@ const FriendPage = () => {
     debounce(async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
-        setPoints(response.data.points);
+        const userData = response.data;
+        setPoints(userData.points);
+        setIsPremium(userData.isPremium);  // Assuming your API returns a boolean field 'isPremium'
         setReferralLink(`https://t.me/cizantest_bot?start=${userID}`);
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -225,7 +284,6 @@ const FriendPage = () => {
   };
 
   const handleForwardLink = () => {
-    // Open Telegram's forwarding dialog for the referral link
     const inviteLink = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=Join%20and%20earn%20rewards!`;
     window.Telegram.WebApp?.openTelegramLink(inviteLink);
   };
@@ -279,6 +337,22 @@ const FriendPage = () => {
           ))}
         </ReferralList>
       </ReferralContainer>
+
+      <TaskCategory>
+        <TaskTitle>Referral Tasks</TaskTitle>
+        <TaskItem>
+          <TaskDetails>
+            <TaskItemTitle>Refer to Premium Profile</TaskItemTitle>
+            <TaskPoints>{isPremium ? 3000 : 2000} pts</TaskPoints>
+          </TaskDetails>
+        </TaskItem>
+        <TaskItem>
+          <TaskDetails>
+            <TaskItemTitle>Refer to Non-Premium User</TaskItemTitle>
+            <TaskPoints>{isPremium ? 3000 : 2000} pts</TaskPoints>
+          </TaskDetails>
+        </TaskItem>
+      </TaskCategory>
     </MainContainer>
   );
 };
