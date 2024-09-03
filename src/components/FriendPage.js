@@ -4,20 +4,20 @@ import styled from "styled-components";
 import { debounce } from "lodash";
 import dollarImage from '../assets/dollar-homepage.png';
 
-// Styled components for better UI/UX
+// Styled components with a bluish theme
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(145deg, #0a2b4e, #1a3e68);
+  background: linear-gradient(145deg, #1a2a4e, #1a3e68);
   padding: 20px;
   color: #ffffff;
   font-family: Arial, sans-serif;
 `;
 
 const ReferralContainer = styled.div`
-  background: linear-gradient(145deg, #1b346f, #11204f);
+  background: linear-gradient(145deg, #1b3c7f, #1a3e68);
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   width: 90%;
@@ -39,7 +39,7 @@ const Title = styled.h2`
 const PointsDisplay = styled.div`
   font-size: 32px;
   font-weight: bold;
-  color: #ffcc00;
+  color: #4db6f9;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,7 @@ const ButtonGroup = styled.div`
 `;
 
 const ReferralLink = styled.a`
-  background-color: #162447;
+  background-color: #1e3d5f;
   padding: 10px;
   border-radius: 8px;
   display: inline-block;
@@ -72,12 +72,12 @@ const ReferralLink = styled.a`
 
   &:hover {
     text-decoration: underline;
-    background-color: #1e4d85;
+    background-color: #2a4d85;
   }
 `;
 
 const CopyButton = styled.button`
-  background-color: #ffcc00;
+  background-color: #4db6f9;
   color: #1f4068;
   border: none;
   padding: 10px 20px;
@@ -88,12 +88,12 @@ const CopyButton = styled.button`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #e6b800;
+    background-color: #42a5f5;
   }
 `;
 
 const ForwardButton = styled.button`
-  background-color: #00c1ff;
+  background-color: #2196f3;
   color: #1f4068;
   border: none;
   padding: 10px 20px;
@@ -104,7 +104,7 @@ const ForwardButton = styled.button`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #00a7d1;
+    background-color: #1e88e5;
   }
 `;
 
@@ -116,7 +116,7 @@ const Notice = styled.p`
 
 const ReferralStats = styled.div`
   margin-top: 20px;
-  color: #ffcc00;
+  color: #4db6f9;
 `;
 
 const ReferralList = styled.div`
@@ -141,19 +141,21 @@ const ReferralUsername = styled.div`
 
 const ReferralPoints = styled.div`
   font-size: 16px;
-  color: #ffcc00;
+  color: #4db6f9;
 `;
 
 const TaskCategory = styled.div`
   width: 100%;
   max-width: 600px;
-  background-color: #fffbfb0a;
+  background-color: #283a6b;
   padding: 20px;
   margin-bottom: 20px;
+  border-radius: 10px;
+  color: #ffffff;
 `;
 
 const TaskTitle = styled.h3`
-  color: #c2beb9;
+  color: #a2bff9;
   margin-bottom: 20px;
   margin-top: 4px;
   font-weight: bold;
@@ -162,7 +164,7 @@ const TaskTitle = styled.h3`
 `;
 
 const TaskItem = styled.div`
-  background-color: #1e1e1e;
+  background-color: #1e1e3e;
   padding: 15px;
   margin: 10px 0;
   border-radius: 15px;
@@ -193,7 +195,7 @@ const TaskItemTitle = styled.div`
 `;
 
 const TaskPoints = styled.div`
-  background-color: #ff9800;
+  background-color: #4db6f9;
   color: white;
   padding: 8px 12px;
   border-radius: 12px;
@@ -297,6 +299,22 @@ const FriendPage = () => {
         </PointsDisplay>
       </StickyUserInfoContainer>
 
+      <TaskCategory>
+        <TaskTitle>Referral Tasks</TaskTitle>
+        <TaskItem>
+          <TaskDetails>
+            <TaskItemTitle>Refer to Premium Profile</TaskItemTitle>
+            <TaskPoints>3000 pts</TaskPoints>
+          </TaskDetails>
+        </TaskItem>
+        <TaskItem>
+          <TaskDetails>
+            <TaskItemTitle>Refer to Non-Premium User</TaskItemTitle>
+            <TaskPoints>2000 pts</TaskPoints>
+          </TaskDetails>
+        </TaskItem>
+      </TaskCategory>
+
       <ReferralContainer>
         <Title>Refer & Earn More Rewards!</Title>
 
@@ -337,22 +355,6 @@ const FriendPage = () => {
           ))}
         </ReferralList>
       </ReferralContainer>
-
-      <TaskCategory>
-        <TaskTitle>Referral Tasks</TaskTitle>
-        <TaskItem>
-          <TaskDetails>
-            <TaskItemTitle>Refer to Premium Profile</TaskItemTitle>
-            <TaskPoints>{isPremium ? 3000 : 2000} pts</TaskPoints>
-          </TaskDetails>
-        </TaskItem>
-        <TaskItem>
-          <TaskDetails>
-            <TaskItemTitle>Refer to Non-Premium User</TaskItemTitle>
-            <TaskPoints>{isPremium ? 3000 : 2000} pts</TaskPoints>
-          </TaskDetails>
-        </TaskItem>
-      </TaskCategory>
     </MainContainer>
   );
 };
