@@ -74,7 +74,7 @@ function EcosystemPage() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/categories`
+          `${process.env.REACT_APP_API_URL}/category/categories`
         );
         setCategories([{ name: "Random", _id: "random" }, ...response.data]);
       } catch (error) {
@@ -90,8 +90,8 @@ function EcosystemPage() {
       try {
         const url =
           selectedCategory === "random"
-            ? `${process.env.REACT_APP_API_URL}/quizzes/random`
-            : `${process.env.REACT_APP_API_URL}/quizzes/random?category=${selectedCategory}`;
+            ? `${process.env.REACT_APP_API_URL}/quiz/quizzes/random`
+            : `${process.env.REACT_APP_API_URL}/quiz/quizzes/random?category=${selectedCategory}`;
         const response = await axios.get(url);
 
         if (!response.data) {
@@ -176,8 +176,8 @@ function EcosystemPage() {
     try {
       const url =
         selectedCategory === "random"
-          ? `${process.env.REACT_APP_API_URL}/quizzes/random`
-          : `${process.env.REACT_APP_API_URL}/quizzes/random?category=${selectedCategory}`;
+          ? `${process.env.REACT_APP_API_URL}/quiz/quizzes/random`
+          : `${process.env.REACT_APP_API_URL}/quiz/quizzes/random?category=${selectedCategory}`;
       const response = await axios.get(url);
 
       if (!response.data) {
