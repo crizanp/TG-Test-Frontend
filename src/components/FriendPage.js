@@ -4,36 +4,27 @@ import styled from "styled-components";
 import { debounce } from "lodash";
 import dollarImage from '../assets/dollar-homepage.png';
 
-// Styled components with a bluish theme
+// Styled components with a modern, spaced-out design and oval-shaped points section
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(145deg, #1a2a4e, #1a3e68);
-  padding: 20px;
+  padding: 30px 20px;
   color: #ffffff;
   font-family: Arial, sans-serif;
 `;
 
-const ReferralContainer = styled.div`
-  background: linear-gradient(145deg, #1b3c7f, #1a3e68);
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  border-radius: 10px;
-  animation: fadeIn 1s ease-in-out;
-  margin-top: 20px;
-`;
-
-const Title = styled.h2`
-  color: #ffffff;
-  margin-bottom: 15px;
-  font-size: 24px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+const PointsDisplayContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  padding: 15px 30px;
+  background: linear-gradient(145deg, #2e3a5c, #2a3e6e);
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 `;
 
 const PointsDisplay = styled.div`
@@ -42,8 +33,6 @@ const PointsDisplay = styled.div`
   color: #4db6f9;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-top: 10px;
 `;
 
 const DollarIcon = styled.img`
@@ -51,107 +40,15 @@ const DollarIcon = styled.img`
   margin-right: 10px;
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 10px;
-`;
-
-const ReferralLink = styled.a`
-  background-color: #1e3d5f;
-  padding: 10px;
-  border-radius: 8px;
-  display: inline-block;
-  margin-top: 15px;
-  word-break: break-all;
-  color: #ffffff;
-  font-size: 14px;
-  text-decoration: none;
-  transition: background-color 0.3s;
-
-  &:hover {
-    text-decoration: underline;
-    background-color: #2a4d85;
-  }
-`;
-
-const CopyButton = styled.button`
-  background-color: #4db6f9;
-  color: #1f4068;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #42a5f5;
-  }
-`;
-
-const ForwardButton = styled.button`
-  background-color: #2196f3;
-  color: #1f4068;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #1e88e5;
-  }
-`;
-
-const Notice = styled.p`
-  margin-top: 10px;
-  font-size: 14px;
-  color: #f5f5f5;
-`;
-
-const ReferralStats = styled.div`
-  margin-top: 20px;
-  color: #4db6f9;
-`;
-
-const ReferralList = styled.div`
-  margin-top: 20px;
-  text-align: left;
-`;
-
-const ReferralItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  background-color: #1f4068;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-`;
-
-const ReferralUsername = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-  color: #ffffff;
-`;
-
-const ReferralPoints = styled.div`
-  font-size: 16px;
-  color: #4db6f9;
-`;
-
 const TaskCategory = styled.div`
   width: 100%;
   max-width: 600px;
   background-color: #283a6b;
   padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
+  margin-bottom: 30px;
+  border-radius: 15px;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 `;
 
 const TaskTitle = styled.h3`
@@ -159,14 +56,14 @@ const TaskTitle = styled.h3`
   margin-bottom: 20px;
   margin-top: 4px;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
   text-transform: uppercase;
 `;
 
 const TaskItem = styled.div`
   background-color: #1e1e3e;
-  padding: 15px;
-  margin: 10px 0;
+  padding: 20px;
+  margin: 15px 0;
   border-radius: 15px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
   display: flex;
@@ -197,10 +94,123 @@ const TaskItemTitle = styled.div`
 const TaskPoints = styled.div`
   background-color: #4db6f9;
   color: white;
-  padding: 8px 12px;
+  padding: 10px 15px;
   border-radius: 12px;
   font-weight: bold;
   font-size: 16px;
+`;
+
+const ReferralContainer = styled.div`
+  background: linear-gradient(145deg, #1b3c7f, #1a3e68);
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  border-radius: 15px;
+  animation: fadeIn 1s ease-in-out;
+`;
+
+const Title = styled.h2`
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+`;
+
+const ReferralLink = styled.a`
+  background-color: #1e3d5f;
+  padding: 15px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 20px;
+  word-break: break-all;
+  color: #ffffff;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+
+  &:hover {
+    text-decoration: underline;
+    background-color: #2a4d85;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 15px;
+`;
+
+const CopyButton = styled.button`
+  background-color: #4db6f9;
+  color: #1f4068;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #42a5f5;
+  }
+`;
+
+const ForwardButton = styled.button`
+  background-color: #2196f3;
+  color: #1f4068;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #1e88e5;
+  }
+`;
+
+const Notice = styled.p`
+  margin-top: 10px;
+  font-size: 14px;
+  color: #f5f5f5;
+`;
+
+const ReferralStats = styled.div`
+  margin-top: 30px;
+  color: #4db6f9;
+`;
+
+const ReferralList = styled.div`
+  margin-top: 20px;
+  text-align: left;
+`;
+
+const ReferralItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: #1f4068;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+`;
+
+const ReferralUsername = styled.div`
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+`;
+
+const ReferralPoints = styled.div`
+  font-size: 16px;
+  color: #4db6f9;
 `;
 
 const StickyUserInfoContainer = styled.div`
@@ -293,10 +303,12 @@ const FriendPage = () => {
   return (
     <MainContainer>
       <StickyUserInfoContainer>
-        <PointsDisplay>
-          <DollarIcon src={dollarImage} alt="Dollar Icon" />
-          {Math.floor(points)}
-        </PointsDisplay>
+        <PointsDisplayContainer>
+          <PointsDisplay>
+            <DollarIcon src={dollarImage} alt="Dollar Icon" />
+            {Math.floor(points)}
+          </PointsDisplay>
+        </PointsDisplayContainer>
       </StickyUserInfoContainer>
 
       <TaskCategory>
