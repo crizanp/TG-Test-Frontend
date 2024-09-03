@@ -33,7 +33,7 @@ export const PointsProvider = ({ children }) => {
           try {
             const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
               userID: tgUserID,
-              username: username,
+              username: username || 'default_username',
               points: 0,
               tasksCompleted: [],
               taskHistory: [],

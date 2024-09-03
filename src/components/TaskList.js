@@ -1,11 +1,14 @@
+// src/components/TaskList.js
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { usePoints } from "../context/PointsContext";
 import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
-import FloatingMessage from './FloatingMessage'; // Adjust the path accordingly
+import FloatingMessage from './FloatingMessage';
 
+// Importing required styles and images
 import {
   TaskContainer,
   TaskCategory,
@@ -30,12 +33,12 @@ import {
   PointsDisplay,
   DollarIcon,
   CloseButtonModel,
-  LoadingSpinner, // Import the LoadingSpinner component
+  LoadingSpinner,
 } from "./TaskList.styles";
-import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
+import dollarImage from "../assets/dollar-homepage.png";
 
 const TaskList = () => {
-  const { points, setPoints, userID, setUserID } = usePoints();
+  const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
@@ -44,49 +47,51 @@ const TaskList = () => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
 
-    useEffect(() => {
-      const initializeUserAndFetchTasks = async () => {
-        setLoading(true);
-        try {
-          const userID = await getUserID(setUserID);
-          console.log("Fetched userID:", userID);
-          
-          const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
-          console.log("User info response:", userResponse);
-          const userData = userResponse.data;
-    
-          setPoints(userData.points);
-    
-          const completedTasksMap = {};
-          userData.tasksCompleted.forEach((taskId) => {
-            completedTasksMap[taskId] = true;
-          });
-          setCompletedTasks(completedTasksMap);
-    
-          const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
-          console.log("Tasks response:", tasksResponse);
-          const data = tasksResponse.data;
-    
-          const categorizedTasks = {
-            special: data.filter((task) => task.category === "Special"),
-            daily: data.filter((task) => task.category === "Daily"),
-            lists: data.filter((task) => task.category === "Lists"),
-          };
-    
-          setTasks(categorizedTasks);
-        } catch (error) {
-          console.error("Unexpected error fetching data:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-    
-      initializeUserAndFetchTasks();
-    }, [setPoints, setUserID]);
-    
+  useEffect(() => {
+    const initializeUserAndFetchTasks = async () => {
+      setLoading(true);
+
+      try {
+        const userID = await getUserID(setUserID, setUsername);
+        console.log("UserID fetched:", userID);
+
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        const userData = userResponse.data;
+
+        setPoints(userData.points);
+
+        const completedTasksMap = {};
+        userData.tasksCompleted.forEach((taskId) => {
+          completedTasksMap[taskId] = true;
+        });
+        setCompletedTasks(completedTasksMap);
+      } catch (error) {
+        console.error("Unexpected error fetching user data:", error);
+      }
+
+      try {
+        const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
+        const data = tasksResponse.data;
+
+        const categorizedTasks = {
+          special: data.filter((task) => task.category === "Special"),
+          daily: data.filter((task) => task.category === "Daily"),
+          lists: data.filter((task) => task.category === "Lists"),
+        };
+
+        setTasks(categorizedTasks);
+      } catch (taskFetchError) {
+        console.error("Error fetching tasks:", taskFetchError);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeUserAndFetchTasks();
+  }, [setPoints, setUserID, setUsername]);
 
   useEffect(() => {
     let countdown;
@@ -125,12 +130,11 @@ const TaskList = () => {
         `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
         {
           pointsToAdd: selectedTask.points,
+          username: window.Telegram.WebApp?.initDataUnsafe?.user?.username,
         }
       );
 
-      const userResponse = await axios.get(
-        `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-      );
+      const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
       setPoints(userResponse.data.points);
 
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
