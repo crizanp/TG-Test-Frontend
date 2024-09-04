@@ -1,10 +1,19 @@
-// src/utils/getUserID.js
-
 import axios from 'axios';
 
 export const getUserID = async (setUserID, setUsername) => {
-  let tgUserID = window.Telegram.WebApp?.initDataUnsafe?.user?.id;
-  let tgUsername = window.Telegram.WebApp?.initDataUnsafe?.user?.username;
+  // Check if running on localhost
+  const isLocalhost = window.location.hostname === 'localhost';
+
+  // Initialize Telegram User ID and Username
+  let tgUserID = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+  let tgUsername = window.Telegram?.WebApp?.initDataUnsafe?.user?.username;
+
+  // If running on localhost, assign a mock user ID and username
+  if (isLocalhost) {
+    tgUserID = 'mockUserID123';
+    tgUsername = 'mockUsername';
+    console.warn('Running on localhost: Mock Telegram user ID and username assigned.');
+  }
 
   if (tgUserID) {
     tgUserID = tgUserID.toString();
@@ -24,7 +33,7 @@ export const getUserID = async (setUserID, setUsername) => {
         try {
           await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
-            username: tgUsername || 'default_username', // handle case if username is not provided
+            username: tgUsername || ''Null Username'', // handle case if username is not provided
             points: 0,
             tasksCompleted: [],
             taskHistory: [],
