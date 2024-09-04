@@ -6,7 +6,7 @@ import LoadingPage from './LoadingPage';
 
 const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
-  background-color: #05173e;
+  background-color: #090c12;
   max-width: 400px;
   height: 100vh;
   margin: 0 auto;
