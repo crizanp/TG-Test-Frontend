@@ -4,13 +4,13 @@ import styled from "styled-components";
 import { debounce } from "lodash";
 import dollarImage from '../assets/dollar-homepage.png';
 
-// Styled components with a professional, darkish blue color theme
+// Styled components with a minimalist dark theme
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(145deg, #0d1b2a, #1b263b);
+  background: #0d0d0d;
   padding: 30px 20px;
   color: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,52 +20,52 @@ const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 30px;
-  padding: 20px 40px;
-  background: linear-gradient(145deg, #1b263b, #0d1b2a);
-  border-radius: 50px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+  margin-bottom: 20px;
+  padding: 15px 30px;
+  background: #1a1a1a;
+  border-radius: 40px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 `;
 
 const PointsDisplay = styled.div`
-  font-size: 36px;
+  font-size: 28px;
   font-weight: bold;
-  color: #00b4d8;
+  color: #ffffff;
   display: flex;
   align-items: center;
 `;
 
 const DollarIcon = styled.img`
-  width: 36px;
-  margin-right: 15px;
+  width: 32px;
+  margin-right: 12px;
 `;
 
 const TaskCategory = styled.div`
   width: 100%;
-  max-width: 650px;
-  background-color: #1e3a5f;
-  padding: 25px;
-  margin-bottom: 35px;
-  border-radius: 15px;
-  color: #ffffff;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  background-color: #1a1a1a;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  color: #e0e0e0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 `;
 
 const TaskTitle = styled.h3`
-  color: #90e0ef;
-  margin-bottom: 20px;
+  color: #e0e0e0;
+  margin-bottom: 15px;
   margin-top: 0;
   font-weight: bold;
-  font-size: 22px;
+  font-size: 20px;
   text-transform: uppercase;
 `;
 
 const TaskItem = styled.div`
-  background-color: #123047;
-  padding: 20px;
-  margin: 15px 0;
-  border-radius: 15px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  background-color: #2b2b2b;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -85,132 +85,131 @@ const TaskDetails = styled.div`
 `;
 
 const TaskItemTitle = styled.div`
-  font-size: 20px;
+  font-size: 18px;
   color: #ffffff;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   font-weight: bold;
 `;
 
 const TaskPoints = styled.div`
-  background-color: #00b4d8;
+  background-color: #333333;
   color: white;
-  padding: 10px 20px;
-  border-radius: 12px;
+  padding: 8px 16px;
+  border-radius: 10px;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 16px;
 `;
 
 const ReferralContainer = styled.div`
-  background: linear-gradient(145deg, #0d1b2a, #1b263b);
-  padding: 30px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+  background: #1a1a1a;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   width: 100%;
-  max-width: 650px;
+  max-width: 600px;
   text-align: center;
-  border-radius: 15px;
+  border-radius: 12px;
   animation: fadeIn 1s ease-in-out;
 `;
 
 const Title = styled.h2`
   color: #ffffff;
-  margin-bottom: 25px;
-  font-size: 26px;
+  margin-bottom: 20px;
+  font-size: 24px;
   text-transform: uppercase;
   letter-spacing: 1px;
 `;
 
 const ReferralLink = styled.a`
-  background-color: #163a59;
-  padding: 15px;
-  border-radius: 12px;
+  background-color: #2b2b2b;
+  padding: 12px;
+  border-radius: 10px;
   display: inline-block;
-  margin-top: 20px;
+  margin-top: 15px;
   word-break: break-all;
   color: #ffffff;
-  font-size: 15px;
+  font-size: 14px;
   text-decoration: none;
   transition: background-color 0.3s;
 
   &:hover {
-    text-decoration: underline;
-    background-color: #1d4b70;
+    background-color: #3a3a3a;
   }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 30px;
-  gap: 20px;
+  margin-top: 20px;
+  gap: 15px;
 `;
 
 const CopyButton = styled.button`
-  background-color: #00b4d8;
-  color: #0d1b2a;
+  background-color: #333333;
+  color: #ffffff;
   border: none;
-  padding: 12px 30px;
-  border-radius: 10px;
+  padding: 10px 25px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   font-size: 14px;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #0096c7;
+    background-color: #4d4d4d;
   }
 `;
 
 const ForwardButton = styled.button`
-  background-color: #0077b6;
+  background-color: #4a4a4a;
   color: #ffffff;
   border: none;
-  padding: 12px 30px;
-  border-radius: 10px;
+  padding: 10px 25px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   font-size: 14px;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #005f8e;
+    background-color: #5a5a5a;
   }
 `;
 
 const Notice = styled.p`
-  margin-top: 10px;
-  font-size: 15px;
-  color: #ced4da;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #d0d0d0;
 `;
 
 const ReferralStats = styled.div`
-  margin-top: 35px;
-  color: #00b4d8;
+  margin-top: 30px;
+  color: #ffffff;
 `;
 
 const ReferralList = styled.div`
-  margin-top: 25px;
+  margin-top: 20px;
   text-align: left;
 `;
 
 const ReferralItem = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: #123047;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: #2b2b2b;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 `;
 
 const ReferralUsername = styled.div`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   color: #ffffff;
 `;
 
 const ReferralPoints = styled.div`
-  font-size: 16px;
-  color: #00b4d8;
+  font-size: 15px;
+  color: #ffffff;
 `;
 
 const StickyUserInfoContainer = styled.div`
