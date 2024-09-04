@@ -81,6 +81,14 @@ function HomePage() {
         return; 
       }
 
+      const currentTime = Date.now();
+      const tapInterval = currentTime - lastTapTime;
+
+      const isDoubleTap = tapInterval < 300 && tapInterval > 0; // Check if double-tap
+      setLastTapTime(currentTime); // Update last tap time
+
+      const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1); // Double points for double-tap
+
       const rect = e.currentTarget.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
@@ -88,8 +96,6 @@ function HomePage() {
       const height = rect.height;
 
       if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
-        const pointsToAdd = calculatePoints();
-
         setPoints((prevPoints) => {
           const newPoints = prevPoints + pointsToAdd;
           localStorage.setItem(`points_${userID}`, newPoints);
@@ -110,14 +116,14 @@ function HomePage() {
 
         setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
 
-        decreaseEnergy(2); // Decrease energy by 2 for each tap
+        decreaseEnergy(2 * (isDoubleTap ? 2 : 1)); // Decrease energy more for double-tap
 
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + pointsToAdd);
         }
       }
     },
-    [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID]
+    [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID, lastTapTime]
   );
 
   useEffect(() => {

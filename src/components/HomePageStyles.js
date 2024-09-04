@@ -132,8 +132,8 @@ export const EagleContainer = styled.div`
 
 // Eagle image styling
 export const EagleImage = styled.img`
-  width: 270px;
-  height: auto;
+  width: 100%; /* Make the image fill the container */
+  height: auto; /* Maintain aspect ratio */
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
   -webkit-tap-highlight-color: transparent;
