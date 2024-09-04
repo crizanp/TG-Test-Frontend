@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { usePoints } from '../context/PointsContext';
-import { useEnergy } from '../context/EnergyContext'; // Import useEnergy
+import { useEnergy } from '../context/EnergyContext';
 import {
   HomeContainer,
   PointsDisplayContainer,
@@ -25,8 +25,8 @@ import dollarImage from '../assets/dollar-homepage.png';
 import { getUserID } from '../utils/getUserID';
 
 function HomePage() {
-  const { points, setPoints, userID, setUserID } = usePoints(); // Include setUserID here
-  const { energy, decreaseEnergy } = useEnergy(); // Access energy and decreaseEnergy from context
+  const { points, setPoints, userID, setUserID } = usePoints();
+  const { energy, decreaseEnergy } = useEnergy();
   const [tapCount, setTapCount] = useState(0);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
@@ -37,7 +37,6 @@ function HomePage() {
     const initializeUser = async () => {
       const userID = await getUserID(setUserID);
 
-      // Retrieve points from localStorage
       const savedPoints = localStorage.getItem(`points_${userID}`);
       if (savedPoints) {
         setPoints(parseFloat(savedPoints));
@@ -54,7 +53,7 @@ function HomePage() {
   }, [tapCount]);
 
   const calculatePoints = () => {
-    return 3;
+    return 1; // 1 point per tap
   };
 
   const syncPointsWithServer = useCallback(
@@ -77,52 +76,47 @@ function HomePage() {
   const handleTap = useCallback(
     (e) => {
       if (energy <= 0) {
-        return; // Stop tapping if energy is depleted
+        return;
       }
 
       const rect = e.currentTarget.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
-      const width = rect.width;
-      const height = rect.height;
+      const clickY = e.clientY - rect.top - 20; // Adjust the position to start just above the tap
 
-      if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
-        const pointsToAdd = calculatePoints();
+      const pointsToAdd = calculatePoints();
 
-        const currentTime = Date.now();
-        const timeDiff = currentTime - lastTapTime;
-        const tapSpeedMultiplier = Math.max(1, 500 / timeDiff);
+      const currentTime = Date.now();
+      const timeDiff = currentTime - lastTapTime;
+      const tapSpeedMultiplier = Math.max(1, 500 / timeDiff);
 
-        setLastTapTime(currentTime);
+      setLastTapTime(currentTime);
 
-        const addedPoints = pointsToAdd * tapSpeedMultiplier;
+      const addedPoints = pointsToAdd * tapSpeedMultiplier;
 
-        setPoints((prevPoints) => {
-          const newPoints = prevPoints + addedPoints;
-          localStorage.setItem(`points_${userID}`, newPoints);
-          return newPoints;
-        });
+      setPoints((prevPoints) => {
+        const newPoints = prevPoints + addedPoints;
+        localStorage.setItem(`points_${userID}`, newPoints);
+        return newPoints;
+      });
 
-        setTapCount((prevTapCount) => prevTapCount + 1);
+      setTapCount((prevTapCount) => prevTapCount + 1);
 
-        setFlyingNumbers((prevNumbers) => [
-          ...prevNumbers,
-          { id: Date.now(), x: e.clientX, y: e.clientY, value: addedPoints },
-        ]);
+      setFlyingNumbers((prevNumbers) => [
+        ...prevNumbers,
+        { id: Date.now(), x: e.clientX, y: clickY, value: addedPoints },
+      ]);
 
-        setSlapEmojis((prevEmojis) => [
-          ...prevEmojis,
-          { id: Date.now(), x: e.clientX, y: e.clientY },
-        ]);
+      setSlapEmojis((prevEmojis) => [
+        ...prevEmojis,
+        { id: Date.now(), x: e.clientX, y: e.clientY },
+      ]);
 
-        setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
+      setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
 
-        // Reduce energy on tap and save to localStorage
-        decreaseEnergy(10); // Use context to decrease energy
+      decreaseEnergy(10);
 
-        if (navigator.onLine) {
-          syncPointsWithServer(offlinePoints + addedPoints);
-        }
+      if (navigator.onLine) {
+        syncPointsWithServer(offlinePoints + addedPoints);
       }
     },
     [lastTapTime, syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID]
@@ -151,7 +145,7 @@ function HomePage() {
         </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
-        <Message>{getMessage}</Message> {/* Use getMessage directly without parentheses */}
+        <Message>{getMessage}</Message>
         <EagleContainer>
           <EagleImage
             src={eagleImage}
@@ -173,7 +167,7 @@ function HomePage() {
 
       {flyingNumbers.map((number) => (
         <FlyingNumber key={number.id} x={number.x} y={number.y}>
-          +{number.value.toFixed(2)}
+          +{number.value.toFixed(0)}
         </FlyingNumber>
       ))}
       {slapEmojis.map((emoji) => (

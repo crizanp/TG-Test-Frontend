@@ -1,7 +1,6 @@
 import styled, { keyframes, css } from 'styled-components';
-import { FaBolt } from 'react-icons/fa'; // Import the FaBolt icon from React Icons
+import { FaBolt } from 'react-icons/fa';
 
-// Define the missing keyframes animations
 const slapEffectAnimation = keyframes`
   0% {
     transform: scale(1) translateY(0) translateX(0);
@@ -23,18 +22,6 @@ const bounceAnimation = keyframes`
   50% { transform: scale(1); }
 `;
 
-const pointsAnimation = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5) rotate(10deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
-`;
-
 const pointFlyingAnimation = keyframes`
   0% {
     opacity: 1;
@@ -42,15 +29,14 @@ const pointFlyingAnimation = keyframes`
   }
   100% {
     opacity: 0;
-    transform: translateY(-60px) scale(1.5); /* Increased scale for better visibility */
+    transform: translateY(-60px) scale(1.2); 
   }
 `;
 
-// Styled components with animations
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #1f1f1f, #2d2d2d);
   color: white;
-  background: radial-gradient(circle, #523B7A, #222325);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,7 +45,7 @@ export const HomeContainer = styled.div`
   min-height: 87vh;
   overflow: hidden;
   user-select: none;
-  padding: 20px 20px;
+  padding: 20px;
   position: relative;
 `;
 
@@ -73,10 +59,10 @@ export const PointsDisplayContainer = styled.div`
 
 export const PointsDisplay = styled.div`
   font-size: 50px;
-  color: white;
   display: flex;
   align-items: center;
   font-weight: bold;
+  color: #f2f2f2;
 `;
 
 export const DollarIcon = styled.img`
@@ -117,7 +103,7 @@ export const EagleContainer = styled.div`
 `;
 
 export const EagleImage = styled.img`
-  width: 270px;
+  width: 300px; 
   height: auto;
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
@@ -139,12 +125,13 @@ export const Description = styled.div`
   margin-top: 10px;
   margin-bottom: 20px;
   line-height: 1.6;
-  color: white;
+  color: #ccc;
   max-width: 100%;
   text-align: center;
 
   & span {
     font-weight: bolder;
+    color: #ffcc00;
   }
 
   @media (max-width: 480px) {
@@ -154,8 +141,8 @@ export const Description = styled.div`
 
 export const FlyingNumber = styled.div`
   position: absolute;
-  font-size: 28px; /* Increased font size for better visibility */
-  color: #ffd700;
+  font-size: 28px;
+  color: #ffcc00;
   animation: ${pointFlyingAnimation} 1s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
@@ -174,30 +161,25 @@ export const SlapEmoji = styled.div`
   transform: translate(-50%, -50%);
   animation: ${slapEffectAnimation} 0.6s ease forwards;
 `;
-export const EnergyDisplay = styled.div`
-  margin-top: 10px;
-  font-size: 18px;
-  color: #ffcc00;  
-  font-weight: bold;
-`;
+
 export const EnergyIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #282c34;
+  background-color: #3a3a3a;
   border-radius: 50%;
-  width: 50px; /* Adjust size as needed */
+  width: 50px;
   height: 50px;
   margin-right: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 export const EnergyIcon = styled(FaBolt)`
-  width: 30px;  /* Adjust size as needed */
+  width: 30px;
   height: 30px;
-  color: #ffcc00; /* Yellow color for energy */
-  opacity: ${(props) => props.energy / 1000}; /* Opacity based on energy level */
-  transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity changes */
+  color: #ffcc00;
+  opacity: ${(props) => props.energy / 1000};
+  transition: opacity 0.3s ease-in-out;
 `;
 
 export const EnergyCounter = styled.div`
