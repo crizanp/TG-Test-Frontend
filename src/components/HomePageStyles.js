@@ -29,7 +29,7 @@ const pointFlyingAnimation = keyframes`
   }
   100% {
     opacity: 0;
-    transform: translateY(-60px) scale(1.2); 
+    transform: translateY(-30px) scale(1.2); /* Reduced Y translation to fly less high */
   }
 `;
 
@@ -128,10 +128,11 @@ export const Description = styled.div`
   color: #ccc;
   max-width: 100%;
   text-align: center;
+  font-weight: bold;
 
   & span {
-    font-weight: bolder;
-    color: #ffcc00;
+    font-weight: bold;
+    color: #fff; /* Pure white text for emphasis */
   }
 
   @media (max-width: 480px) {

@@ -37,6 +37,7 @@ function HomePage() {
     const initializeUser = async () => {
       const userID = await getUserID(setUserID);
 
+      // Retrieve points from localStorage
       const savedPoints = localStorage.getItem(`points_${userID}`);
       if (savedPoints) {
         setPoints(parseFloat(savedPoints));
@@ -76,7 +77,7 @@ function HomePage() {
   const handleTap = useCallback(
     (e) => {
       if (energy <= 0) {
-        return;
+        return; // Stop tapping if energy is depleted
       }
 
       const rect = e.currentTarget.getBoundingClientRect();
@@ -113,7 +114,8 @@ function HomePage() {
 
       setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + addedPoints);
 
-      decreaseEnergy(10);
+      // Reduce energy by 2 points on each tap
+      decreaseEnergy(2);
 
       if (navigator.onLine) {
         syncPointsWithServer(offlinePoints + addedPoints);
@@ -145,7 +147,7 @@ function HomePage() {
         </PointsDisplay>
       </PointsDisplayContainer>
       <MiddleSection>
-        <Message>{getMessage}</Message>
+        <Message>{getMessage}</Message> {/* Use getMessage directly without parentheses */}
         <EagleContainer>
           <EagleImage
             src={eagleImage}
