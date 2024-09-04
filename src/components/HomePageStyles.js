@@ -76,8 +76,9 @@ export const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 64px;
-  margin-bottom: 20px;
+  margin-top: 40px;
+    margin-bottom: 11px;
+
 `;
 
 // Points display
