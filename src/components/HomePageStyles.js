@@ -117,7 +117,7 @@ export const Message = styled.div`
   text-transform: uppercase;
 
   @media (max-width: 480px) {
-    font-size: 18px;
+    font-size: 14px;
     margin-bottom: 10px;
   }
 `;
@@ -201,8 +201,8 @@ export const EnergyIconContainer = styled.div`
   justify-content: center;
   background-color: #1f1f1f;
   border-radius: 50%;
-  width: 70px;  
-  height: 70px;
+  width: 50px;  
+  height: 50px;
   margin-right: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   position: relative;

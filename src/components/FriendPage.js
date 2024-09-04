@@ -30,7 +30,7 @@ const PointsDisplayContainer = styled.div`
 const PointsDisplay = styled.div`
   font-size: 30px;
   font-weight: bold;
-  color: #00b4d8;
+  color:#ffffff;
   display: flex;
   align-items: center;
 `;
@@ -92,7 +92,7 @@ const TaskItemTitle = styled.div`
 `;
 
 const TaskPoints = styled.div`
-  background-color: #00b4d8;
+  background-color: #ffc107;
   color: white;
   padding: 8px 16px;
   border-radius: 10px;
@@ -126,7 +126,7 @@ const ReferralLink = styled.a`
   display: inline-block;
   margin-top: 15px;
   word-break: break-all;
-  color: #00b4d8;
+  color: #ffffff;
   font-size: 14px;
   text-decoration: none;
   transition: background-color 0.3s;
@@ -145,7 +145,7 @@ const ButtonGroup = styled.div`
 
 const CopyButton = styled.button`
   background-color: #00b4d8;
-  color: #111111;
+  color: #ffffff;
   border: none;
   padding: 10px 25px;
   border-radius: 8px;
@@ -209,7 +209,7 @@ const ReferralUsername = styled.div`
 
 const ReferralPoints = styled.div`
   font-size: 15px;
-  color: #00b4d8;
+  color: #ffffff;
 `;
 
 const StickyUserInfoContainer = styled.div`
