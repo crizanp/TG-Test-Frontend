@@ -4,13 +4,13 @@ import styled from "styled-components";
 import { debounce } from "lodash";
 import dollarImage from '../assets/dollar-homepage.png';
 
-// Styled components with a minimalist dark theme
+// Styled components with a dark background, subtle color accents
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: #0d0d0d;
+  background: #111111;
   padding: 30px 20px;
   color: #ffffff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,17 +20,17 @@ const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  padding: 15px 30px;
+  margin-bottom: 25px;
+  padding: 20px 40px;
   background: #1a1a1a;
-  border-radius: 40px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 `;
 
 const PointsDisplay = styled.div`
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
-  color: #ffffff;
+  color: #00b4d8;
   display: flex;
   align-items: center;
 `;
@@ -43,16 +43,16 @@ const DollarIcon = styled.img`
 const TaskCategory = styled.div`
   width: 100%;
   max-width: 600px;
-  background-color: #1a1a1a;
+  background-color: #1f1f1f;
   padding: 20px;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   border-radius: 12px;
-  color: #e0e0e0;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 `;
 
 const TaskTitle = styled.h3`
-  color: #e0e0e0;
+  color: #ffc107;
   margin-bottom: 15px;
   margin-top: 0;
   font-weight: bold;
@@ -92,7 +92,7 @@ const TaskItemTitle = styled.div`
 `;
 
 const TaskPoints = styled.div`
-  background-color: #333333;
+  background-color: #00b4d8;
   color: white;
   padding: 8px 16px;
   border-radius: 10px;
@@ -103,7 +103,7 @@ const TaskPoints = styled.div`
 const ReferralContainer = styled.div`
   background: #1a1a1a;
   padding: 25px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   width: 100%;
   max-width: 600px;
   text-align: center;
@@ -112,7 +112,7 @@ const ReferralContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  color: #ffffff;
+  color: #ffc107;
   margin-bottom: 20px;
   font-size: 24px;
   text-transform: uppercase;
@@ -126,13 +126,13 @@ const ReferralLink = styled.a`
   display: inline-block;
   margin-top: 15px;
   word-break: break-all;
-  color: #ffffff;
+  color: #00b4d8;
   font-size: 14px;
   text-decoration: none;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #3a3a3a;
+    background-color: #333333;
   }
 `;
 
@@ -144,8 +144,8 @@ const ButtonGroup = styled.div`
 `;
 
 const CopyButton = styled.button`
-  background-color: #333333;
-  color: #ffffff;
+  background-color: #00b4d8;
+  color: #111111;
   border: none;
   padding: 10px 25px;
   border-radius: 8px;
@@ -155,12 +155,12 @@ const CopyButton = styled.button`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #4d4d4d;
+    background-color: #00a3c7;
   }
 `;
 
 const ForwardButton = styled.button`
-  background-color: #4a4a4a;
+  background-color: #0077b6;
   color: #ffffff;
   border: none;
   padding: 10px 25px;
@@ -171,7 +171,7 @@ const ForwardButton = styled.button`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #5a5a5a;
+    background-color: #005f8e;
   }
 `;
 
@@ -209,7 +209,7 @@ const ReferralUsername = styled.div`
 
 const ReferralPoints = styled.div`
   font-size: 15px;
-  color: #ffffff;
+  color: #00b4d8;
 `;
 
 const StickyUserInfoContainer = styled.div`
