@@ -33,7 +33,7 @@ export const getUserID = async (setUserID, setUsername) => {
         try {
           await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
-            username: tgUsername || ''Null Username'', // handle case if username is not provided
+            username: tgUsername || 'Null Username', // handle case if username is not provided
             points: 0,
             tasksCompleted: [],
             taskHistory: [],
