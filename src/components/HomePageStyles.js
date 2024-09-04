@@ -209,7 +209,7 @@ export const EnergyIconContainer = styled.div`
   ${({ energy }) =>
     energy > 800 &&
     css`
-      animation: ${glowAnimation} 1.5s infinite ease-in-out;
+      ${'' /* animation: ${glowAnimation} 1.5s infinite ease-in-out; */}
     `}
 
   ${({ energy }) =>
