@@ -98,7 +98,7 @@ const MenuItem = styled.div`
     isActive &&
     css`
       animation: ${pulseAnimation} 1.5s infinite;
-      transform: scale(2.5); /* Bigger scale for the clicked item */
+      transform: scale(1.5); /* Bigger scale for the clicked item */
       color: #fff;
     `}
 `;
@@ -117,7 +117,7 @@ const MenuLabel = styled.div`
 const VibrationMenuItem = (props) => {
   const handleClick = () => {
     if ('vibrate' in navigator) {
-      navigator.vibrate(100); // Trigger vibration for 100ms
+      navigator.vibrate(50); // Softer vibration for 50ms
     }
 
     if (props.onClick) {
@@ -132,6 +132,7 @@ const VibrationMenuItem = (props) => {
     </MenuItem>
   );
 };
+
 
 function BottomMenu() {
   const navigate = useNavigate(); // Get navigation function from React Router
@@ -160,7 +161,7 @@ function BottomMenu() {
             isActive={activeMenu === '/friend'}
           >
             <GiHiveMind
-              size={20}
+              size={26}
               color={activeMenu === '/friend' ? '#fff' : '#dfcec0'}
             />
           </VibrationMenuItem>
@@ -170,7 +171,7 @@ function BottomMenu() {
             isActive={activeMenu === '/earn'}
           >
             <GiReceiveMoney
-              size={20}
+              size={26}
               color={activeMenu === '/earn' ? '#fff' : '#dfcec0'}
             />
           </VibrationMenuItem>
@@ -180,7 +181,7 @@ function BottomMenu() {
             isActive={activeMenu === '/home'}
           >
             <SiEagle
-              size={20}
+              size={26}
               color={activeMenu === '/home' ? '#fff' : '#dfcec0'}
             />
           </VibrationMenuItem>
@@ -190,7 +191,7 @@ function BottomMenu() {
             isActive={activeMenu === '/airdrop'}
           >
             <FaParachuteBox
-              size={20}
+              size={26}
               color={activeMenu === '/airdrop' ? '#fff' : '#dfcec0'}
             />
           </VibrationMenuItem>
@@ -200,7 +201,7 @@ function BottomMenu() {
             isActive={activeMenu === '/games'}
           >
             <FaGamepad
-              size={20}
+              size={26}
               color={activeMenu === '/games' ? '#fff' : '#dfcec0'}
             />
           </VibrationMenuItem>
