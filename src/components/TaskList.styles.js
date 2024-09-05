@@ -317,7 +317,6 @@ export const Modal = styled.div`
 
   @media (max-width: 480px) {
     padding: 20px;
-    height: 70vh;
     border-radius: 15px 15px 0 0;
   }
 `;
