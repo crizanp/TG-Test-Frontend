@@ -14,6 +14,8 @@ import {
   TaskCategory,
   TaskTitle,
   CoinText,
+  Logo,
+  PointsDisplayModal,
   TaskItem,
   TaskDetails,
   TaskItemTitle,
@@ -215,52 +217,64 @@ const TaskList = () => {
               ))}
             </TaskCategory>
           ))}
-
           {selectedTask && (
-            <ModalOverlay>
-              <Modal>
-                <CloseButtonModel onClick={handleClose}>❌</CloseButtonModel>
-                <ModalHeader>{selectedTask.name}</ModalHeader>
-                <ModalContent>{selectedTask.description}</ModalContent>
-                {!timerStarted && !isClaimable && !underModeration ? (
-                  <ModalButton onClick={handleStartTask}>
-                    Start Task
-                  </ModalButton>
-                ) : null}
+  <ModalOverlay>
+    <Modal>
+      <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
 
-                {timerStarted && !isClaimable && !underModeration ? (
-                  <>
-                    <TimerIcon />
-                    <TimerText>{timer} seconds</TimerText>
-                  </>
-                ) : null}
+      {/* Logo Section */}
+      <Logo src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQQtpHFFaMw_0RtE4I7PodWeMdgMhXcZgnYw&s" alt="Logo" />
 
-                {isClaimable && !underModeration ? (
-                  <>
-                    <ProofInput
-                      type="text"
-                      placeholder={selectedTask.proofPlaceholder}
-                      value={proof}
-                      onChange={(e) => setProof(e.target.value)}
-                    />
-                    <ClaimButton
-                      onClick={handleClaimReward}
-                      disabled={!proof.trim()}
-                    >
-                      Claim Reward
-                    </ClaimButton>
-                  </>
-                ) : null}
+      {/* Title */}
+      <ModalHeader>{selectedTask.name}</ModalHeader>
 
-                {underModeration && (
-                  <>
-                    <ModalContent>Task under moderation...</ModalContent>
-                    <TimerIcon />
-                  </>
-                )}
-              </Modal>
-            </ModalOverlay>
-          )}
+      {/* Points Display */}
+      <PointsDisplayModal>+{selectedTask.points} IGH</PointsDisplayModal>
+
+      {/* Description */}
+      <ModalContent>{selectedTask.description}</ModalContent>
+
+      {/* Proof Input and Claim Button */}
+      {isClaimable && !underModeration ? (
+  <>
+    <ProofInput
+      type="text"
+      placeholder={selectedTask.proofPlaceholder}
+      value={proof}
+      onChange={(e) => setProof(e.target.value)}
+    />
+
+    {/* Claim Reward Button */}
+    <ClaimButton
+      onClick={handleClaimReward}
+      disabled={!proof.trim() || underModeration} // Disable if proof is empty or in moderation
+    >
+      {underModeration ? 'Claiming...' : 'Claim Reward'} {/* Show "Claiming..." when processing */}
+    </ClaimButton>
+  </>
+) : null}
+
+      {/* Start Task and Processing Button */}
+      {!timerStarted && !isClaimable && !underModeration ? (
+        <ModalButton onClick={handleStartTask}>
+          Start Task
+        </ModalButton>
+      ) : timerStarted && !isClaimable ? (
+        <ModalButton disabled>Processing...</ModalButton>
+      ) : null}
+
+      {/* Moderation Section */}
+      {underModeration && (
+        <>
+          <ModalContent>Task under moderation...</ModalContent>
+          <TimerIcon />
+        </>
+      )}
+    </Modal>
+  </ModalOverlay>
+)}
+
+
         </TaskContainer>
       )}
     </>

@@ -1,7 +1,8 @@
-import styled, { keyframes, css } from "styled-components"; // Import css from styled-components
+import styled, { keyframes, css } from "styled-components";
 import { GiClockwork } from "react-icons/gi";
+import { FaTimes } from "react-icons/fa"; // Importing the close button icon
 
-// Keyframe for slide-in animation from the top right
+// Slide in from right animation for floating message
 const slideIn = keyframes`
   from {
     transform: translateX(100%);
@@ -13,7 +14,7 @@ const slideIn = keyframes`
   }
 `;
 
-// Keyframe for fade-out animation
+// Fade out for floating message
 const fadeOut = keyframes`
   from {
     opacity: 1;
@@ -23,6 +24,7 @@ const fadeOut = keyframes`
   }
 `;
 
+// Floating message container with responsive behavior and animations
 export const FloatingMessageContainer = styled.div`
   position: fixed;
   top: 20px;
@@ -46,6 +48,7 @@ export const FloatingMessageContainer = styled.div`
   }
 `;
 
+// Text for floating message
 export const MessageText = styled.div`
   font-size: 16px;
   margin-right: 10px;
@@ -55,6 +58,7 @@ export const MessageText = styled.div`
   }
 `;
 
+// Close button for floating message
 export const CloseButton = styled.div`
   cursor: pointer;
   font-size: 20px;
@@ -64,6 +68,7 @@ export const CloseButton = styled.div`
   }
 `;
 
+// Task list container styling
 export const TaskContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -84,13 +89,14 @@ export const TaskContainer = styled.div`
     padding-bottom: 80px;
   }
 `;
-// Define the spin animation
+
+// Keyframe for spinning loading spinner
 const spin = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
 
-// Styled component for the loading spinner
+// Styled component for loading spinner
 export const LoadingSpinner = styled.div`
   border: 16px solid #f3f3f3; /* Light grey */
   border-top: 16px solid #3498db; /* Blue */
@@ -103,32 +109,28 @@ export const LoadingSpinner = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+// Task category block with background and padding
 export const TaskCategory = styled.div`
   width: 100%;
   max-width: 600px;
   background-color: #fffbfb0a;
   padding: 20px;
   margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 `;
 
+// Task title with uppercase and color
 export const TaskTitle = styled.h3`
   color: #c2beb9;
   margin-bottom: 20px;
-  margin-top: 4px;
-  /* text-align: center; */
   font-weight: bold;
   font-size: 18px;
   text-transform: uppercase;
 `;
 
-export const CoinLogo = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 45px;
-  margin-bottom: 10px;
-  font-size: 64px;
-`;
+// Points display section with animated effect
 export const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
@@ -163,6 +165,7 @@ export const CoinText = styled.div`
   font-weight: bold;
 `;
 
+// Task item with hover effects and transitions
 export const TaskItem = styled.div`
   background-color: #1e1e1e;
   padding: 15px;
@@ -196,6 +199,7 @@ export const TaskItem = styled.div`
   }
 `;
 
+// Task details section
 export const TaskDetails = styled.div`
   display: flex;
   flex-direction: column;
@@ -251,6 +255,27 @@ export const TaskIcon = styled.div`
   }
 `;
 
+// Modal overlay with blur background and slide-up animation
+const slideUp = keyframes`
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+const blurBackground = keyframes`
+  from {
+    backdrop-filter: blur(0px);
+  }
+  to {
+    backdrop-filter: blur(8px);
+  }
+`;
+
+// Modal overlay with background blur
 export const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -262,66 +287,100 @@ export const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
-
+  animation: ${blurBackground} 0.5s ease-in-out forwards;
+  
   @media (max-width: 480px) {
-    align-items: center;
+    align-items: flex-end;
   }
 `;
 
+// Modal styling that covers the bottom half of the screen
 export const Modal = styled.div`
-  background-color: #1e1e1e;
-  padding: 20px;
+  background-color: #1a1a1a;
+  padding: 40px 30px;
   border-radius: 20px 20px 0 0;
   width: 100%;
-  max-width: 400px;
+  max-width: 353px;
+  height: 61vh;
   text-align: center;
   position: relative;
+  animation: ${slideUp} 0.7s ease-out forwards;
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   @media (max-width: 768px) {
-    padding: 15px;
+    padding: 30px 20px;
+    height: 61vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px;
+    height: 70vh;
     border-radius: 15px 15px 0 0;
   }
-
-  @media (max-width: 480px) {
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-  }
 `;
 
+// Large white title
 export const ModalHeader = styled.div`
-  font-size: 24px;
-  color: #ff9800;
-  margin-bottom: 20px;
+  font-size: 32px;
+  color: #ffffff; // White title
+  margin-bottom: 10px;
   font-weight: bold;
 
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 28px;
+  }
+`;
+// Description styling with proper spacing and color
+export const ModalContent = styled.div`
+  font-size: 17px;
+    color: #ffffff;
+    padding: 15px;
+    background-color: rgb(255 255 255 / 4%);
+    /* border: 1px solid rgba(255, 255, 255, 0.2); */
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+  @media (max-width: 480px) {
+    font-size: 17px;
   }
 `;
 
-export const ModalContent = styled.div`
-  font-size: 16px;
-  color: white;
+// Points display section with coin icon
+export const PointsDisplayModal = styled.div`
+  font-size: 24px;
+  color: #f0a500;  // Yellow for points
+  font-weight: bold;
   margin-bottom: 20px;
 
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 22px;
   }
 `;
+// Coin icon with points display
+export const CoinIcon = styled.img`
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+`;
 
+// Start Task Button with updated styles
 export const ModalButton = styled.button`
-  background-color: #ff9800;
+  background-color: #800080;  // Purple background for the button
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 15px 25px;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #ffb74d;
+    background-color: #a64ca6;  // Lighten the purple on hover
+    transform: scale(1.05);
   }
 
   &:disabled {
@@ -330,41 +389,52 @@ export const ModalButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 16px;
     padding: 10px 20px;
   }
 `;
-
-export const ClaimButton = styled(ModalButton)`
-  background-color: green;
-  margin-top: 20px;
-
-  &:hover {
-    background-color: #66bb6a;
-  }
-
-  &:disabled {
-    background-color: grey;
-    cursor: not-allowed;
-  }
-`;
-
-export const CloseButtonModel = styled.div`
+// Red close button (icon)
+export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
   top: 10px;
   right: 10px;
   font-size: 24px;
   cursor: pointer;
-  color: white;
+  color: #f44336; // Red color for close button
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 0.8;
+  }
 
   @media (max-width: 480px) {
     font-size: 20px;
   }
 `;
+// Logo area (for the placeholder logo)
+export const Logo = styled.img`
+  width: 150px;
+  height: 180px;
+  margin: 0 auto 20px;
+  object-fit: contain;
+`;
+export const ClaimButton = styled(ModalButton)`
+  background-color: #b82bcb;
+  ${'' /* margin-top: 20px; */}
 
+  &:hover {
+    background-color: ;
+  }#66bb6a
+
+  &:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+  }
+`;
+// Input field for proof of task completion
 export const ProofInput = styled.input`
   background-color: #333;
-  border: 2px solid #ff9800;
+  border: 2px solid #b82bcb;
   padding: 12px;
   border-radius: 8px;
   width: calc(100% - 24px);
@@ -382,32 +452,7 @@ export const ProofInput = styled.input`
     font-size: 16px;
   }
 `;
-
-export const PointsContainer = styled.div`
-  background-color: #4caf50;
-  padding: 10px 20px;
-  border-radius: 15px;
-  margin-top: 15px;
-  max-width: 400px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  font-weight: bold;
-  position: fixed;
-  top: 0;
-  z-index: 10;
-
-  @media (max-width: 480px) {
-    padding: 10px 20px;
-    font-size: 18px;
-  }
-`;
-
-export const TotalPoints = styled.div`
-  font-weight: bold;
-`;
-
+// Timer icon with rotating animation
 const spinAnimation = keyframes`
   from {
     transform: rotate(0deg);
@@ -438,7 +483,8 @@ export const TimerText = styled.div`
     font-size: 16px;
   }
 `;
-// Define the pointsAnimation keyframes
+
+// Points animation keyframe
 const pointsAnimation = keyframes`
   0% {
     transform: scale(1);
