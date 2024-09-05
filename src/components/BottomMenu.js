@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
+import styled, { keyframes, createGlobalStyle, css } from 'styled-components';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaParachuteBox, FaGamepad } from 'react-icons/fa';
 import { GiReceiveMoney, GiHiveMind } from 'react-icons/gi';
 import { SiEagle } from 'react-icons/si';
+
+// Global styles for preventing long press pop-up and blue dim
+const GlobalStyle = createGlobalStyle`
+  * {
+    -webkit-user-select: none; /* Disable text selection */
+    -webkit-touch-callout: none; /* Disable long-press context menu */
+    outline: none; /* Remove focus outline */
+    -webkit-tap-highlight-color: transparent; /* Disable blue dim background */
+  }
+`;
 
 const BottomMenuContainer = styled.div`
   background-color: black;
@@ -33,7 +43,7 @@ const pulseAnimation = keyframes`
     transform: scale(1);
   }
   50% {
-    transform: scale(1.2);
+    transform: scale(1.3);
   }
   100% {
     transform: scale(1);
@@ -69,7 +79,7 @@ const MenuItems = styled.div`
   padding-top: 5px;
 `;
 
-const MenuItem = styled(Link)`
+const MenuItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -78,28 +88,19 @@ const MenuItem = styled(Link)`
   text-decoration: none;
   padding: 10px; /* Increased padding for broader touch area */
   transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.1); /* Slightly enlarge the icon on hover */
-  }
-
-  &:active {
-    transform: scale(1.2); /* Scale effect when icon is clicked */
-  }
+  cursor: pointer;
 
   @media (max-width: 480px) {
     font-size: 10px;
   }
-`;
 
-const HomeMenuItem = styled(MenuItem)`
-  font-size: 20px;
-  transform: translateY(-5px);
-  animation: ${pulseAnimation} 2s infinite;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
+  ${({ isActive }) =>
+    isActive &&
+    css`
+      animation: ${pulseAnimation} 1.5s infinite;
+      transform: scale(2.5); /* Bigger scale for the clicked item */
+      color: #fff;
+    `}
 `;
 
 const MenuLabel = styled.div`
@@ -118,49 +119,94 @@ const VibrationMenuItem = (props) => {
     if ('vibrate' in navigator) {
       navigator.vibrate(100); // Trigger vibration for 100ms
     }
+
+    if (props.onClick) {
+      props.onClick();
+    }
   };
 
   return (
-    <MenuItem onClick={handleClick} {...props}>
+    <MenuItem onClick={handleClick} isActive={props.isActive}>
       {props.children}
+      <MenuLabel>{props.label}</MenuLabel>
     </MenuItem>
   );
 };
 
 function BottomMenu() {
+  const navigate = useNavigate(); // Get navigation function from React Router
   const location = useLocation(); // Get current page location
+  const [activeMenu, setActiveMenu] = useState(location.pathname); // Track the currently active menu item
+
+  const handleMenuClick = (path) => {
+    setActiveMenu(path);
+    navigate(path);
+  };
 
   return (
-    <BottomMenuContainer>
-      <PoweredBy>
-        Powered by{' '}
-        <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">
-          IGH Group [ ICOGEMHUNTERS ]
-        </a>
-      </PoweredBy>
-      <MenuItems>
-        <VibrationMenuItem to="/friend">
-          <GiHiveMind size={location.pathname === '/friend' ? 24 : 20} color={location.pathname === '/friend' ? '#fff' : '#dfcec0'} />
-          <MenuLabel>Friend</MenuLabel>
-        </VibrationMenuItem>
-        <VibrationMenuItem to="/earn">
-          <GiReceiveMoney size={location.pathname === '/earn' ? 24 : 20} color={location.pathname === '/earn' ? '#fff' : '#dfcec0'} />
-          <MenuLabel>Earn</MenuLabel>
-        </VibrationMenuItem>
-        <HomeMenuItem to="/home">
-          <SiEagle size={location.pathname === '/home' ? 36 : 32} color={location.pathname === '/home' ? '#fff' : '#dfcec0'} />
-          <MenuLabel>Home</MenuLabel>
-        </HomeMenuItem>
-        <VibrationMenuItem to="/airdrop">
-          <FaParachuteBox size={location.pathname === '/airdrop' ? 24 : 20} color={location.pathname === '/airdrop' ? '#fff' : '#dfcec0'} />
-          <MenuLabel>Airdrop</MenuLabel>
-        </VibrationMenuItem>
-        <VibrationMenuItem to="/games">
-          <FaGamepad size={location.pathname === '/games' ? 24 : 20} color={location.pathname === '/games' ? '#fff' : '#dfcec0'} />
-          <MenuLabel>Games</MenuLabel>
-        </VibrationMenuItem>
-      </MenuItems>
-    </BottomMenuContainer>
+    <>
+      <GlobalStyle /> {/* Apply global styles */}
+      <BottomMenuContainer>
+        <PoweredBy>
+          Powered by{' '}
+          <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">
+            IGH Group [ ICOGEMHUNTERS ]
+          </a>
+        </PoweredBy>
+        <MenuItems>
+          <VibrationMenuItem
+            label="Friend"
+            onClick={() => handleMenuClick('/friend')}
+            isActive={activeMenu === '/friend'}
+          >
+            <GiHiveMind
+              size={20}
+              color={activeMenu === '/friend' ? '#fff' : '#dfcec0'}
+            />
+          </VibrationMenuItem>
+          <VibrationMenuItem
+            label="Earn"
+            onClick={() => handleMenuClick('/earn')}
+            isActive={activeMenu === '/earn'}
+          >
+            <GiReceiveMoney
+              size={20}
+              color={activeMenu === '/earn' ? '#fff' : '#dfcec0'}
+            />
+          </VibrationMenuItem>
+          <VibrationMenuItem
+            label="Home"
+            onClick={() => handleMenuClick('/home')}
+            isActive={activeMenu === '/home'}
+          >
+            <SiEagle
+              size={20}
+              color={activeMenu === '/home' ? '#fff' : '#dfcec0'}
+            />
+          </VibrationMenuItem>
+          <VibrationMenuItem
+            label="Airdrop"
+            onClick={() => handleMenuClick('/airdrop')}
+            isActive={activeMenu === '/airdrop'}
+          >
+            <FaParachuteBox
+              size={20}
+              color={activeMenu === '/airdrop' ? '#fff' : '#dfcec0'}
+            />
+          </VibrationMenuItem>
+          <VibrationMenuItem
+            label="Games"
+            onClick={() => handleMenuClick('/games')}
+            isActive={activeMenu === '/games'}
+          >
+            <FaGamepad
+              size={20}
+              color={activeMenu === '/games' ? '#fff' : '#dfcec0'}
+            />
+          </VibrationMenuItem>
+        </MenuItems>
+      </BottomMenuContainer>
+    </>
   );
 }
 
