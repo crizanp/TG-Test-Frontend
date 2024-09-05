@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Link } from 'react-router-dom';
-import { FaDove, FaParachuteBox, FaGamepad, FaHome } from 'react-icons/fa';
-import { GiReceiveMoney, GiHiveMind,GiEagleHead  } from 'react-icons/gi';
- import { SiEagle } from "react-icons/si";
+import { Link, useLocation } from 'react-router-dom';
+import { FaParachuteBox, FaGamepad } from 'react-icons/fa';
+import { GiReceiveMoney, GiHiveMind } from 'react-icons/gi';
+import { SiEagle } from 'react-icons/si';
 
 const BottomMenuContainer = styled.div`
   background-color: black;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Centers content vertically */
+  justify-content: center; 
   position: fixed;
   bottom: 0;
   width: 100%;
   max-width: 400px;
-  padding: 0px 0px 10px 0px; /* Adjust padding as needed */
+  padding: 0px 0px 10px 0px; 
   margin: 0 auto;
   z-index: 10;
 
@@ -66,7 +66,7 @@ const MenuItems = styled.div`
   display: flex;
   justify-content: space-around;
   width: 100%;
-  padding-top: 5px; /* Add some space between PoweredBy and MenuItems */
+  padding-top: 5px;
 `;
 
 const MenuItem = styled(Link)`
@@ -76,6 +76,16 @@ const MenuItem = styled(Link)`
   color: #dfcec0;
   font-size: 12px;
   text-decoration: none;
+  padding: 10px; /* Increased padding for broader touch area */
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1); /* Slightly enlarge the icon on hover */
+  }
+
+  &:active {
+    transform: scale(1.2); /* Scale effect when icon is clicked */
+  }
 
   @media (max-width: 480px) {
     font-size: 10px;
@@ -93,9 +103,9 @@ const HomeMenuItem = styled(MenuItem)`
 `;
 
 const MenuLabel = styled.div`
-  font-family: 'Poppins', sans-serif; /* Set the font family */
+  font-family: 'Poppins', sans-serif;
   font-size: 10px;
-  font-weight: 600; /* Optional: make the text slightly bolder */
+  font-weight: 600;
   margin-top: 3px;
 
   @media (max-width: 480px) {
@@ -103,7 +113,23 @@ const MenuLabel = styled.div`
   }
 `;
 
+const VibrationMenuItem = (props) => {
+  const handleClick = () => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(100); // Trigger vibration for 100ms
+    }
+  };
+
+  return (
+    <MenuItem onClick={handleClick} {...props}>
+      {props.children}
+    </MenuItem>
+  );
+};
+
 function BottomMenu() {
+  const location = useLocation(); // Get current page location
+
   return (
     <BottomMenuContainer>
       <PoweredBy>
@@ -113,26 +139,26 @@ function BottomMenu() {
         </a>
       </PoweredBy>
       <MenuItems>
-        <MenuItem to="/friend">
-          <GiHiveMind size={20} />
+        <VibrationMenuItem to="/friend">
+          <GiHiveMind size={location.pathname === '/friend' ? 24 : 20} color={location.pathname === '/friend' ? '#fff' : '#dfcec0'} />
           <MenuLabel>Friend</MenuLabel>
-        </MenuItem>
-        <MenuItem to="/earn">
-          <GiReceiveMoney size={20} />
+        </VibrationMenuItem>
+        <VibrationMenuItem to="/earn">
+          <GiReceiveMoney size={location.pathname === '/earn' ? 24 : 20} color={location.pathname === '/earn' ? '#fff' : '#dfcec0'} />
           <MenuLabel>Earn</MenuLabel>
-        </MenuItem>
+        </VibrationMenuItem>
         <HomeMenuItem to="/home">
-          <SiEagle size={32} />
+          <SiEagle size={location.pathname === '/home' ? 36 : 32} color={location.pathname === '/home' ? '#fff' : '#dfcec0'} />
           <MenuLabel>Home</MenuLabel>
         </HomeMenuItem>
-        <MenuItem to="/airdrop">
-          <FaParachuteBox size={20} />
+        <VibrationMenuItem to="/airdrop">
+          <FaParachuteBox size={location.pathname === '/airdrop' ? 24 : 20} color={location.pathname === '/airdrop' ? '#fff' : '#dfcec0'} />
           <MenuLabel>Airdrop</MenuLabel>
-        </MenuItem>
-        <MenuItem to="/games">
-          <FaGamepad size={20} />
+        </VibrationMenuItem>
+        <VibrationMenuItem to="/games">
+          <FaGamepad size={location.pathname === '/games' ? 24 : 20} color={location.pathname === '/games' ? '#fff' : '#dfcec0'} />
           <MenuLabel>Games</MenuLabel>
-        </MenuItem>
+        </VibrationMenuItem>
       </MenuItems>
     </BottomMenuContainer>
   );
