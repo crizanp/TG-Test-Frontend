@@ -66,7 +66,7 @@ const UserInfo = () => {
   return (
     <UserInfoContainer>
       <Username>
-        Hi {firstName || 'User'}, you have
+        Hi {firstName || 'User'}
       </Username>
       <PointsContainer>
         <CrownIcon /> {Math.floor(points)} Crowns
