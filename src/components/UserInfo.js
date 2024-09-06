@@ -1,6 +1,6 @@
-// UserInfo.js
+// src/components/UserInfo.js
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
 
@@ -86,13 +86,20 @@ const UserInfo = () => {
   const firstName = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name;
   const profilePhoto = window.Telegram.WebApp?.initDataUnsafe?.user?.photo_url;
 
+  // Debugging Telegram data to ensure the photo_url is present
+  useEffect(() => {
+    console.log('Telegram WebApp Data:', window.Telegram.WebApp?.initDataUnsafe);
+  }, []);
+
   return (
     <UserInfoContainer>
       <UserDetails>
         {/* Conditionally show the profile image if it exists */}
-        {profilePhoto && <ProfileImage src={profilePhoto} alt="Profile" />}
+        {profilePhoto ? (
+          <ProfileImage src={profilePhoto} alt="Profile" />
+        ) : null}
 
-        {/* Display username and points */}
+        {/* Display username */}
         <Username>Hi {firstName || 'User'}</Username>
       </UserDetails>
 
