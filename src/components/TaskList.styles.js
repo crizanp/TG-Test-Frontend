@@ -117,7 +117,7 @@ export const LoadingSpinner = styled.div`
 export const TaskCategory = styled.div`
   width: 100%;
   max-width: 600px;
-  background-color: #fffbfb0a;
+  background-color: #a9d5ff14;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 15px;
@@ -170,16 +170,20 @@ export const CoinText = styled.div`
 
 // Task item with hover effects and transitions
 export const TaskItem = styled.div`
-  background-color: #1e1e1e;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 15px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  ${'' /* background-color: #4fb053; */ }
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 15px;
+    /* box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+     background-color: #ffffff1a; 
+    cursor: default;
+    border: 2px solid white;
+
 
   &:hover {
     transform: translateY(-3px);
@@ -189,7 +193,9 @@ export const TaskItem = styled.div`
   ${({ $completed }) =>
     $completed &&
     `
-    background-color: #2e7d32;
+    background-color: #00800017;
+    border: 2px solid #6aeb6a91;
+
     cursor: default;
     &:hover {
       transform: none;
@@ -221,17 +227,22 @@ export const TaskItemTitle = styled.div`
 `;
 
 export const TaskPoints = styled.div`
-  background-color: #ff9800;
+  background-color: #0096da;
   color: white;
   padding: 8px 12px;
   border-radius: 12px;
   font-weight: bold;
   font-size: 16px;
+  display: flex;         /* Use flexbox */
+  align-items: center;   /* Align items vertically */
+  justify-content: center; /* Center items horizontally */
+  gap: 2px;              /* Add space between crown icon and points text */
 
   @media (max-width: 480px) {
     font-size: 14px;
   }
 `;
+
 
 export const TaskIcon = styled.div`
   font-size: 20px;

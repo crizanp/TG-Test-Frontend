@@ -7,6 +7,8 @@ import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
+import { FaCrown } from 'react-icons/fa';  // Crown icon from react-icons
+
 import {
   TaskContainer,
   TaskCategory,
@@ -36,6 +38,15 @@ import {
 } from "./TaskList.styles";
 import dollarImage from "../assets/dollar-homepage.png";
 import coinIcon from "../assets/coin-icon.png"; // Add coin icon
+import styled from "styled-components"; // Make sure this is present
+
+export const CrownIcon = styled(FaCrown)`
+  color: #ffd700; /* Gold color for the crown */
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top: -3px;
+  font-size: 1.5rem;
+`;
 
 const TaskList = () => {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
@@ -58,7 +69,9 @@ const TaskList = () => {
         const userID = await getUserID(setUserID, setUsername);
         console.log("UserID fetched:", userID);
 
-        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        const userResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+        );
         const userData = userResponse.data;
 
         setPoints(userData.points);
@@ -73,7 +86,9 @@ const TaskList = () => {
       }
 
       try {
-        const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
+        const tasksResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`
+        );
         const data = tasksResponse.data;
 
         const categorizedTasks = {
@@ -134,7 +149,9 @@ const TaskList = () => {
         }
       );
 
-      const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+      const userResponse = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+      );
       setPoints(userResponse.data.points);
 
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
@@ -154,11 +171,11 @@ const TaskList = () => {
         [selectedTask._id]: true,
       }));
 
-      setMessage({ text: 'Points awarded!', type: 'success' });
+      setMessage({ text: "Points awarded!", type: "success" });
       setSelectedTask(null);
     } catch (error) {
       console.error("Error claiming reward:", error);
-      setMessage({ text: 'Error claiming the reward.', type: 'error' });
+      setMessage({ text: "Error claiming the reward.", type: "error" });
     } finally {
       setUnderModeration(false);
     }
@@ -182,7 +199,16 @@ const TaskList = () => {
       <PointsDisplayContainer id="pointsDisplay">
         <UserInfo userID={userID} points={points} />
         <PointsDisplay>
-          <DollarIcon src={dollarImage} alt="Dollar Icon" /> {Math.floor(points)}
+          <img
+            src="https://cdn-icons-png.freepik.com/512/1753/1753666.png"
+            alt="Logo Icon"
+            style={{
+              width: "100px",
+              height: "100px",
+              marginBottom: "19px",
+              marginTop: "20px",
+            }}
+          />
         </PointsDisplay>
       </PointsDisplayContainer>
 
@@ -197,21 +223,30 @@ const TaskList = () => {
               <TaskTitle>
                 {category.charAt(0).toUpperCase() + category.slice(1)} Tasks
               </TaskTitle>
-              {tasks[category].map((task) => (
-                <TaskItem
-                  key={task._id}
-                  $completed={completedTasks[task._id]}
-                  onClick={() => handleTaskClick(task)}
-                >
-                  <TaskDetails>
-                    <TaskItemTitle>{task.name}</TaskItemTitle>
-                    <TaskPoints>{task.points} pts</TaskPoints>
-                  </TaskDetails>
-                  <TaskIcon $completed={completedTasks[task._id]}>
-                    {completedTasks[task._id] ? "Done" : <FaChevronRight />}
-                  </TaskIcon>
-                </TaskItem>
-              ))}
+              {tasks[category]
+                .sort((a, b) => {
+                  // Move completed tasks to the bottom
+                  const isACompleted = completedTasks[a._id] ? 1 : 0;
+                  const isBCompleted = completedTasks[b._id] ? 1 : 0;
+                  return isACompleted - isBCompleted;
+                })
+                .map((task) => (
+                  <TaskItem
+                    key={task._id}
+                    $completed={completedTasks[task._id]}
+                    onClick={() => handleTaskClick(task)}
+                  >
+                    <TaskDetails>
+                      <TaskItemTitle>{task.name}</TaskItemTitle>
+                      <TaskPoints>
+  <CrownIcon /> {task.points}
+</TaskPoints>
+                    </TaskDetails>
+                    <TaskIcon $completed={completedTasks[task._id]}>
+                      {completedTasks[task._id] ? "Done" : <FaChevronRight />}
+                    </TaskIcon>
+                  </TaskItem>
+                ))}
             </TaskCategory>
           ))}
 
@@ -219,22 +254,20 @@ const TaskList = () => {
             <ModalOverlay>
               <Modal>
                 <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
-
                 {/* Logo Section */}
-                <Logo src="https://cdn3d.iconscout.com/3d/premium/thumb/ton-11767677-9599979.png" alt="Logo" />
-
+                <Logo
+                  src="https://cdn3d.iconscout.com/3d/premium/thumb/ton-11767677-9599979.png"
+                  alt="Logo"
+                />
                 {/* Title */}
                 <ModalHeader>{selectedTask.name}</ModalHeader>
-
                 {/* Points Display */}
                 <PointsDisplayModal>
-                  <CoinIcon src={coinIcon} alt="Coin Icon" />
-                  +{selectedTask.points} IGH
+                  <CoinIcon src={coinIcon} alt="Coin Icon" />+
+                  {selectedTask.points} IGH
                 </PointsDisplayModal>
-
                 {/* Description */}
                 <ModalContent>{selectedTask.description}</ModalContent>
-
                 {/* Proof Input and Claim Button */}
                 {isClaimable && !underModeration ? (
                   <>
@@ -254,7 +287,6 @@ const TaskList = () => {
                     </ClaimButton>
                   </>
                 ) : null}
-
                 {/* Start Task and Processing Button */}
                 {!timerStarted && !isClaimable && !underModeration ? (
                   <ModalButton onClick={handleStartTask}>
@@ -263,12 +295,11 @@ const TaskList = () => {
                 ) : timerStarted && !isClaimable ? (
                   <ModalButton disabled>Processing...</ModalButton>
                 ) : null}
-
                 {/* Moderation Section */}
                 {underModeration && (
                   <>
                     <ModalContent>Task under moderation...</ModalContent>
-                    <TimerIcon />
+                    {/* <TimerIcon /> */}
                   </>
                 )}
               </Modal>

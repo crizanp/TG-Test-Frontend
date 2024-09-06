@@ -1,105 +1,76 @@
-// src/components/UserInfo.js
-
 import React from 'react';
 import styled from 'styled-components';
+import { FaCrown } from 'react-icons/fa';  // Crown icon from react-icons
 import { usePoints } from '../context/PointsContext';
 
-// Telegram-themed colors
-const telegramBlue = "#0088cc";
-const telegramLightBlue = "#36A8E5";
-
-// User Info container with Telegram theme
 const UserInfoContainer = styled.div`
-  background-color: ${telegramBlue};
+  background: #1c1c1c;  /* Dark background */
   color: white;
-  padding: 8px 16px;
+  padding: 10px 20px;  /* Reduced padding */
   border-radius: 25px;
   margin-top: 10px;
-  max-width: 380px;
+  width: 100%;
+    max-width: 300px;  /* Limit max width */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
+  font-size: 14px;  /* Reduced font size */
   font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: fixed;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
+  border: 2px solid #0088cc;  /* Telegram's primary color for the border */
 
   @media (max-width: 480px) {
-    padding: 8px 12px;
-    font-size: 12px;
-    max-width: 95%;
+    padding: 8px 15px;
+    font-size: 15px;
   }
-`;
-
-// Profile image styling
-const ProfileImage = styled.img`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-  border: 2px solid ${telegramLightBlue};
-  
-  @media (max-width: 480px) {
-    width: 30px;
-    height: 30px;
-  }
-`;
-
-// Username and Points section
-const UserDetails = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 15px; // Increased the gap between username and points display
 `;
 
 const Username = styled.div`
-  color: white;
-  font-weight: bold;
-
-  @media (max-width: 480px) {
-    font-size: 12px;
-  }
+  display: flex;
+  align-items: center;
 `;
 
-const Points = styled.div`
-  background-color: ${telegramLightBlue};
+const CrownIcon = styled(FaCrown)`
+  color: #ffd700;  /* Gold color for crown */
+  margin-left: 8px;
+  margin-right: 8px;
+  font-size: 1.5rem;
+`;
+
+const PointsContainer = styled.div`
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 8px 15px;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
+  text-align: center;
 
   @media (max-width: 480px) {
-    font-size: 10px;
+    font-size: 17px;
+    padding: 4px 9px;
   }
 `;
 
 const UserInfo = () => {
-  const { points } = usePoints();
-  
-  // Fetch the user's first name and profile photo from Telegram WebApp API
+  const { points, username } = usePoints();
   const firstName = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name;
-  const profilePhoto = window.Telegram.WebApp?.initDataUnsafe?.user?.photo_url;
 
   return (
     <UserInfoContainer>
-      <UserDetails>
-        {/* Conditionally show the profile image if it exists */}
-        {profilePhoto ? (
-          <ProfileImage src={profilePhoto} alt="Profile" />
-        ) : null}
-
-        {/* Display username */}
-        <Username>Hi {firstName || 'User'}</Username>
-      </UserDetails>
-
-      {/* Display points with Telegram-style badge */}
-      <Points>IGH: {Math.floor(points)}</Points>
+      <Username>
+        Hi {firstName || 'User'}, you have
+      </Username>
+      <PointsContainer>
+        <CrownIcon /> {Math.floor(points)} Crowns
+      </PointsContainer>
     </UserInfoContainer>
   );
 };

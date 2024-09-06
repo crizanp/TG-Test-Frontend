@@ -74,10 +74,10 @@ export const HomeContainer = styled.div`
 // Points display container
 export const PointsDisplayContainer = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 40px;
-    margin-bottom: 11px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 76px;
+    margin-bottom: -26px;
 
 `;
 
@@ -143,7 +143,7 @@ export const EagleImage = styled.img`
     transform: scale(1.05);
   }
 
-  ${({ $animate }) =>
+  ${({ $animate }) =>-
     $animate &&
     css`
       animation: ${glowAnimation} 0.3s ease-in-out;
@@ -154,7 +154,7 @@ export const EagleImage = styled.img`
 export const Description = styled.div`
   font-size: 16px;
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   line-height: 1.6;
   color: white;
   max-width: 100%;
