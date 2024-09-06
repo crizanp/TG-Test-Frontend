@@ -266,6 +266,7 @@ const slideUp = keyframes`
     opacity: 1;
   }
 `;
+// Background blur animation for modal overlay
 const blurBackground = keyframes`
   from {
     backdrop-filter: blur(0px);
@@ -282,11 +283,11 @@ export const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.7);  // Darker overlay
   z-index: 100;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   animation: ${blurBackground} 0.5s ease-in-out forwards;
   
   @media (max-width: 480px) {
@@ -294,75 +295,63 @@ export const ModalOverlay = styled.div`
   }
 `;
 
+// Modal styling that covers the bottom half of the screen
 export const Modal = styled.div`
-  background-color: #1c1c1e;
-  color: white;
-  padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '30px 20px' : '30px 20px')};
-  border-radius: 12px 12px 0 0;
+  background-color: #1a1a1a;
+  padding: 20px;  // Reduced padding for a sleeker look
+  border-radius: 20px 20px 0 0;
   width: 100%;
-  max-width: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '100%' : '340px')};
-  height: ${({ isKeyboardVisible, $isClaimable }) =>
-    isKeyboardVisible ? '35vh'
-    : $isClaimable ? '35vh'
-    : '65vh'};
+  max-width: 400px;
+  min-height: 50vh; // Reduced height
+  text-align: center;
   position: relative;
+  animation: ${slideUp} 0.7s ease-out forwards;
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
-  justify-content: ${({ isKeyboardVisible }) => (isKeyboardVisible ? 'flex-start' : 'space-between')};
-  box-sizing: border-box;
-  transition: height 0.4s ease-out, transform 0.4s ease-out, opacity 0.4s ease-out;
-
-  @media (max-width: 768px) {
-    padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '20px' : '25px 15px')};
-  }
+  justify-content: space-between;
 
   @media (max-width: 480px) {
-    height: ${({ isKeyboardVisible, $isClaimable }) =>
-      isKeyboardVisible ? '35vh'
-      : $isClaimable ? '35vh'
-      : '55vh'};
-    padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '20px' : '20px')};
-    border-radius: 12px 12px 0 0;
-    width: 100%;
-    max-width: 100%;
-  }
-`;
-
-
-
-// Large white title
-export const ModalHeader = styled.div`
-  font-size: 31px;
-  color: #fff;
-  font-weight: bold;
-  text-align: center;
-`;
-
-// Description styling with proper spacing and color
-export const ModalContent = styled.div`
-  font-size: 17px;
-    color: #ffffff;
     padding: 15px;
-    background-color: rgb(255 255 255 / 4%);
-    /* border: 1px solid rgba(255, 255, 255, 0.2); */
-    border-radius: 8px;
-    ${'' /* margin-bottom: 20px; */}
-
-  @media (max-width: 480px) {
-    font-size: 17px;
+    height: auto;
+    transform: ${({ $keyboardVisible }) => ($keyboardVisible ? 'translateY(-100px)' : 'translateY(0)')}; // Shifts up on keyboard pop-up
   }
 `;
 
+// Updated modal header with optimized font size
+export const ModalHeader = styled.div`
+  font-size: 28px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-weight: bold;
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+  }
+`;
+
+// Modal content with reduced padding and improved styling
+export const ModalContent = styled.div`
+  font-size: 16px;
+  color: #ffffff;
+  padding: 10px;
+  background-color: rgb(255 255 255 / 4%);
+  border-radius: 8px;
+  margin-bottom: 10px;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
+`;
 // Points display section with coin icon
 export const PointsDisplayModal = styled.div`
-  font-size: 26px;
+  font-size: 20px;
   color: #f0a500;  // Yellow for points
   font-weight: bold;
+  margin-bottom: 10px;
 
   @media (max-width: 480px) {
-    font-size: 26px;
-    text-align:center;
+    font-size: 18px;
   }
 `;
 // Coin icon with points display
@@ -374,7 +363,7 @@ export const CoinIcon = styled.img`
 
 // Start Task Button with updated styles
 export const ModalButton = styled.button`
-  background-color: #0ea9a9;  // Purple background for the button
+  background-color: #800080;  // Purple background for the button
   color: white;
   border: none;
   padding: 15px 25px;
@@ -395,7 +384,7 @@ export const ModalButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 24px;
+    font-size: 16px;
     padding: 10px 20px;
   }
 `;
@@ -404,41 +393,60 @@ export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 27px;
+  font-size: 20px;
   cursor: pointer;
-  color: #ffffff; // Red color for close button
+  color: #f44336; // Red color for close button
   transition: opacity 0.3s;
 
   &:hover {
     opacity: 0.8;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 27px;
   }
 `;
 // Logo area (for the placeholder logo)
 export const Logo = styled.img`
   width: 150px;
   height: 180px;
-  margin: 0 auto 0px;
+  margin: 0 auto 20px;
   object-fit: contain;
 `;
-// Reduce the excessive margins, apply hover effects for claim button
-export const ClaimButton = styled.button`
-  background-color: #ff416c;
-  color: white;
-  padding: 15px 25px;
-  border: none;
+
+// Input field for proof of task completion
+// Proof input field with better mobile handling
+export const ProofInput = styled.input`
+  background-color: #333;
+  border: 2px solid #b82bcb;
+  padding: 10px;
   border-radius: 8px;
+  width: calc(100% - 20px);
+  color: white;
+  margin-bottom: 10px;
+  font-size: 16px;
+
+  &:focus {
+    outline: none;
+    border-color: #36A8E5;  // Telegram blue color on focus
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px;
+    font-size: 14px;
+  }
+`;
+
+// Claim Button styled like Telegram with focus on mobile
+export const ClaimButton = styled.button`
+  background-color: #36A8E5;  // Telegram blue
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.3s, background-color 0.3s;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #ff4b2b;
+    background-color: #65B6E8;  // Lighter blue on hover
     transform: scale(1.05);
   }
 
@@ -446,24 +454,13 @@ export const ClaimButton = styled.button`
     background-color: grey;
     cursor: not-allowed;
   }
-`;
-// Adjust proof input field with minimal padding and focus state
-export const ProofInput = styled.input`
-  background-color: #333;
-  border: 2px solid #b82bcb;
-  padding: 10px;
-  border-radius: 6px;
-  color: white;
-  margin-bottom: 15px;
-  font-size: 16px;
-  width: 100%;
-  box-sizing: border-box; /* Include padding and border in width */
 
-  &:focus {
-    outline: none;
-    border-color: #ffb74d;
+  @media (max-width: 480px) {
+    font-size: 14px;
+    padding: 8px 16px;
   }
 `;
+
 // Timer icon with rotating animation
 const spinAnimation = keyframes`
   from {
@@ -475,24 +472,25 @@ const spinAnimation = keyframes`
 `;
 
 export const TimerIcon = styled(GiClockwork)`
-  font-size: 32px;
+  font-size: 28px;
   color: #ff9800;
   animation: ${spinAnimation} 2s linear infinite;
-  margin-top: 20px;
+  margin-top: 10px;
 
   @media (max-width: 480px) {
-    font-size: 28px;
+    font-size: 24px;
   }
 `;
 
+// Timer text with improved layout
 export const TimerText = styled.div`
   color: #ff9800;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   margin-top: 10px;
 
   @media (max-width: 480px) {
-    font-size: 16px;
+    font-size: 14px;
   }
 `;
 

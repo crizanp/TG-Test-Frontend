@@ -1,3 +1,5 @@
+// src/components/TaskList.js
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { usePoints } from "../context/PointsContext";
@@ -49,22 +51,6 @@ const TaskList = () => {
   const [timerStarted, setTimerStarted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerHeight < 500) {
-        setIsKeyboardVisible(true);
-      } else {
-        setIsKeyboardVisible(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
@@ -232,75 +218,63 @@ const TaskList = () => {
             </TaskCategory>
           ))}
           {selectedTask && (
-            <ModalOverlay>
-              <Modal
-                isKeyboardVisible={isKeyboardVisible}
-  $isClaimable={isClaimable}
-  $isProcessingCompleted={!underModeration} // Pass the claimable state to the modal for styling
-              >
-                <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
+  <ModalOverlay>
+    <Modal>
+      <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
 
-                {/* Conditionally show description or input field based on isClaimable */}
-                {!isClaimable && !isKeyboardVisible && (
-                  <>
-                    {/* Logo Section */}
-                    <Logo src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png" alt="Logo" />
+      {/* Logo Section */}
+      <Logo src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQQtpHFFaMw_0RtE4I7PodWeMdgMhXcZgnYw&s" alt="Logo" />
 
-                    {/* Description */}
-                    <ModalContent>{selectedTask.description}</ModalContent>
-                  </>
-                )}
+      {/* Title */}
+      <ModalHeader>{selectedTask.name}</ModalHeader>
 
-                {/* Title */}
-                <ModalHeader>{selectedTask.name}</ModalHeader>
+      {/* Points Display */}
+      <PointsDisplayModal>+{selectedTask.points} IGH</PointsDisplayModal>
 
-                {/* Points Display */}
-                <PointsDisplayModal>+{selectedTask.points} IGH</PointsDisplayModal>
+      {/* Description */}
+      <ModalContent>{selectedTask.description}</ModalContent>
 
-                {/* Proof Input and Claim Button */}
-                {timerStarted && (
-                  <>
-                    {isClaimable && !underModeration ? (
-                      <>
-                        <ProofInput
-                          type="text"
-                          placeholder={selectedTask.proofPlaceholder}
-                          value={proof}
-                          onChange={(e) => setProof(e.target.value)}
-                        />
+      {/* Proof Input and Claim Button */}
+      {isClaimable && !underModeration ? (
+  <>
+    <ProofInput
+      type="text"
+      placeholder={selectedTask.proofPlaceholder}
+      value={proof}
+      onChange={(e) => setProof(e.target.value)}
+    />
 
-                        {/* Claim Reward Button */}
-                        <ClaimButton
-                          onClick={handleClaimReward}
-                          disabled={!proof.trim() || underModeration} 
-                          style={isKeyboardVisible ? { marginTop: '10px' } : {}} // Adjust spacing when keyboard is visible
-                        >
-                          {underModeration ? 'Claiming...' : 'Claim Reward'}
-                        </ClaimButton>
-                      </>
-                    ) : (
-                      <ModalButton disabled>Processing...</ModalButton>
-                    )}
-                  </>
-                )}
+    {/* Claim Reward Button */}
+    <ClaimButton
+      onClick={handleClaimReward}
+      disabled={!proof.trim() || underModeration} // Disable if proof is empty or in moderation
+    >
+      {underModeration ? 'Claiming...' : 'Claim Reward'} {/* Show "Claiming..." when processing */}
+    </ClaimButton>
+  </>
+) : null}
 
-                {/* Start Task Button (only visible before task is started) */}
-                {!timerStarted && (
-                  <ModalButton onClick={handleStartTask}>
-                    Start Task
-                  </ModalButton>
-                )}
+      {/* Start Task and Processing Button */}
+      {!timerStarted && !isClaimable && !underModeration ? (
+        <ModalButton onClick={handleStartTask}>
+          Start Task
+        </ModalButton>
+      ) : timerStarted && !isClaimable ? (
+        <ModalButton disabled>Processing...</ModalButton>
+      ) : null}
 
-                {/* Moderation Section */}
-                {underModeration && (
-                  <>
-                    <ModalContent>Task under moderation...</ModalContent>
-                    <TimerIcon />
-                  </>
-                )}
-              </Modal>
-            </ModalOverlay>
-          )}
+      {/* Moderation Section */}
+      {underModeration && (
+        <>
+          <ModalContent>Task under moderation...</ModalContent>
+          <TimerIcon />
+        </>
+      )}
+    </Modal>
+  </ModalOverlay>
+)}
+
+
         </TaskContainer>
       )}
     </>
@@ -308,8 +282,3 @@ const TaskList = () => {
 };
 
 export default TaskList;
-
-
-
-
-
