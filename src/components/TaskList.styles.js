@@ -1,6 +1,9 @@
 import styled, { keyframes, css } from "styled-components";
 import { GiClockwork } from "react-icons/gi";
 import { FaTimes } from "react-icons/fa"; // Importing the close button icon
+// Telegram colors and styling
+const telegramBlue = "#0088cc";
+const telegramLightBlue = "#36A8E5";
 
 // Slide in from right animation for floating message
 const slideIn = keyframes`
@@ -283,26 +286,25 @@ export const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);  // Darker overlay
+  background-color: rgba(0, 0, 0, 0.7); // Darker overlay
   z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
   animation: ${blurBackground} 0.5s ease-in-out forwards;
-  
+
   @media (max-width: 480px) {
     align-items: flex-end;
   }
 `;
-
 // Modal styling that covers the bottom half of the screen
 export const Modal = styled.div`
   background-color: #1a1a1a;
-  padding: 20px;  // Reduced padding for a sleeker look
+  padding: 25px;
   border-radius: 20px 20px 0 0;
   width: 100%;
   max-width: 400px;
-  min-height: 50vh; // Reduced height
+  min-height: 50vh;
   text-align: center;
   position: relative;
   animation: ${slideUp} 0.7s ease-out forwards;
@@ -314,44 +316,49 @@ export const Modal = styled.div`
   @media (max-width: 480px) {
     padding: 15px;
     height: auto;
-    transform: ${({ $keyboardVisible }) => ($keyboardVisible ? 'translateY(-100px)' : 'translateY(0)')}; // Shifts up on keyboard pop-up
+    transform: ${({ $keyboardVisible }) =>
+      $keyboardVisible ? "translateY(-100px)" : "translateY(0)"};
   }
 `;
 
 // Updated modal header with optimized font size
 export const ModalHeader = styled.div`
-  font-size: 28px;
+  font-size: 30px;
   color: #ffffff;
   margin-bottom: 10px;
   font-weight: bold;
 
   @media (max-width: 480px) {
-    font-size: 24px;
+    font-size: 26px;
   }
 `;
 
 // Modal content with reduced padding and improved styling
 export const ModalContent = styled.div`
-  font-size: 16px;
+  font-size: 18px;
   color: #ffffff;
   padding: 10px;
-  background-color: rgb(255 255 255 / 4%);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 16px;
   }
 `;
 // Points display section with coin icon
+// Points display section with coin icon
 export const PointsDisplayModal = styled.div`
-  font-size: 20px;
-  color: #f0a500;  // Yellow for points
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #f0a500; // Yellow for points
   font-weight: bold;
   margin-bottom: 10px;
 
   @media (max-width: 480px) {
-    font-size: 18px;
+    font-size: 22px;
   }
 `;
 // Coin icon with points display
@@ -360,6 +367,7 @@ export const CoinIcon = styled.img`
   height: 32px;
   margin-right: 10px;
 `;
+
 
 // Start Task Button with updated styles
 export const ModalButton = styled.button`
@@ -393,7 +401,7 @@ export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
   color: #f44336; // Red color for close button
   transition: opacity 0.3s;
@@ -411,10 +419,9 @@ export const Logo = styled.img`
 `;
 
 // Input field for proof of task completion
-// Proof input field with better mobile handling
 export const ProofInput = styled.input`
   background-color: #333;
-  border: 2px solid #b82bcb;
+  border: 2px solid ${telegramBlue};
   padding: 10px;
   border-radius: 8px;
   width: calc(100% - 20px);
@@ -424,7 +431,7 @@ export const ProofInput = styled.input`
 
   &:focus {
     outline: none;
-    border-color: #36A8E5;  // Telegram blue color on focus
+    border-color: ${telegramLightBlue}; // Lighter blue on focus
   }
 
   @media (max-width: 480px) {
@@ -432,21 +439,20 @@ export const ProofInput = styled.input`
     font-size: 14px;
   }
 `;
-
-// Claim Button styled like Telegram with focus on mobile
+// Telegram blue button with hover effect
 export const ClaimButton = styled.button`
-  background-color: #36A8E5;  // Telegram blue
+  background-color: ${telegramBlue}; // Telegram blue
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   transition: background-color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #65B6E8;  // Lighter blue on hover
+    background-color: ${telegramLightBlue}; // Lighter blue on hover
     transform: scale(1.05);
   }
 
@@ -456,10 +462,11 @@ export const ClaimButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 14px;
-    padding: 8px 16px;
+    font-size: 16px;
+    padding: 10px 20px;
   }
 `;
+
 
 // Timer icon with rotating animation
 const spinAnimation = keyframes`
@@ -481,16 +488,15 @@ export const TimerIcon = styled(GiClockwork)`
     font-size: 24px;
   }
 `;
-
 // Timer text with improved layout
 export const TimerText = styled.div`
   color: #ff9800;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   margin-top: 10px;
 
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 16px;
   }
 `;
 
