@@ -236,7 +236,7 @@ const TaskList = () => {
               <Modal isKeyboardVisible={isKeyboardVisible}>
                 <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
 
-                {/* Conditionally render the logo and description */}
+                {/* Only show logo and description if keyboard is not visible */}
                 {!isKeyboardVisible && (
                   <>
                     {/* Logo Section */}
@@ -254,34 +254,38 @@ const TaskList = () => {
                 <PointsDisplayModal>+{selectedTask.points} IGH</PointsDisplayModal>
 
                 {/* Proof Input and Claim Button */}
-                {isClaimable && !underModeration ? (
+                {timerStarted && (
                   <>
-                    <ProofInput
-                      type="text"
-                      placeholder={selectedTask.proofPlaceholder}
-                      value={proof}
-                      onChange={(e) => setProof(e.target.value)}
-                    />
+                    {isClaimable && !underModeration ? (
+                      <>
+                        <ProofInput
+                          type="text"
+                          placeholder={selectedTask.proofPlaceholder}
+                          value={proof}
+                          onChange={(e) => setProof(e.target.value)}
+                        />
 
-                    {/* Claim Reward Button */}
-                    <ClaimButton
-                      onClick={handleClaimReward}
-                      disabled={!proof.trim() || underModeration} 
-                      style={isKeyboardVisible ? { marginTop: '10px' } : {}} // Adjust spacing when keyboard is visible
-                    >
-                      {underModeration ? 'Claiming...' : 'Claim Reward'}
-                    </ClaimButton>
+                        {/* Claim Reward Button */}
+                        <ClaimButton
+                          onClick={handleClaimReward}
+                          disabled={!proof.trim() || underModeration} 
+                          style={isKeyboardVisible ? { marginTop: '10px' } : {}} // Adjust spacing when keyboard is visible
+                        >
+                          {underModeration ? 'Claiming...' : 'Claim Reward'}
+                        </ClaimButton>
+                      </>
+                    ) : (
+                      <ModalButton disabled>Processing...</ModalButton>
+                    )}
                   </>
-                ) : null}
+                )}
 
-                {/* Start Task and Processing Button */}
-                {!timerStarted && !isClaimable && !underModeration ? (
+                {/* Start Task Button (only visible before task is started) */}
+                {!timerStarted && (
                   <ModalButton onClick={handleStartTask}>
                     Start Task
                   </ModalButton>
-                ) : timerStarted && !isClaimable ? (
-                  <ModalButton disabled>Processing...</ModalButton>
-                ) : null}
+                )}
 
                 {/* Moderation Section */}
                 {underModeration && (
