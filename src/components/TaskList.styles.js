@@ -294,44 +294,41 @@ export const ModalOverlay = styled.div`
   }
 `;
 
-// Modal styling that covers the bottom half of the screen
 export const Modal = styled.div`
-  background-color: #1a1a1a;
-  padding: 40px 30px;
-  border-radius: 20px 20px 0 0;
+  background-color: #1c1c1e;
+  color: white;
+  padding: 30px 20px;
+  border-radius: 12px 12px 0 0;
   width: 100%;
-  max-width: 353px;
-  height: 61vh;
-  text-align: center;
+  max-width: 340px;
+  height: 55vh;
   position: relative;
-  animation: ${slideUp} 0.7s ease-out forwards;
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
 
   @media (max-width: 768px) {
-    padding: 30px 20px;
-    height: 61vh;
+    height: auto;
+    padding: 25px 15px;
   }
 
   @media (max-width: 480px) {
+    height: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '80vh' : '55vh')};
     padding: 20px;
-    border-radius: 15px 15px 0 0;
+    border-radius: 12px 12px 0 0;
   }
 `;
 
 // Large white title
 export const ModalHeader = styled.div`
-  font-size: 32px;
-  color: #ffffff; // White title
-  margin-bottom: 10px;
+  font-size: 31px;
+  color: #fff;
   font-weight: bold;
-
-  @media (max-width: 480px) {
-    font-size: 28px;
-  }
+  text-align: center;
 `;
+
 // Description styling with proper spacing and color
 export const ModalContent = styled.div`
   font-size: 17px;
@@ -340,7 +337,7 @@ export const ModalContent = styled.div`
     background-color: rgb(255 255 255 / 4%);
     /* border: 1px solid rgba(255, 255, 255, 0.2); */
     border-radius: 8px;
-    margin-bottom: 20px;
+    ${'' /* margin-bottom: 20px; */}
 
   @media (max-width: 480px) {
     font-size: 17px;
@@ -349,13 +346,13 @@ export const ModalContent = styled.div`
 
 // Points display section with coin icon
 export const PointsDisplayModal = styled.div`
-  font-size: 24px;
+  font-size: 26px;
   color: #f0a500;  // Yellow for points
   font-weight: bold;
-  margin-bottom: 20px;
 
   @media (max-width: 480px) {
-    font-size: 22px;
+    font-size: 26px;
+    text-align:center;
   }
 `;
 // Coin icon with points display
@@ -367,7 +364,7 @@ export const CoinIcon = styled.img`
 
 // Start Task Button with updated styles
 export const ModalButton = styled.button`
-  background-color: #800080;  // Purple background for the button
+  background-color: #0ea9a9;  // Purple background for the button
   color: white;
   border: none;
   padding: 15px 25px;
@@ -388,7 +385,7 @@ export const ModalButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 16px;
+    font-size: 24px;
     padding: 10px 20px;
   }
 `;
@@ -397,9 +394,9 @@ export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 24px;
+  font-size: 27px;
   cursor: pointer;
-  color: #f44336; // Red color for close button
+  color: #ffffff; // Red color for close button
   transition: opacity 0.3s;
 
   &:hover {
@@ -407,48 +404,53 @@ export const CloseButtonModel = styled(FaTimes)`
   }
 
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 27px;
   }
 `;
 // Logo area (for the placeholder logo)
 export const Logo = styled.img`
   width: 150px;
   height: 180px;
-  margin: 0 auto 20px;
+  margin: 0 auto 0px;
   object-fit: contain;
 `;
-export const ClaimButton = styled(ModalButton)`
-  background-color: #b82bcb;
-  ${'' /* margin-top: 20px; */}
+// Reduce the excessive margins, apply hover effects for claim button
+export const ClaimButton = styled.button`
+  background-color: #ff416c;
+  color: white;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s, background-color 0.3s;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 
   &:hover {
-    background-color: ;
-  }#66bb6a
+    background-color: #ff4b2b;
+    transform: scale(1.05);
+  }
 
   &:disabled {
     background-color: grey;
     cursor: not-allowed;
   }
 `;
-// Input field for proof of task completion
+// Adjust proof input field with minimal padding and focus state
 export const ProofInput = styled.input`
   background-color: #333;
   border: 2px solid #b82bcb;
-  padding: 12px;
-  border-radius: 8px;
-  width: calc(100% - 24px);
+  padding: 10px;
+  border-radius: 6px;
   color: white;
-  margin-bottom: 20px;
-  font-size: 18px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  transition: all 0.3s ease;
 
   &:focus {
     outline: none;
     border-color: #ffb74d;
-  }
-
-  @media (max-width: 480px) {
-    padding: 10px;
-    font-size: 16px;
   }
 `;
 // Timer icon with rotating animation
