@@ -190,6 +190,10 @@ const TaskList = () => {
     setSelectedTask(null);
   };
 
+  const handleVisitAgain = () => {
+    window.open(selectedTask.link, "_blank");
+  };
+
   return (
     <>
       {message && (
@@ -245,62 +249,73 @@ const TaskList = () => {
                 $isProcessingCompleted={!underModeration} // Pass the claimable state to the modal for styling
               >
                 <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
-                {/* Conditionally show description or input field based on isClaimable */}
-                {!isClaimable && !isKeyboardVisible && (
+                {isKeyboardVisible ? (
                   <>
-                    {/* Logo Section */}
-                    <Logo
-                      src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png"
-                      alt="Logo"
+                    {/* Only showing the input field and buttons when keyboard is visible */}
+                    <ProofInput
+                      type="text"
+                      placeholder={selectedTask.proofPlaceholder}
+                      value={proof}
+                      onChange={(e) => setProof(e.target.value)}
                     />
-
-                    {/* Description */}
-                    <ModalContent>{selectedTask.description}</ModalContent>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "10px" }}>
+                      <ModalButton onClick={handleVisitAgain}>
+                        Visit Again
+                      </ModalButton>
+                      <ClaimButton
+                        onClick={handleClaimReward}
+                        disabled={!proof.trim() || underModeration}
+                      >
+                        {underModeration ? "Claiming..." : "Claim Reward"}
+                      </ClaimButton>
+                    </div>
                   </>
-                )}
-                {/* Title */}
-                <ModalHeader>{selectedTask.name}</ModalHeader>
-                {/* Points Display */}
-                <PointsDisplayModal>
-                  +{selectedTask.points} IGH
-                </PointsDisplayModal>
-                {/* Proof Input and Claim Button */}
-                {timerStarted && (
+                ) : (
                   <>
-                    {isClaimable && !underModeration ? (
+                    {/* The full modal content when the keyboard is not visible */}
+                    {!isClaimable && !isKeyboardVisible && (
                       <>
-                        <ProofInput
-                          type="text"
-                          placeholder={selectedTask.proofPlaceholder}
-                          value={proof}
-                          onChange={(e) => setProof(e.target.value)}
+                        <Logo
+                          src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png"
+                          alt="Logo"
                         />
-
-                        {/* Claim Reward Button */}
-                        <ClaimButton
-                          onClick={handleClaimReward}
-                          disabled={!proof.trim() || underModeration}
-                          style={isKeyboardVisible ? { marginTop: "10px" } : {}} // Adjust spacing when keyboard is visible
-                        >
-                          {underModeration ? "Claiming..." : "Claim Reward"}
-                        </ClaimButton>
+                        <ModalContent>{selectedTask.description}</ModalContent>
                       </>
-                    ) : (
-                      <ModalButton disabled>Processing...</ModalButton>
                     )}
-                  </>
-                )}
-                {/* Start Task Button (only visible before task is started) */}
-                {!timerStarted && (
-                  <ModalButton onClick={handleStartTask}>
-                    Start Task
-                  </ModalButton>
-                )}
-                {/* Moderation Section */}
-                {underModeration && (
-                  <>
-                    <ModalContent>Task under moderation...</ModalContent>
-                    <TimerIcon />
+                    <ModalHeader>{selectedTask.name}</ModalHeader>
+                    <PointsDisplayModal>
+                      +{selectedTask.points} IGH
+                    </PointsDisplayModal>
+                    {timerStarted && (
+                      <>
+                        {isClaimable && !underModeration ? (
+                          <>
+                            <ProofInput
+                              type="text"
+                              placeholder={selectedTask.proofPlaceholder}
+                              value={proof}
+                              onChange={(e) => setProof(e.target.value)}
+                            />
+                            <ClaimButton
+                              onClick={handleClaimReward}
+                              disabled={!proof.trim() || underModeration}
+                              style={
+                                isKeyboardVisible ? { marginTop: "10px" } : {}
+                              }
+                            >
+                              {underModeration ? "Claiming..." : "Claim Reward"}
+                            </ClaimButton>
+                          </>
+                        ) : (
+                          <ModalButton disabled>Processing...</ModalButton>
+                        )}
+                      </>
+                    )}
+                    {!timerStarted && (
+                      <ModalButton onClick={handleStartTask}>
+                        Start Task
+                      </ModalButton>
+                    )}
                   </>
                 )}
               </Modal>
