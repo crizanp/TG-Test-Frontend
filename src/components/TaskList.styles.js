@@ -321,7 +321,7 @@ export const Modal = styled.div`
 
   @media (max-width: 480px) {
     height: ${({ isKeyboardVisible, $isClaimable }) => 
-      isKeyboardVisible ? '30vh' 
+      isKeyboardVisible ? '35vh' 
       : $isClaimable ? '35vh' 
       : '55vh'};
     padding: 20px;
