@@ -1,10 +1,10 @@
 // src/components/UserInfo.js
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { usePoints } from '../context/PointsContext';
 
-// Telegram themed colors
+// Telegram-themed colors
 const telegramBlue = "#0088cc";
 const telegramLightBlue = "#36A8E5";
 
@@ -82,14 +82,9 @@ const Points = styled.div`
 const UserInfo = () => {
   const { points } = usePoints();
   
-  // Fetching the first name and profile photo from Telegram WebApp API
+  // Fetch the user's first name and profile photo from Telegram WebApp API
   const firstName = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name;
   const profilePhoto = window.Telegram.WebApp?.initDataUnsafe?.user?.photo_url;
-
-  // Debugging Telegram data to ensure the photo_url is present
-  useEffect(() => {
-    console.log('Telegram WebApp Data:', window.Telegram.WebApp?.initDataUnsafe);
-  }, []);
 
   return (
     <UserInfoContainer>
