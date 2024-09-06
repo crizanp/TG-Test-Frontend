@@ -236,17 +236,22 @@ const TaskList = () => {
               <Modal isKeyboardVisible={isKeyboardVisible}>
                 <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
 
-                {/* Logo Section */}
-                <Logo src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png" alt="Logo" />
+                {/* Conditionally render the logo and description */}
+                {!isKeyboardVisible && (
+                  <>
+                    {/* Logo Section */}
+                    <Logo src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png" alt="Logo" />
+
+                    {/* Description */}
+                    <ModalContent>{selectedTask.description}</ModalContent>
+                  </>
+                )}
 
                 {/* Title */}
                 <ModalHeader>{selectedTask.name}</ModalHeader>
 
                 {/* Points Display */}
                 <PointsDisplayModal>+{selectedTask.points} IGH</PointsDisplayModal>
-
-                {/* Description */}
-                <ModalContent>{selectedTask.description}</ModalContent>
 
                 {/* Proof Input and Claim Button */}
                 {isClaimable && !underModeration ? (
@@ -261,9 +266,10 @@ const TaskList = () => {
                     {/* Claim Reward Button */}
                     <ClaimButton
                       onClick={handleClaimReward}
-                      disabled={!proof.trim() || underModeration} // Disable if proof is empty or in moderation
+                      disabled={!proof.trim() || underModeration} 
+                      style={isKeyboardVisible ? { marginTop: '10px' } : {}} // Adjust spacing when keyboard is visible
                     >
-                      {underModeration ? 'Claiming...' : 'Claim Reward'} {/* Show "Claiming..." when processing */}
+                      {underModeration ? 'Claiming...' : 'Claim Reward'}
                     </ClaimButton>
                   </>
                 ) : null}

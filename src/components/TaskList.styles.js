@@ -297,20 +297,19 @@ export const ModalOverlay = styled.div`
 export const Modal = styled.div`
   background-color: #1c1c1e;
   color: white;
-  padding: 30px 20px;
+  padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '10px' : '30px 20px')};
   border-radius: 12px 12px 0 0;
   width: 100%;
   max-width: 340px;
-  height: 55vh;
+  height: ${({ isKeyboardVisible }) => (isKeyboardVisible ? 'auto' : '55vh')};
   position: relative;
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: ${({ isKeyboardVisible }) => (isKeyboardVisible ? 'center' : 'space-between')};
   transition: transform 0.4s ease-out, opacity 0.4s ease-out;
 
   @media (max-width: 768px) {
-    height: auto;
     padding: 25px 15px;
   }
 
