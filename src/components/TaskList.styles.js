@@ -182,7 +182,7 @@ export const TaskItem = styled.div`
     transition: transform 0.2s, box-shadow 0.2s;
      background-color: #ffffff1a; 
     cursor: default;
-    border: 2px solid white;
+    ${'' /* border: 2px solid white; */}
 
 
   &:hover {
@@ -194,7 +194,7 @@ export const TaskItem = styled.div`
     $completed &&
     `
     background-color: #00800017;
-    border: 2px solid #6aeb6a91;
+    ${'' /* border: 2px solid #6aeb6a91; */}
 
     cursor: default;
     &:hover {
