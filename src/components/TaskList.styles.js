@@ -297,14 +297,14 @@ export const ModalOverlay = styled.div`
 export const Modal = styled.div`
   background-color: #1c1c1e;
   color: white;
-  padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '20px' : '30px 20px')};
+  padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '30px 20px' : '30px 20px')};
   border-radius: 12px 12px 0 0;
   width: 100%;
   max-width: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '100%' : '340px')};
   height: ${({ isKeyboardVisible, $isClaimable }) =>
     isKeyboardVisible ? '35vh'
     : $isClaimable ? '35vh'
-    : '55vh'};
+    : '65vh'};
   position: relative;
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
   display: flex;
@@ -322,7 +322,7 @@ export const Modal = styled.div`
       isKeyboardVisible ? '35vh'
       : $isClaimable ? '35vh'
       : '55vh'};
-    padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '15px' : '20px')};
+    padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '20px' : '20px')};
     border-radius: 12px 12px 0 0;
     width: 100%;
     max-width: 100%;
