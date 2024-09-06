@@ -330,6 +330,7 @@ export const ModalHeader = styled.div`
 
   @media (max-width: 480px) {
     font-size: 26px;
+    margin-bottom: 10px;
   }
 `;
 
