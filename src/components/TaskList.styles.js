@@ -299,26 +299,37 @@ export const Modal = styled.div`
   color: white;
   padding: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '10px' : '30px 20px')};
   border-radius: 12px 12px 0 0;
-  width: 100%;
-  max-width: 340px;
-  height: ${({ isKeyboardVisible }) => (isKeyboardVisible ? 'auto' : '55vh')};
-  position: relative;
+  width: ${({ $isClaimable }) => ($isClaimable ? '100%' : '100%')}; 
+  max-width: ${({ $isClaimable }) => ($isClaimable ? '340px' : '100%')}; 
+  height: ${({ isKeyboardVisible, $isClaimable }) => 
+    isKeyboardVisible ? '80vh' 
+    : $isClaimable ? '35vh' 
+    : '55vh'};
+  position: ${({ $isClaimable }) => ($isClaimable ? 'absolute' : 'relative')}; 
+  top: ${({ $isClaimable }) => ($isClaimable ? '50%' : 'unset')}; 
+  left: ${({ $isClaimable }) => ($isClaimable ? '50%' : 'unset')}; 
+  transform: ${({ $isClaimable }) => ($isClaimable ? 'translate(-50%, -50%)' : 'unset')}; 
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   justify-content: ${({ isKeyboardVisible }) => (isKeyboardVisible ? 'center' : 'space-between')};
-  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+  transition: height 0.4s ease-out, transform 0.4s ease-out, opacity 0.4s ease-out;
 
   @media (max-width: 768px) {
     padding: 25px 15px;
   }
 
   @media (max-width: 480px) {
-    height: ${({ isKeyboardVisible }) => (isKeyboardVisible ? '80vh' : '55vh')};
+    height: ${({ isKeyboardVisible, $isClaimable }) => 
+      isKeyboardVisible ? '30vh' 
+      : $isClaimable ? '35vh' 
+      : '55vh'};
     padding: 20px;
     border-radius: 12px 12px 0 0;
   }
 `;
+
+
 
 // Large white title
 export const ModalHeader = styled.div`

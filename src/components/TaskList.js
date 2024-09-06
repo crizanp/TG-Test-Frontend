@@ -4,7 +4,7 @@ import { usePoints } from "../context/PointsContext";
 import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
-import FloatingMessage from './FloatingMessage';
+import FloatingMessage from "./FloatingMessage";
 
 // Importing required styles and images
 import {
@@ -74,7 +74,9 @@ const TaskList = () => {
         const userID = await getUserID(setUserID, setUsername);
         console.log("UserID fetched:", userID);
 
-        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+        const userResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+        );
         const userData = userResponse.data;
 
         setPoints(userData.points);
@@ -89,7 +91,9 @@ const TaskList = () => {
       }
 
       try {
-        const tasksResponse = await axios.get(`${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`);
+        const tasksResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/igh-airdrop-tasks`
+        );
         const data = tasksResponse.data;
 
         const categorizedTasks = {
@@ -150,7 +154,9 @@ const TaskList = () => {
         }
       );
 
-      const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+      const userResponse = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+      );
       setPoints(userResponse.data.points);
 
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
@@ -170,11 +176,11 @@ const TaskList = () => {
         [selectedTask._id]: true,
       }));
 
-      setMessage({ text: 'Points awarded!', type: 'success' });
+      setMessage({ text: "Points awarded!", type: "success" });
       setSelectedTask(null);
     } catch (error) {
       console.error("Error claiming reward:", error);
-      setMessage({ text: 'Error claiming the reward.', type: 'error' });
+      setMessage({ text: "Error claiming the reward.", type: "error" });
     } finally {
       setUnderModeration(false);
     }
@@ -233,26 +239,31 @@ const TaskList = () => {
           ))}
           {selectedTask && (
             <ModalOverlay>
-              <Modal isKeyboardVisible={isKeyboardVisible}>
+              <Modal
+                isKeyboardVisible={isKeyboardVisible}
+                $isClaimable={isClaimable}
+                $isProcessingCompleted={!underModeration} // Pass the claimable state to the modal for styling
+              >
                 <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
-
-                {/* Only show logo and description if keyboard is not visible */}
-                {!isKeyboardVisible && (
+                {/* Conditionally show description or input field based on isClaimable */}
+                {!isClaimable && !isKeyboardVisible && (
                   <>
                     {/* Logo Section */}
-                    <Logo src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png" alt="Logo" />
+                    <Logo
+                      src="https://png.pngtree.com/png-clipart/20230401/original/pngtree-three-dimensional-instagram-icon-png-image_9015419.png"
+                      alt="Logo"
+                    />
 
                     {/* Description */}
                     <ModalContent>{selectedTask.description}</ModalContent>
                   </>
                 )}
-
                 {/* Title */}
                 <ModalHeader>{selectedTask.name}</ModalHeader>
-
                 {/* Points Display */}
-                <PointsDisplayModal>+{selectedTask.points} IGH</PointsDisplayModal>
-
+                <PointsDisplayModal>
+                  +{selectedTask.points} IGH
+                </PointsDisplayModal>
                 {/* Proof Input and Claim Button */}
                 {timerStarted && (
                   <>
@@ -268,10 +279,10 @@ const TaskList = () => {
                         {/* Claim Reward Button */}
                         <ClaimButton
                           onClick={handleClaimReward}
-                          disabled={!proof.trim() || underModeration} 
-                          style={isKeyboardVisible ? { marginTop: '10px' } : {}} // Adjust spacing when keyboard is visible
+                          disabled={!proof.trim() || underModeration}
+                          style={isKeyboardVisible ? { marginTop: "10px" } : {}} // Adjust spacing when keyboard is visible
                         >
-                          {underModeration ? 'Claiming...' : 'Claim Reward'}
+                          {underModeration ? "Claiming..." : "Claim Reward"}
                         </ClaimButton>
                       </>
                     ) : (
@@ -279,14 +290,12 @@ const TaskList = () => {
                     )}
                   </>
                 )}
-
                 {/* Start Task Button (only visible before task is started) */}
                 {!timerStarted && (
                   <ModalButton onClick={handleStartTask}>
                     Start Task
                   </ModalButton>
                 )}
-
                 {/* Moderation Section */}
                 {underModeration && (
                   <>
