@@ -246,7 +246,12 @@ const TaskList = () => {
               <Modal
                 isKeyboardVisible={isKeyboardVisible}
                 $isClaimable={isClaimable}
-                $isProcessingCompleted={!underModeration} // Pass the claimable state to the modal for styling
+                $isProcessingCompleted={!underModeration}
+                style={
+                  isKeyboardVisible
+                    ? { transform: "translateY(-50%)", top: "10%" }
+                    : {}
+                } // Shifts modal upwards when keyboard is visible
               >
                 <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
                 {isKeyboardVisible ? (
@@ -258,7 +263,13 @@ const TaskList = () => {
                       value={proof}
                       onChange={(e) => setProof(e.target.value)}
                     />
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "10px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginTop: "10px",
+                      }}
+                    >
                       <ModalButton onClick={handleVisitAgain}>
                         Visit Again
                       </ModalButton>
@@ -300,10 +311,14 @@ const TaskList = () => {
                               onClick={handleClaimReward}
                               disabled={!proof.trim() || underModeration}
                               style={
-                                isKeyboardVisible ? { marginTop: "10px" } : {}
+                                isKeyboardVisible
+                                  ? { marginTop: "10px" }
+                                  : {}
                               }
                             >
-                              {underModeration ? "Claiming..." : "Claim Reward"}
+                              {underModeration
+                                ? "Claiming..."
+                                : "Claim Reward"}
                             </ClaimButton>
                           </>
                         ) : (
