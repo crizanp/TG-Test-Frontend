@@ -325,7 +325,7 @@ export const Modal = styled.div`
 export const ModalHeader = styled.div`
   font-size: 30px;
   color: #ffffff;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
   font-weight: bold;
 
   @media (max-width: 480px) {
@@ -338,9 +338,9 @@ export const ModalContent = styled.div`
   font-size: 18px;
   color: #ffffff;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.1);
+  ${'' /* background-color: rgba(255, 255, 255, 0.1); */}
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 
   @media (max-width: 480px) {
     font-size: 16px;
@@ -401,9 +401,9 @@ export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 24px;
+  font-size: 30px;
   cursor: pointer;
-  color: #f44336; // Red color for close button
+  color: #ffebea; // Red color for close button
   transition: opacity 0.3s;
 
   &:hover {

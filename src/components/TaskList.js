@@ -221,7 +221,7 @@ const TaskList = () => {
                 <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
 
                 {/* Logo Section */}
-                <Logo src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQQtpHFFaMw_0RtE4I7PodWeMdgMhXcZgnYw&s" alt="Logo" />
+                <Logo src="https://cdn3d.iconscout.com/3d/premium/thumb/ton-11767677-9599979.png" alt="Logo" />
 
                 {/* Title */}
                 <ModalHeader>{selectedTask.name}</ModalHeader>
