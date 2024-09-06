@@ -325,7 +325,7 @@ export const Modal = styled.div`
 export const ModalHeader = styled.div`
   font-size: 30px;
   color: #ffffff;
-  margin-bottom: 18px;
+  ${'' /* margin-bottom: 18px; */}
   font-weight: bold;
 
   @media (max-width: 480px) {
@@ -371,8 +371,8 @@ export const CoinIcon = styled.img`
 
 // Start Task Button with updated styles
 export const ModalButton = styled.button`
-  background-color: #800080;  // Purple background for the button
-  color: white;
+  background-color: #3e9ed1;
+  color: #f7f7f7;
   border: none;
   padding: 15px 25px;
   border-radius: 12px;
@@ -392,15 +392,16 @@ export const ModalButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 16px;
+    font-size: 20px;
     padding: 10px 20px;
+    margin-bottom: 10px;
   }
 `;
 // Red close button (icon)
 export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+    right: 12px;
   font-size: 30px;
   cursor: pointer;
   color: #ffebea; // Red color for close button
@@ -414,7 +415,7 @@ export const CloseButtonModel = styled(FaTimes)`
 export const Logo = styled.img`
   width: 150px;
   height: 180px;
-  margin: 0 auto 20px;
+  margin: 0 auto 0px;
   object-fit: contain;
 `;
 
