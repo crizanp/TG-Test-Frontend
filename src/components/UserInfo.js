@@ -10,7 +10,7 @@ const UserInfoContainer = styled.div`
   border-radius: 25px;
   margin-top: 10px;
   width: 100%;
-    max-width: 300px;  /* Limit max width */
+  max-width: 300px;  /* Limit max width */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: space-between;
@@ -61,12 +61,17 @@ const PointsContainer = styled.div`
 
 const UserInfo = () => {
   const { points, username } = usePoints();
-  const firstName = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name;
+  
+  // Get the first name from Telegram WebApp or 'User' as fallback
+  let firstName = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name || 'User';
+  
+  // Use regex to extract only the first part before special characters or space
+  firstName = firstName.split(/[^\w]+/)[0]; // Stops at any non-alphanumeric character
 
   return (
     <UserInfoContainer>
       <Username>
-        Hi {firstName || 'User'}
+        Hi {firstName}
       </Username>
       <PointsContainer>
         <CrownIcon /> {Math.floor(points)} Crowns
