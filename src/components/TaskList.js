@@ -7,8 +7,8 @@ import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
-import { FaCrown } from "react-icons/fa"; 
-import styled from "styled-components"; 
+import { FaCrown } from "react-icons/fa";
+import styled from "styled-components";
 
 import {
   TaskContainer,
@@ -31,11 +31,11 @@ import {
   CoinIcon,
 } from "./TaskList.styles";
 
-import coinIcon from "../assets/coin-icon.png"; 
+import coinIcon from "../assets/coin-icon.png";
 
 // Styled component for the crown icon
 export const CrownIcon = styled(FaCrown)`
-  color: #ffd700; 
+  color: #ffd700;
   font-size: 1.5rem;
   margin-top: -3px;
 `;
@@ -44,7 +44,8 @@ const TaskItemContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${(props) => (props.$completed ? "#d4ffc32e" : "#d8d0d02b")};
+  background-color: ${(props) =>
+    props.$completed ? "#d4ffc32e" : "#d8d0d02b"};
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 10px;
@@ -53,12 +54,11 @@ const TaskItemContainer = styled.div`
   box-sizing: border-box;
 `;
 
-
 const TaskDetailsContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px; 
-  flex-grow: 1; 
+  gap: 12px;
+  flex-grow: 1;
 `;
 
 const TaskLogo = styled.img`
@@ -72,15 +72,15 @@ const ModalTaskLogo = styled(TaskLogo)`
   height: 150px;
   margin: 20px auto;
   object-fit: contain;
-  display: block; 
-  border-radius: 8px; 
+  display: block;
+  border-radius: 8px;
 `;
 
 const TaskTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-grow: 1; 
+  flex-grow: 1;
 `;
 
 const TaskTitleRow = styled.div`
@@ -96,7 +96,7 @@ const TaskPointsContainer = styled.div`
   gap: 5px;
   font-size: 14px;
   color: #fff;
-  background-color: #24A1DE;
+  background-color: #24a1de;
   padding: 5px 10px;
   border-radius: 8px;
   width: fit-content;
@@ -338,15 +338,21 @@ const TaskList = () => {
                     />
                     <ClaimButton
                       onClick={handleClaimReward}
-                      disabled={!proof.trim() || underModeration}
+                      disabled={timer > 0 || !proof.trim() || underModeration}
                     >
-                      {underModeration ? "Claiming..." : "Claim Reward"}
+                      {timer > 0
+                        ? `Wait ${timer}s`
+                        : underModeration
+                        ? "Claiming..."
+                        : "Claim Reward"}
                     </ClaimButton>
                   </>
                 ) : null}
 
                 {!timerStarted && !isClaimable && !underModeration ? (
-                  <ModalButton onClick={handleStartTask}>Start Task</ModalButton>
+                  <ModalButton onClick={handleStartTask}>
+                    Start Task
+                  </ModalButton>
                 ) : timerStarted && !isClaimable ? (
                   <ModalButton disabled>Processing...</ModalButton>
                 ) : null}
