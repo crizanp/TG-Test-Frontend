@@ -98,7 +98,7 @@ const TaskPointsContainer = styled.div`
   color: #fff;
   background-color: #24A1DE;
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: 8px;
   width: fit-content; /* Prevents stretching */
   box-sizing: border-box;
 `;
