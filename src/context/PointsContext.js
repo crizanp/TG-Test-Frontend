@@ -13,23 +13,23 @@ export const usePoints = () => {
 export const PointsProvider = ({ children }) => {
   const [points, setPoints] = useState(0);
   const [userID, setUserID] = useState('');
-  const [username, setUsername] = useState('');  // New state for username
+  const [username, setUsername] = useState(''); 
 
   useEffect(() => {
     const fetchPoints = async () => {
       const tgUserID = await getUserID(setUserID, setUsername);
 
       try {
-        // Fetch the user's points from the backend
+        
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
-        setPoints(Math.round(response.data.points));  // Round to the nearest integer
+        setPoints(Math.round(response.data.points));  
 
         if (response.data.username) {
-          setUsername(response.data.username);  // Set the username from the response
+          setUsername(response.data.username);  
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // User not found on the backend, create a new user
+          
           try {
             const newUserResponse = await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
               userID: tgUserID,
@@ -38,7 +38,7 @@ export const PointsProvider = ({ children }) => {
               tasksCompleted: [],
               taskHistory: [],
             });
-            setPoints(Math.round(newUserResponse.data.points));  // Round to the nearest integer
+            setPoints(Math.round(newUserResponse.data.points)); 
           } catch (postError) {
             console.error('Error creating new user:', postError);
           }

@@ -37,7 +37,7 @@ const Wheel = styled.div`
   position: absolute;
   transition: transform 4s ease-out;
   transform: ${({ rotate }) => `rotate(${rotate}deg)`};
-  z-index: 2; /* Ensure the outer wheel is above the inner wheel */
+  z-index: 2; 
 `;
 
 const InnerWheel = styled.img`

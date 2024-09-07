@@ -54,7 +54,7 @@ function HomePage() {
   }, [tapCount]);
 
   const calculatePoints = () => {
-    return 1; // Set points per tap to 1
+    return 1; 
   };
 
   const syncPointsWithServer = useCallback(
@@ -83,10 +83,10 @@ function HomePage() {
       const currentTime = Date.now();
       const tapInterval = currentTime - lastTapTime;
 
-      const isDoubleTap = tapInterval < 300 && tapInterval > 0; // Check if double-tap
-      setLastTapTime(currentTime); // Update last tap time
+      const isDoubleTap = tapInterval < 300 && tapInterval > 0; 
+      setLastTapTime(currentTime); 
 
-      const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1); // Double points for double-tap
+      const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1); 
 
       const rect = e.currentTarget.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
@@ -115,7 +115,7 @@ function HomePage() {
 
         setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
 
-        decreaseEnergy(2 * (isDoubleTap ? 2 : 1)); // Decrease energy more for double-tap
+        decreaseEnergy(2 * (isDoubleTap ? 2 : 1)); 
 
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + pointsToAdd);
@@ -172,10 +172,7 @@ function HomePage() {
           </EnergyIconContainer>
           <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
         </div>
-        {/* <Description>
-          Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
-          Stay tuned for <span>updates</span> and <span>rewards</span>!
-        </Description> */}
+        
       </MiddleSection>
 
       {flyingNumbers.map((number) => (

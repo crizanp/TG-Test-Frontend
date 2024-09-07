@@ -13,7 +13,7 @@ const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  overflow-x: hidden; /* Disable horizontal scrolling */
+  overflow-x: hidden; 
 `;
 
 const RestrictedContainer = styled.div`
@@ -25,14 +25,14 @@ const RestrictedContainer = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  overflow-x: hidden; /* Disable horizontal scrolling */
+  overflow-x: hidden; 
 `;
 
 const Content = styled.div`
   flex: 1;
   overflow-y: auto;
   padding-bottom: 60px;
-  overflow-x: hidden; /* Disable horizontal scrolling */
+  overflow-x: hidden; 
 `;
 
 function Layout({ children }) {
@@ -55,26 +55,26 @@ function Layout({ children }) {
 
       if (platform === 'android' || platform === 'ios') {
         console.log('Confirmed: Running inside Telegram mobile app');
-        tg.expand(); // Expand to fullscreen, hiding the Telegram UI elements
-        setShowBottomMenu(true); // Show the bottom menu if in Telegram mobile app
-        setLoading(false); // Stop loading
+        tg.expand(); 
+        setShowBottomMenu(true); 
+        setLoading(false); 
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
-        setRestricted(true); // Restrict access if not on mobile app
-        setLoading(false); // Stop loading
+        setRestricted(true); 
+        setLoading(false); 
       }
     } else {
       console.log('Not confirmed: Running outside Telegram');
-      setLoading(true); // Continue showing the loading page if outside Telegram
-      navigate('/'); // Ensure the user stays on the loading page
+      setLoading(true); 
+      navigate('/'); 
     }
 
-    // Delay showing the menu for 4 seconds
+    
     const menuTimer = setTimeout(() => {
       setMenuVisible(true);
     }, 4000);
 
-    // Disable right-click context menu
+   
     const handleContextMenu = (e) => {
       e.preventDefault();
     };
@@ -82,23 +82,23 @@ function Layout({ children }) {
     window.addEventListener('contextmenu', handleContextMenu);
 
     return () => {
-      clearTimeout(menuTimer); // Clean up the timer if the component unmounts
+      clearTimeout(menuTimer); 
       window.removeEventListener('contextmenu', handleContextMenu);
     };
   }, [navigate]);
 
   if (loading) {
-    return <LoadingPage />; // Show the loading page if still loading or outside Telegram
+    return <LoadingPage />; 
   }
 
   if (restricted) {
-    return <RestrictedContainer />; // Show the background image if restricted
+    return <RestrictedContainer />; 
   }
 
   return (
     <LayoutContainer>
       <Content>{children}</Content>
-      {showBottomMenu && menuVisible && <BottomMenu />} {/* Render BottomMenu after 4 seconds */}
+      {showBottomMenu && menuVisible && <BottomMenu />} 
     </LayoutContainer>
   );
 }

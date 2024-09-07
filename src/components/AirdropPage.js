@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled, { keyframes } from "styled-components";
 
-// Import LoadingSpinner from the TaskList.styles.js file
 import { LoadingSpinner } from "./TaskList.styles";
 
 const AirdropContainer = styled.div`

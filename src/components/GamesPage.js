@@ -22,7 +22,7 @@ const GamesContainer = styled.div`
   color: white;
   min-height: 87vh;
   text-align: center;
-  background-image: url("/path-to-your-background-image.jpg"); // Add your background image path here
+  background-image: url("/path-to-your-background-image.jpg"); 
   background-size: cover;
   background-position: center;
 `;
@@ -31,14 +31,14 @@ const GameList = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px; /* Smaller gap between the boxes */
+  gap: 15px; 
   margin-top: 30px;
   animation: ${fadeIn} 1s ease;
 `;
 
 const GameItem = styled(Link)`
   background-color: #1e1e1e;
-  padding: 30px 20px; /* Increased padding for more space inside */
+  padding: 30px 20px; 
   border-radius: 15px;
   width: 170px;
   display: flex;
@@ -47,7 +47,7 @@ const GameItem = styled(Link)`
   align-items: center;
   color: white;
   text-decoration: none;
-  font-size: 20px; /* Increased font size */
+  font-size: 20px; 
   text-align: center;
   transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
@@ -73,13 +73,13 @@ const GameItem = styled(Link)`
 `;
 
 const GameTitle = styled.h2`
-  font-size: 36px; /* Increased font size */
+  font-size: 36px; 
   font-weight: bold;
   margin-bottom: 20px;
 `;
 
 const GameDescription = styled.p`
-  font-size: 20px; /* Increased font size */
+  font-size: 20px; 
   color:#ffffff;
   max-width: 600px;
 `;

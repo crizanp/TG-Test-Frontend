@@ -7,8 +7,8 @@ import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
-import { FaCrown } from "react-icons/fa"; // Crown icon from react-icons
-import styled from "styled-components"; // Ensure this is present
+import { FaCrown } from "react-icons/fa"; 
+import styled from "styled-components"; 
 
 import {
   TaskContainer,
@@ -31,11 +31,11 @@ import {
   CoinIcon,
 } from "./TaskList.styles";
 
-import coinIcon from "../assets/coin-icon.png"; // Add coin icon
+import coinIcon from "../assets/coin-icon.png"; 
 
 // Styled component for the crown icon
 export const CrownIcon = styled(FaCrown)`
-  color: #ffd700; /* Gold color for the crown */
+  color: #ffd700; 
   font-size: 1.5rem;
   margin-top: -3px;
 `;
@@ -49,7 +49,7 @@ const TaskItemContainer = styled.div`
   padding: 10px;
   margin-bottom: 10px;
   cursor: pointer;
-  min-height: 80px; /* Consistent height */
+  min-height: 80px;
   box-sizing: border-box;
 `;
 
@@ -57,30 +57,30 @@ const TaskItemContainer = styled.div`
 const TaskDetailsContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px; /* Ensures spacing between logo and text */
-  flex-grow: 1; /* Make this container take available width */
+  gap: 12px; 
+  flex-grow: 1; 
 `;
 
 const TaskLogo = styled.img`
   width: 50px;
   height: 50px;
   object-fit: cover;
-  border-radius: 8px; /* Rounded corners for the logo */
+  border-radius: 8px;
 `;
 const ModalTaskLogo = styled(TaskLogo)`
   width: 150px;
   height: 150px;
-  margin: 20px auto; /* Center the logo with margin */
+  margin: 20px auto;
   object-fit: contain;
-  display: block; /* Ensures the image is centered */
-  border-radius: 8px; /* Rounded corners */
+  display: block; 
+  border-radius: 8px; 
 `;
 
 const TaskTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-grow: 1; /* Ensure the text container takes up remaining space */
+  flex-grow: 1; 
 `;
 
 const TaskTitleRow = styled.div`
@@ -99,7 +99,7 @@ const TaskPointsContainer = styled.div`
   background-color: #24A1DE;
   padding: 5px 10px;
   border-radius: 8px;
-  width: fit-content; /* Prevents stretching */
+  width: fit-content;
   box-sizing: border-box;
 `;
 

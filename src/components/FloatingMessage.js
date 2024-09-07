@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FloatingMessageContainer, MessageText, CloseButton } from './TaskList.styles'; // Adjust the path accordingly
+import { FloatingMessageContainer, MessageText, CloseButton } from './TaskList.styles'; 
 
 const FloatingMessage = ({ message, type, duration = 3000, onClose }) => {
   const [fade, setFade] = useState(false);
@@ -9,7 +9,7 @@ const FloatingMessage = ({ message, type, duration = 3000, onClose }) => {
       setFade(true);
       setTimeout(() => {
         onClose();
-      }, 500); // Give time for fade-out animation
+      }, 500); 
     }, duration);
 
     return () => clearTimeout(timer);

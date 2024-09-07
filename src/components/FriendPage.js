@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { debounce } from "lodash";
 import { FaTelegramPlane, FaCopy, FaArrowRight, FaCrown } from "react-icons/fa";
-import UserInfo from "./UserInfo"; // Ensure the path is correct
+import UserInfo from "./UserInfo"; 
 
 // Color Palette
 const mainBackground = "#1f1f1f"; // Dark background for the app
@@ -106,7 +106,7 @@ const BonusArrow = styled.div`
   color: ${white};
 `;
 
-// Referral Button and Copy Button aligned in the same row
+// Referral Button and Copy Button
 const ButtonRow = styled.div`
   display: flex;
   justify-content: center;
@@ -116,7 +116,7 @@ const ButtonRow = styled.div`
 `;
 
 const ReferralButton = styled.button`
-  background-color: ${telegramBlue}; /* Main blue color */
+  background-color: ${telegramBlue}; 
   color: white;
   padding: 12px 50px;
   border-radius: 8px;
@@ -127,10 +127,10 @@ const ReferralButton = styled.button`
   cursor: pointer;
   transition: background-color 0.3s;
 
-  border: none; /* Ensure no border */
-  outline: none; /* Remove default button outline */
+  border: none; 
+  outline: none; 
 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow with proper color */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   &:hover {
     background-color: ${telegramLightBlue};
@@ -139,12 +139,12 @@ const ReferralButton = styled.button`
 
 const CopyIcon = styled(FaCopy)`
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.8); /* Slightly dimmed white */
+  color: rgba(255, 255, 255, 0.8); 
   font-size: 32px;
   transition: color 0.3s;
 
   &:hover {
-    color: ${white}; /* Full white on hover */
+    color: ${white}; 
   }
 `;
 
@@ -156,7 +156,6 @@ const CopySuccessMessage = styled.p`
   margin-top: 15px;
 `;
 
-// Referral Stats Section (Updated to match the rest of the layout)
 const ReferralStatsContainer = styled(ReferralContainer)`
   margin-top: 40px;
 `;
@@ -178,11 +177,11 @@ const ReferralItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.08); /* Dimmed background for individual referral items */
+  background-color: rgba(255, 255, 255, 0.08); 
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better emphasis */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); 
 `;
 
 const ReferralUsername = styled.div`
@@ -196,7 +195,6 @@ const ReferralPoints = styled.div`
   color: ${white};
 `;
 
-// Modify this to better control the text within the list
 const PointText = styled.span`
   margin-top: 0;
   font-size: 14px;

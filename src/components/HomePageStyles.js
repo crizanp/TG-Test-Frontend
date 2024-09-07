@@ -13,7 +13,7 @@ const glowAnimation = keyframes`
   }
 `;
 
-// Pulse animation for energy container when low energy
+// Pulse animation 
 const energyBarAnimation = keyframes`
   0% {
     transform: scale(1);
@@ -54,7 +54,6 @@ const slapEffectAnimation = keyframes`
   }
 `;
 
-// Container for the homepage
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   color: #ffffff;
@@ -64,21 +63,19 @@ export const HomeContainer = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 100vh; /* Center both horizontally and vertically */
+  height: 100vh; 
   overflow: hidden;
   user-select: none;
   position: relative;
 `;
 
-// Points display container
 export const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 20px; /* Adjusted for better alignment */
+  margin-top: 20px; 
 `;
 
-// Points display
 export const PointsDisplay = styled.div`
   font-size: 48px;
   color: #d3dfe5;
@@ -87,24 +84,21 @@ export const PointsDisplay = styled.div`
   font-weight: bold;
 `;
 
-// Dollar icon next to points
 export const DollarIcon = styled.img`
   width: 36px;
   height: 36px;
   margin-right: 10px;
 `;
 
-// Middle section for eagle and energy bar
 export const MiddleSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding-top: 20px; /* For better spacing */
+  padding-top: 20px; 
 `;
 
-// Message above the eagle
 export const Message = styled.div`
   padding: 10px;
   font-size: 18px;
@@ -114,7 +108,6 @@ export const Message = styled.div`
   text-transform: uppercase;
 `;
 
-// Eagle container for displaying the eagle image
 export const EagleContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -122,9 +115,8 @@ export const EagleContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-// Eagle image styling
 export const EagleImage = styled.img`
-  width: 95%; /* Adjust the size */
+  width: 95%; 
   height: auto;
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
@@ -140,7 +132,6 @@ export const EagleImage = styled.img`
     `}
 `;
 
-// Energy icon and container
 export const EnergyIconContainer = styled.div`
   display: flex;
   align-items: center;
@@ -160,7 +151,6 @@ export const EnergyIcon = styled(FaBolt)`
   color: #ffcc00;
 `;
 
-// Circular progress container for energy
 export const EnergyProgressContainer = styled.div`
   position: absolute;
   top: 0;
@@ -194,7 +184,6 @@ export const EnergyCirclePath = styled.circle`
   transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
 `;
 
-// Energy Counter
 export const EnergyCounter = styled.div`
   font-size: 18px;
     color: #171616;
@@ -205,7 +194,6 @@ export const EnergyCounter = styled.div`
     font-weight: bold;
 `;
 
-// Flying number animation
 export const FlyingNumber = styled.div`
   position: absolute;
   font-size: 24px;
@@ -218,7 +206,6 @@ export const FlyingNumber = styled.div`
   transform: translate(-50%, -100%);
 `;
 
-// Slap emoji that appears on tap
 export const SlapEmoji = styled.div`
   position: absolute;
   top: ${({ y }) => y}px;

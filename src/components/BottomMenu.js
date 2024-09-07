@@ -5,13 +5,12 @@ import { FaParachuteBox, FaGamepad } from 'react-icons/fa';
 import { GiReceiveMoney, GiHiveMind } from 'react-icons/gi';
 import { SiEagle } from 'react-icons/si';
 
-// Global styles for preventing long press pop-up and blue dim
 const GlobalStyle = createGlobalStyle`
   * {
-    -webkit-user-select: none; /* Disable text selection */
-    -webkit-touch-callout: none; /* Disable long-press context menu */
-    outline: none; /* Remove focus outline */
-    -webkit-tap-highlight-color: transparent; /* Disable blue dim background */
+    -webkit-user-select: none; 
+    -webkit-touch-callout: none; 
+    outline: none; 
+    -webkit-tap-highlight-color: transparent; 
   }
 `;
 
@@ -28,7 +27,7 @@ const BottomMenuContainer = styled.div`
   padding: 0px 0px 10px 0px; 
   margin: 0 auto;
   z-index: 10;
-  border-top: 2px solid #ffffff; /* Add a white top border */
+  border-top: 2px solid #ffffff; 
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -88,7 +87,7 @@ const MenuItem = styled.div`
   color: #dfcec0;
   font-size: 12px;
   text-decoration: none;
-  padding: 10px; /* Increased padding for broader touch area */
+  padding: 10px; 
   transition: transform 0.2s ease;
   cursor: pointer;
 
@@ -100,7 +99,7 @@ const MenuItem = styled.div`
     isActive &&
     css`
       animation: ${pulseAnimation} 1.5s infinite;
-      transform: scale(1.5); /* Bigger scale for the clicked item */
+      transform: scale(1.5);
       color: #fff;
     `}
 `;
@@ -119,7 +118,7 @@ const MenuLabel = styled.div`
 const VibrationMenuItem = (props) => {
   const handleClick = () => {
     if ('vibrate' in navigator) {
-      navigator.vibrate(50); // Softer vibration for 50ms
+      navigator.vibrate(50); 
     }
 
     if (props.onClick) {
@@ -136,9 +135,9 @@ const VibrationMenuItem = (props) => {
 };
 
 function BottomMenu() {
-  const navigate = useNavigate(); // Get navigation function from React Router
-  const location = useLocation(); // Get current page location
-  const [activeMenu, setActiveMenu] = useState(location.pathname); // Track the currently active menu item
+  const navigate = useNavigate(); 
+  const location = useLocation(); 
+  const [activeMenu, setActiveMenu] = useState(location.pathname); 
 
   const handleMenuClick = (path) => {
     setActiveMenu(path);

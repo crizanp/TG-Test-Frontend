@@ -16,7 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
   return (
     <PointsProvider>
-      <EnergyProvider> {/* Wrap the entire app with EnergyProvider */}
+      <EnergyProvider> 
         <Router>
           <Layout>
             <Routes>

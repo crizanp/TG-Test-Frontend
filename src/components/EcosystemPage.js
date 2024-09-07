@@ -32,7 +32,7 @@ function EcosystemPage() {
   const [correctOption, setCorrectOption] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [noMoreQuizzes, setNoMoreQuizzes] = useState(false);
-  const [message, setMessage] = useState(null); // Add state for message
+  const [message, setMessage] = useState(null); 
 
   const QuizContainer = styled.div`
     display: flex;
@@ -43,7 +43,7 @@ function EcosystemPage() {
     color: white;
     min-height: 87vh;
     text-align: center;
-    background-image: url("/path-to-your-background-image.jpg"); // Update with your background image path
+    background-image: url("/path-to-your-background-image.jpg"); 
     background-size: cover;
     background-position: center;
   `;
@@ -108,7 +108,7 @@ function EcosystemPage() {
             (q) => q.quizId === response.data._id
           );
           setAlreadyCompleted(quizCompleted);
-          setNoMoreQuizzes(false); // Reset no more quizzes flag
+          setNoMoreQuizzes(false); 
         }
 
         setLoading(false);
@@ -119,8 +119,8 @@ function EcosystemPage() {
       } catch (error) {
         console.error("Error fetching random quiz:", error);
         setLoading(false);
-        setCurrentQuiz(null); // No quizzes available
-        setNoMoreQuizzes(true); // No more quizzes in this category
+        setCurrentQuiz(null); 
+        setNoMoreQuizzes(true); 
       }
     };
 
@@ -150,13 +150,13 @@ function EcosystemPage() {
       );
 
       setPoints((prevPoints) => prevPoints + pointsEarned);
-      setDisableSubmit(true); // Disable the submit button and options after submission
+      setDisableSubmit(true);
       setCorrectOption(
         isCorrect
           ? selectedOption
           : currentQuiz.options.findIndex((option) => option.isCorrect)
       );
-      setShowFeedback(true); // Show feedback (correct/wrong option)
+      setShowFeedback(true); 
 
       // Show the floating message
       setMessage({
@@ -182,7 +182,7 @@ function EcosystemPage() {
 
       if (!response.data) {
         setCurrentQuiz(null);
-        setNoMoreQuizzes(true); // No more quizzes in this category
+        setNoMoreQuizzes(true); 
       } else {
         setCurrentQuiz(response.data);
         setSelectedOption(null);
@@ -196,15 +196,15 @@ function EcosystemPage() {
           (q) => q.quizId === response.data._id
         );
         setAlreadyCompleted(quizCompleted);
-        setNoMoreQuizzes(false); // Reset no more quizzes flag
+        setNoMoreQuizzes(false); 
       }
 
       setLoading(false);
     } catch (error) {
       console.error("Error fetching next quiz:", error);
       setLoading(false);
-      setCurrentQuiz(null); // No quizzes available
-      setNoMoreQuizzes(true); // No more quizzes in this category
+      setCurrentQuiz(null); 
+      setNoMoreQuizzes(true); 
     }
   };
 

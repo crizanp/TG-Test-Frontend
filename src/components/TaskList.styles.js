@@ -107,7 +107,7 @@ const spin = keyframes`
   100% { transform: rotate(360deg); }
 `;
 
-// Styled component for loading spinner
+//  loading spinner
 export const LoadingSpinner = styled.div`
   border: 16px solid #f3f3f3; /* Light grey */
   border-top: 16px solid #3498db; /* Blue */
@@ -240,10 +240,10 @@ export const TaskPoints = styled.div`
   border-radius: 12px;
   font-weight: bold;
   font-size: 16px;
-  display: flex; /* Use flexbox */
-  align-items: center; /* Align items vertically */
-  justify-content: center; /* Center items horizontally */
-  gap: 2px; /* Add space between crown icon and points text */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 2px; 
 
   @media (max-width: 480px) {
     font-size: 14px;
@@ -351,7 +351,7 @@ export const ModalHeader = styled.div`
   }
 `;
 
-// Modal content with reduced padding and improved styling
+// Modal content with reduced padding 
 export const ModalContent = styled.div`
   font-size: 18px;
   color: #ffffff;
@@ -364,7 +364,6 @@ export const ModalContent = styled.div`
     font-size: 16px;
   }
 `;
-// Points display section with coin icon
 // Points display section with coin icon
 export const PointsDisplayModal = styled.div`
   display: flex;
@@ -379,14 +378,14 @@ export const PointsDisplayModal = styled.div`
     font-size: 22px;
   }
 `;
-// Coin icon with points display
+// Coin icon 
 export const CoinIcon = styled.img`
   width: 32px;
   height: 32px;
   margin-right: 10px;
 `;
 
-// Start Task Button with updated styles
+// Start Task Button 
 export const ModalButton = styled.button`
   background-color: #3e9ed1;
   color: #f7f7f7;
@@ -399,7 +398,7 @@ export const ModalButton = styled.button`
   transition: background-color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #a64ca6; // Lighten the purple on hover
+    background-color: #a64ca6; 
     transform: scale(1.05);
   }
 
@@ -414,7 +413,7 @@ export const ModalButton = styled.button`
     margin-bottom: 10px;
   }
 `;
-// Red close button (icon)
+// Red close button 
 export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
   top: 12px;
@@ -459,7 +458,7 @@ export const ProofInput = styled.input`
 `;
 // Telegram blue button with hover effect
 export const ClaimButton = styled.button`
-  background-color: ${telegramBlue}; // Telegram blue
+  background-color: ${telegramBlue}; 
   color: white;
   border: none;
   padding: 12px 24px;
@@ -470,7 +469,7 @@ export const ClaimButton = styled.button`
   transition: background-color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: ${telegramLightBlue}; // Lighter blue on hover
+    background-color: ${telegramLightBlue}; 
     transform: scale(1.05);
   }
 
@@ -505,7 +504,7 @@ export const TimerIcon = styled(GiClockwork)`
     font-size: 24px;
   }
 `;
-// Timer text with improved layout
+// Timer text
 export const TimerText = styled.div`
   color: #ff9800;
   font-size: 18px;
