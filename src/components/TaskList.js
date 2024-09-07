@@ -324,7 +324,7 @@ const TaskList = () => {
                 <ModalHeader>{selectedTask.name}</ModalHeader>
                 <PointsDisplayModal>
                   <CoinIcon src={coinIcon} alt="Coin Icon" />+
-                  {selectedTask.points} IGH
+                  {selectedTask.points} Crowns
                 </PointsDisplayModal>
                 <ModalContent>{selectedTask.description}</ModalContent>
 

@@ -26,7 +26,14 @@ const fadeOut = keyframes`
     opacity: 0;
   }
 `;
-
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 // Floating message container with responsive behavior and animations
 export const FloatingMessageContainer = styled.div`
   position: fixed;
@@ -296,7 +303,6 @@ const blurBackground = keyframes`
   }
 `;
 
-// Modal overlay with background blur
 export const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -306,35 +312,33 @@ export const ModalOverlay = styled.div`
   background-color: rgba(0, 0, 0, 0.7); // Darker overlay
   z-index: 100;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; // Centers the modal horizontally
+  align-items: center; // Centers the modal vertically
   animation: ${blurBackground} 0.5s ease-in-out forwards;
 
   @media (max-width: 480px) {
-    align-items: flex-end;
+    padding: 15px;
   }
 `;
+
 // Modal styling that covers the bottom half of the screen
 export const Modal = styled.div`
   background-color: #1a1a1a;
   padding: 25px;
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px;
   width: 100%;
   max-width: 400px;
   min-height: 50vh;
   text-align: center;
-  position: relative;
-  animation: ${slideUp} 0.7s ease-out forwards;
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  animation: ${fadeIn} 0.7s ease-out forwards; // A fade-in animation
 
   @media (max-width: 480px) {
     padding: 15px;
     height: auto;
-    transform: ${({ $keyboardVisible }) =>
-      $keyboardVisible ? "translateY(-100px)" : "translateY(0)"};
   }
 `;
 
@@ -416,8 +420,7 @@ export const ModalButton = styled.button`
 // Red close button 
 export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
-  top: 12px;
-  right: 12px;
+  right: 30px;
   font-size: 30px;
   cursor: pointer;
   color: #ffebea; // Red color for close button
