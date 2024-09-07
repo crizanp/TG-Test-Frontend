@@ -8,18 +8,14 @@ import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
 import { FaCrown } from "react-icons/fa"; // Crown icon from react-icons
+import styled from "styled-components"; // Ensure this is present
 
 import {
   TaskContainer,
   TaskCategory,
   TaskTitle,
   CoinText,
-  Logo,
   PointsDisplayModal,
-  TaskItem,
-  TaskDetails,
-  TaskItemTitle,
-  TaskPoints,
   TaskIcon,
   ModalOverlay,
   Modal,
@@ -29,23 +25,83 @@ import {
   ClaimButton,
   CloseButtonModel,
   ProofInput,
-  TimerIcon,
   PointsDisplayContainer,
   PointsDisplay,
-  DollarIcon,
   LoadingSpinner,
   CoinIcon,
 } from "./TaskList.styles";
-import dollarImage from "../assets/dollar-homepage.png";
-import coinIcon from "../assets/coin-icon.png"; // Add coin icon
-import styled from "styled-components"; // Make sure this is present
 
+import coinIcon from "../assets/coin-icon.png"; // Add coin icon
+
+// Styled component for the crown icon
 export const CrownIcon = styled(FaCrown)`
   color: #ffd700; /* Gold color for the crown */
-  margin-left: 8px;
-  margin-right: 8px;
-  margin-top: -3px;
   font-size: 1.5rem;
+  margin-top: -3px;
+`;
+
+const TaskItemContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: ${(props) => (props.$completed ? "#2c2c2c" : "#1f1f1f")};
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  min-height: 80px; /* Consistent height */
+  box-sizing: border-box;
+`;
+
+
+const TaskDetailsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Ensures spacing between logo and text */
+  flex-grow: 1; /* Make this container take available width */
+`;
+
+const TaskLogo = styled.img`
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px; /* Rounded corners for the logo */
+  background-color: #ccc; /* Placeholder background for missing logos */
+`;
+const ModalTaskLogo = styled(TaskLogo)`
+  width: 150px;
+  height: 150px;
+  margin: 20px auto; /* Center the logo with margin */
+  object-fit: contain;
+  display: block; /* Ensures the image is centered */
+  border-radius: 8px; /* Rounded corners */
+`;
+
+const TaskTextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1; /* Ensure the text container takes up remaining space */
+`;
+
+const TaskTitleRow = styled.div`
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+`;
+
+const TaskPointsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #297bff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  width: fit-content; /* Prevents stretching */
+  box-sizing: border-box;
 `;
 
 const TaskList = () => {
@@ -200,7 +256,7 @@ const TaskList = () => {
         <UserInfo userID={userID} points={points} />
         <PointsDisplay>
           <img
-            src="https://i.postimg.cc/JhMWHG8x/square-5.png"
+            src="https://i.postimg.cc/y6Pn7xpB/square-3.png"
             alt="Logo Icon"
             style={{
               width: "100px",
@@ -225,27 +281,34 @@ const TaskList = () => {
               </TaskTitle>
               {tasks[category]
                 .sort((a, b) => {
-                  // Move completed tasks to the bottom
                   const isACompleted = completedTasks[a._id] ? 1 : 0;
                   const isBCompleted = completedTasks[b._id] ? 1 : 0;
                   return isACompleted - isBCompleted;
                 })
                 .map((task) => (
-                  <TaskItem
+                  <TaskItemContainer
                     key={task._id}
                     $completed={completedTasks[task._id]}
                     onClick={() => handleTaskClick(task)}
                   >
-                    <TaskDetails>
-                      <TaskItemTitle>{task.name}</TaskItemTitle>
-                      <TaskPoints>
-                        <CrownIcon /> {task.points}
-                      </TaskPoints>
-                    </TaskDetails>
+                    <TaskDetailsContainer>
+                      <TaskLogo
+                        src={task.logo || "https://via.placeholder.com/50"} // Fallback URL for missing logos
+                        alt={`${task.name} logo`}
+                      />
+                      <TaskTextContainer>
+                        <TaskTitleRow>{task.name}</TaskTitleRow>
+                        <TaskPointsContainer>
+                          <CrownIcon />
+                          {task.points}
+                        </TaskPointsContainer>
+                      </TaskTextContainer>
+                    </TaskDetailsContainer>
+
                     <TaskIcon $completed={completedTasks[task._id]}>
                       {completedTasks[task._id] ? "Done" : <FaChevronRight />}
                     </TaskIcon>
-                  </TaskItem>
+                  </TaskItemContainer>
                 ))}
             </TaskCategory>
           ))}
@@ -253,22 +316,19 @@ const TaskList = () => {
           {selectedTask && (
             <ModalOverlay>
               <Modal>
-                <CloseButtonModel onClick={handleClose} /> {/* Close Button */}
-                {/* Logo Section */}
-                <Logo
-                  src="https://cdn3d.iconscout.com/3d/premium/thumb/ton-11767677-9599979.png"
-                  alt="Logo"
+                <CloseButtonModel onClick={handleClose} />
+                {/* Modal Logo Centered and Bigger */}
+                <ModalTaskLogo
+                  src={selectedTask.logo || "https://via.placeholder.com/50"}
+                  alt={`${selectedTask.name} logo`}
                 />
-                {/* Title */}
                 <ModalHeader>{selectedTask.name}</ModalHeader>
-                {/* Points Display */}
                 <PointsDisplayModal>
                   <CoinIcon src={coinIcon} alt="Coin Icon" />+
                   {selectedTask.points} IGH
                 </PointsDisplayModal>
-                {/* Description */}
                 <ModalContent>{selectedTask.description}</ModalContent>
-                {/* Proof Input and Claim Button */}
+
                 {isClaimable && !underModeration ? (
                   <>
                     <ProofInput
@@ -277,8 +337,6 @@ const TaskList = () => {
                       value={proof}
                       onChange={(e) => setProof(e.target.value)}
                     />
-
-                    {/* Claim Reward Button */}
                     <ClaimButton
                       onClick={handleClaimReward}
                       disabled={!proof.trim() || underModeration}
@@ -287,20 +345,15 @@ const TaskList = () => {
                     </ClaimButton>
                   </>
                 ) : null}
-                {/* Start Task and Processing Button */}
+
                 {!timerStarted && !isClaimable && !underModeration ? (
-                  <ModalButton onClick={handleStartTask}>
-                    Start Task
-                  </ModalButton>
+                  <ModalButton onClick={handleStartTask}>Start Task</ModalButton>
                 ) : timerStarted && !isClaimable ? (
                   <ModalButton disabled>Processing...</ModalButton>
                 ) : null}
-                {/* Moderation Section */}
+
                 {underModeration && (
-                  <>
-                    <ModalContent>Task under moderation...</ModalContent>
-                    {/* <TimerIcon /> */}
-                  </>
+                  <ModalContent>Task under moderation...</ModalContent>
                 )}
               </Modal>
             </ModalOverlay>
