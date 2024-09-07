@@ -13,18 +13,19 @@ import {
   EagleImage,
   FlyingNumber,
   SlapEmoji,
-  EnergyIconContainer,
-  EnergyIcon,
+  EnergyContainer,
+  EarnMoreBox,
   EnergyCounter,
-  EnergyProgressContainer,
-  EnergyCircle,
-  EnergyCirclePath
+  EnergyIcon,
+  BottomContainer
 } from './HomePageStyles';
 import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import eagleImage from '../assets/eagle.png';
 import dollarImage from '../assets/dollar-homepage.png';
 import { getUserID } from '../utils/getUserID';
+import { Link } from 'react-router-dom';
+import { FaTasks } from 'react-icons/fa';
 
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
@@ -156,23 +157,22 @@ function HomePage() {
             onClick={handleTap}
           />
         </EagleContainer>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <EnergyIconContainer energy={energy}>
-            <EnergyProgressContainer>
-              <EnergyCircle>
-                <EnergyCirclePath
-                  energy={energy}
-                  r="30"
-                  cx="40"
-                  cy="40"
-                />
-              </EnergyCircle>
-            </EnergyProgressContainer>
+
+        <BottomContainer>
+          {/* Left Box for "Earn More" */}
+          {/* <EarnMoreBox>
+            <Link to="/tasks" style={{ textDecoration: 'none', color: 'white' }}>
+              <FaTasks size={18} />
+              <span>Earn More</span>
+            </Link>
+          </EarnMoreBox> */}
+
+          {/* Right Box for Energy */}
+          <EnergyContainer>
             <EnergyIcon energy={energy} />
-          </EnergyIconContainer>
-          <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
-        </div>
-        
+            <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
+          </EnergyContainer>
+        </BottomContainer>
       </MiddleSection>
 
       {flyingNumbers.map((number) => (

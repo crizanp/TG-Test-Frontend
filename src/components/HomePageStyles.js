@@ -1,32 +1,6 @@
 import styled, { keyframes, css } from 'styled-components';
 import { FaBolt } from 'react-icons/fa'; 
 
-const glowAnimation = keyframes`
-  0% {
-    box-shadow: 0 0 6px #00aaff, 0 0 12px #00aaff, 0 0 18px #00aaff;
-  }
-  50% {
-    box-shadow: 0 0 12px #00aaff, 0 0 18px #00aaff, 0 0 24px #00aaff;
-  }
-  100% {
-    box-shadow: 0 0 6px #00aaff, 0 0 12px #00aaff, 0 0 18px #00aaff;
-  }
-`;
-
-// Pulse animation 
-const energyBarAnimation = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-`;
-
-// Flying number animation
 const pointFlyingAnimation = keyframes`
   0% {
     opacity: 1;
@@ -38,7 +12,6 @@ const pointFlyingAnimation = keyframes`
   }
 `;
 
-// Slap emoji animation
 const slapEffectAnimation = keyframes`
   0% {
     transform: scale(1) translateY(0) translateX(0);
@@ -56,142 +29,149 @@ const slapEffectAnimation = keyframes`
 
 export const HomeContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
-  color: #ffffff;
-  background: #1e1e1e; /* Dark theme */
+  color: white;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: flex-start;
   text-align: center;
-  height: 100vh; 
+  min-height: 87vh;
   overflow: hidden;
   user-select: none;
+  padding: 20px 20px;
   position: relative;
+  
 `;
 
 export const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 20px; 
+  margin-top: 77px;
 `;
 
 export const PointsDisplay = styled.div`
-  font-size: 48px;
-  color: #d3dfe5;
+  font-size: 37px;
+  color: white;
   display: flex;
   align-items: center;
   font-weight: bold;
+  justify-content: center;
+
+
 `;
 
 export const DollarIcon = styled.img`
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   margin-right: 10px;
 `;
 
 export const MiddleSection = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding-top: 20px; 
+    flex-grow: 1;
+    position: relative;
+    justify-content: flex-start;
+    align-content: space-around;
+    flex-direction: column;
+    margin-top: 30px;
 `;
 
 export const Message = styled.div`
-  padding: 10px;
-  font-size: 18px;
-  margin-bottom: 12px;
-  font-weight: bold;
-  color: #bec6ca;
+  color: white;
   text-transform: uppercase;
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
 `;
 
 export const EagleContainer = styled.div`
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 export const EagleImage = styled.img`
-  width: 95%; 
+  width: 90%;
   height: auto;
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     transform: scale(1.05);
   }
-
-  ${({ $animate }) =>
-    $animate &&
-    css`
-      animation: ${glowAnimation} 0.3s ease-in-out;
-    `}
 `;
 
-export const EnergyIconContainer = styled.div`
+export const BottomContainer = styled.div`
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: #121212;
-  border-radius: 50%;
-  width: 45px;  
-  height: 45px;
-  margin-right: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  position: relative;
+  width: 100%;
+  
+  padding: 0 20px;
+  box-sizing: border-box;
+`;
+
+export const EarnMoreBox = styled.div`
+  display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: #2a2a2a00;
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100px;
+    height: 45px;
+    text-align: right;
+    border: 2px solid #1fa3e6;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  & svg {
+    margin-right: 5px;
+  }
+
+  &:hover {
+    background-color: #575757;
+  }
+`;
+
+export const EnergyContainer = styled.div`
+  display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: #2a2a2a00;
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100px;
+    height: 45px;
+    text-align: right;
+    border: 2px solid #1fa3e6;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  & svg {
+    margin-right: 5px;
+  }
 `;
 
 export const EnergyIcon = styled(FaBolt)`
   width: 20px;
   height: 20px;
-  color: #ffcc00;
-`;
-
-export const EnergyProgressContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const EnergyCircle = styled.svg`
-  position: absolute;
-  width: 80px;
-    height: 80px;
-`;
-
-export const EnergyCirclePath = styled.circle`
-  fill: none;
-  stroke-width: 5;
-  stroke: ${({ energy }) =>
-    energy > 800
-      ? 'limegreen'
-      : energy > 500
-      ? 'yellow'
-      : energy > 200
-      ? 'orange'
-      : 'red'};
-  stroke-dasharray: 250;
-  stroke-dashoffset: ${({ energy }) => 250 - (energy / 1000) * 250};
-  transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
+  color: ${({ energy }) => (energy > 500 ? '#ffcc00' : '#ff6600')};
+  transition: color 0.3s ease;
 `;
 
 export const EnergyCounter = styled.div`
-  font-size: 18px;
-    color: #171616;
-    margin-left: 10px;
-    background-color: rgb(36 160 220);
-    padding: 8px 8px;
-    border-radius: 15px;
-    font-weight: bold;
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
 `;
 
 export const FlyingNumber = styled.div`
