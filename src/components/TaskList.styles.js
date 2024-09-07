@@ -471,6 +471,20 @@ export const ClaimButton = styled.button`
   font-weight: bold;
   transition: background-color 0.3s, transform 0.3s;
 
+  /* Ensure the button is large enough for touch on all devices */
+  min-height: 44px;
+  min-width: 44px;
+
+  /* Improve touch handling on mobile */
+  touch-action: manipulation;
+
+  /* Fix default Safari styles */
+  -webkit-appearance: none;
+
+  /* Fix any potential z-index issues with overlapping elements */
+  z-index: 10;
+  position: relative;
+
   &:hover {
     background-color: ${telegramLightBlue}; 
     transform: scale(1.05);
@@ -486,7 +500,6 @@ export const ClaimButton = styled.button`
     padding: 10px 20px;
   }
 `;
-
 // Timer icon with rotating animation
 const spinAnimation = keyframes`
   from {
