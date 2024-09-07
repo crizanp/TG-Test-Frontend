@@ -105,7 +105,7 @@ const TaskPointsContainer = styled.div`
 
 const TaskList = () => {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
-  const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] });
+  const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] ,extra:[]});
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
   const [isClaimable, setIsClaimable] = useState(false);
@@ -150,6 +150,7 @@ const TaskList = () => {
           special: data.filter((task) => task.category === "Special"),
           daily: data.filter((task) => task.category === "Daily"),
           lists: data.filter((task) => task.category === "Lists"),
+          extra: data.filter((task) => task.category === "Extra"),
         };
 
         setTasks(categorizedTasks);

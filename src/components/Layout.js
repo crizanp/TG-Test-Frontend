@@ -7,7 +7,7 @@ import LoadingPage from './LoadingPage';
 const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
   background-color: #090c12;
-  max-width: 470px;
+  max-width: 460px;
   height: 100vh;
   margin: 0 auto;
   display: flex;
