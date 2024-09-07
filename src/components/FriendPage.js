@@ -368,7 +368,7 @@ const FriendPage = () => {
               <ReferralItem key={referral.id}>
                 <ReferralUsername>{referral.username}</ReferralUsername>
                 <ReferralPoints>
-                  <CrownIcon /> {referral.points} Crowns
+                  <CrownIcon /> {referral.pointsAwarded}
                 </ReferralPoints>
               </ReferralItem>
             ))}
