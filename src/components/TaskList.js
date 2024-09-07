@@ -44,7 +44,7 @@ const TaskItemContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${(props) => (props.$completed ? "#2c2c2c" : "#1f1f1f")};
+  background-color: ${(props) => (props.$completed ? "#d4ffc32e" : "#d8d0d02b")};
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 10px;
@@ -96,7 +96,7 @@ const TaskPointsContainer = styled.div`
   gap: 5px;
   font-size: 14px;
   color: #fff;
-  background-color: #297bff;
+  background-color: #24A1DE;
   padding: 5px 10px;
   border-radius: 4px;
   width: fit-content; /* Prevents stretching */
