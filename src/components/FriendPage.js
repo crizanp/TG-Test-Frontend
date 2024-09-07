@@ -298,7 +298,7 @@ const FriendPage = () => {
       {/* Invite Friend Section */}
       <PointsDisplayContainer>
         <InviteIcon3D
-          src="https://cdn-icons-png.flaticon.com/512/272/272482.png"
+          src="https://i.postimg.cc/VNBwg5PP/square.png"
           alt="Invite Icon"
         />
         <InviteText>
