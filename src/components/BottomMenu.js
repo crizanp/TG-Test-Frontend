@@ -28,6 +28,7 @@ const BottomMenuContainer = styled.div`
   padding: 0px 0px 10px 0px; 
   margin: 0 auto;
   z-index: 10;
+  border-top: 2px solid #ffffff; /* Add a white top border */
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -37,6 +38,7 @@ const BottomMenuContainer = styled.div`
     font-size: 10px;
   }
 `;
+
 
 const pulseAnimation = keyframes`
   0% {
@@ -133,7 +135,6 @@ const VibrationMenuItem = (props) => {
   );
 };
 
-
 function BottomMenu() {
   const navigate = useNavigate(); // Get navigation function from React Router
   const location = useLocation(); // Get current page location
@@ -148,12 +149,15 @@ function BottomMenu() {
     <>
       <GlobalStyle /> {/* Apply global styles */}
       <BottomMenuContainer>
-        <PoweredBy>
-          Powered by{' '}
-          <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">
-            IGH Group [ ICOGEMHUNTERS ]
-          </a>
-        </PoweredBy>
+        {/* Conditionally render the PoweredBy section based on location */}
+        {location.pathname !== '/home' && (
+          <PoweredBy>
+            Powered by{' '}
+            <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">
+              IGH Group [ ICOGEMHUNTERS ]
+            </a>
+          </PoweredBy>
+        )}
         <MenuItems>
           <VibrationMenuItem
             label="Friend"

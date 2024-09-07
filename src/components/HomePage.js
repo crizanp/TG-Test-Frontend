@@ -11,7 +11,6 @@ import {
   Message,
   EagleContainer,
   EagleImage,
-  Description,
   FlyingNumber,
   SlapEmoji,
   EnergyIconContainer,
@@ -173,10 +172,10 @@ function HomePage() {
           </EnergyIconContainer>
           <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
         </div>
-        <Description>
+        {/* <Description>
           Slap the eagle to earn <span>points</span>! Collect more as you <span>play</span>.
           Stay tuned for <span>updates</span> and <span>rewards</span>!
-        </Description>
+        </Description> */}
       </MiddleSection>
 
       {flyingNumbers.map((number) => (
