@@ -66,7 +66,6 @@ const TaskLogo = styled.img`
   height: 50px;
   object-fit: cover;
   border-radius: 8px; /* Rounded corners for the logo */
-  background-color: #ccc; /* Placeholder background for missing logos */
 `;
 const ModalTaskLogo = styled(TaskLogo)`
   width: 150px;
