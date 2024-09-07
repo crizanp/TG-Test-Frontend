@@ -121,7 +121,6 @@ const ReferralButton = styled.button`
   padding: 12px 50px;
   border-radius: 8px;
   font-size: 18px;
-  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -311,7 +310,7 @@ const FriendPage = () => {
         <BonusBox>
           <BonusContent>
             <BonusIcon
-              src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png"
+              src="https://i.postimg.cc/tCWXS96k/Invite-Friend-Premium.png"
               alt="Premium Icon"
             />
             <BonusText>
@@ -329,7 +328,7 @@ const FriendPage = () => {
         <BonusBox>
           <BonusContent>
             <BonusIcon
-              src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png"
+              src="https://i.postimg.cc/rFFBWcJz/Invite-Friend-Normal.png"
               alt="Crown Icon"
             />
             <BonusText>

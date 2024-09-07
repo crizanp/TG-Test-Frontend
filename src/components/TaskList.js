@@ -200,7 +200,7 @@ const TaskList = () => {
         <UserInfo userID={userID} points={points} />
         <PointsDisplay>
           <img
-            src="https://cdn-icons-png.freepik.com/512/1753/1753666.png"
+            src="https://i.postimg.cc/JhMWHG8x/square-5.png"
             alt="Logo Icon"
             style={{
               width: "100px",
