@@ -157,11 +157,9 @@ const CopySuccessMessage = styled.p`
   margin-top: 15px;
 `;
 
-// Referral Stats Section
-const ReferralStatsContainer = styled.div`
+// Referral Stats Section (Updated to match the previous div style)
+const ReferralStatsContainer = styled(ReferralContainer)`
   margin-top: 40px;
-  width: 100%;
-  text-align: center;
 `;
 
 const ReferralStatsHeading = styled.h3`
@@ -175,17 +173,6 @@ const NoReferralsMessage = styled.p`
   color: ${white};
   text-align: center;
   margin-top: 20px;
-`;
-
-const ReferralListContainer = styled.div`
-  background: ${dimmedBackground}; /* Dimmed background for referrals */
-  padding: 20px;
-  width: 100%;
-  max-width: 600px;
-  border-radius: 12px;
-  text-align: left;
-  margin-top: 20px;
-  box-shadow: 0 4px 12px ${boxShadowColor}; /* Slight shadow for better visibility */
 `;
 
 const ReferralItem = styled.div`
@@ -374,16 +361,18 @@ const FriendPage = () => {
         {referralCount === 0 ? (
           <NoReferralsMessage>You have no referrals yet</NoReferralsMessage>
         ) : (
-          <ReferralListContainer>
+          <ReferralContainer>
             <div>
               {referrals.map((referral) => (
                 <ReferralItem key={referral.id}>
                   <ReferralUsername>{referral.username}</ReferralUsername>
-                  <ReferralPoints>{referral.points} Points</ReferralPoints>
+                  <ReferralPoints><CrownText>
+                <CrownIcon /> <PointText>{referral.points}</PointText>
+              </CrownText></ReferralPoints>
                 </ReferralItem>
               ))}
             </div>
-          </ReferralListContainer>
+          </ReferralContainer>
         )}
       </ReferralStatsContainer>
     </MainContainer>
