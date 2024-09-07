@@ -58,7 +58,9 @@ const InviteText = styled.p`
 const ReferralContainer = styled.div`
   background: ${dimmedBackground};
   padding: 25px;
+  width: 100%;
   max-width: 600px;
+  border-radius: 12px;
   margin-top: 30px;
 `;
 
