@@ -157,7 +157,7 @@ const CopySuccessMessage = styled.p`
   margin-top: 15px;
 `;
 
-// Referral Stats Section (Updated to match the previous div style)
+// Referral Stats Section (Updated to match the rest of the layout)
 const ReferralStatsContainer = styled(ReferralContainer)`
   margin-top: 40px;
 `;
@@ -178,24 +178,26 @@ const NoReferralsMessage = styled.p`
 const ReferralItem = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.08); /* Dimmed background for individual referral items */
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better emphasis */
 `;
 
 const ReferralUsername = styled.div`
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
   color: ${white};
 `;
 
 const ReferralPoints = styled.div`
-  font-size: 15px;
+  font-size: 16px;
   color: ${white};
 `;
 
+// Modify this to better control the text within the list
 const PointText = styled.span`
   margin-top: 0;
   font-size: 14px;
@@ -361,18 +363,16 @@ const FriendPage = () => {
         {referralCount === 0 ? (
           <NoReferralsMessage>You have no referrals yet</NoReferralsMessage>
         ) : (
-          <ReferralContainer>
-            <div>
-              {referrals.map((referral) => (
-                <ReferralItem key={referral.id}>
-                  <ReferralUsername>{referral.username}</ReferralUsername>
-                  <ReferralPoints><CrownText>
-                <CrownIcon /> <PointText>{referral.points}</PointText>
-              </CrownText></ReferralPoints>
-                </ReferralItem>
-              ))}
-            </div>
-          </ReferralContainer>
+          <div>
+            {referrals.map((referral) => (
+              <ReferralItem key={referral.id}>
+                <ReferralUsername>{referral.username}</ReferralUsername>
+                <ReferralPoints>
+                  <CrownIcon /> {referral.points} Crowns
+                </ReferralPoints>
+              </ReferralItem>
+            ))}
+          </div>
         )}
       </ReferralStatsContainer>
     </MainContainer>
