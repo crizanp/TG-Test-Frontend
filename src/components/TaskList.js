@@ -7,7 +7,7 @@ import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
-import { FaCrown } from 'react-icons/fa';  // Crown icon from react-icons
+import { FaCrown } from "react-icons/fa"; // Crown icon from react-icons
 
 import {
   TaskContainer,
@@ -239,8 +239,8 @@ const TaskList = () => {
                     <TaskDetails>
                       <TaskItemTitle>{task.name}</TaskItemTitle>
                       <TaskPoints>
-  <CrownIcon /> {task.points}
-</TaskPoints>
+                        <CrownIcon /> {task.points}
+                      </TaskPoints>
                     </TaskDetails>
                     <TaskIcon $completed={completedTasks[task._id]}>
                       {completedTasks[task._id] ? "Done" : <FaChevronRight />}

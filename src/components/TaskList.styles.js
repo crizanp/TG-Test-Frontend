@@ -32,7 +32,10 @@ export const FloatingMessageContainer = styled.div`
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: ${({ type }) => (type === 'success' ? '#4caf50' : '#f44336')}; /* Green for success, red for error */
+  background-color: ${({ type }) =>
+    type === "success"
+      ? "#4caf50"
+      : "#f44336"}; /* Green for success, red for error */
   color: white;
   padding: 15px 20px;
   border-radius: 8px;
@@ -41,7 +44,12 @@ export const FloatingMessageContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  animation: ${slideIn} 0.5s ease-out forwards, ${({ $fade }) => $fade && css`${fadeOut} 0.5s ease-out forwards`};
+  animation: ${slideIn} 0.5s ease-out forwards,
+    ${({ $fade }) =>
+      $fade &&
+      css`
+        ${fadeOut} 0.5s ease-out forwards
+      `};
 
   @media (max-width: 480px) {
     width: 50%;
@@ -170,20 +178,19 @@ export const CoinText = styled.div`
 
 // Task item with hover effects and transitions
 export const TaskItem = styled.div`
-  ${'' /* background-color: #4fb053; */ }
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 15px;
-    /* box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-     background-color: #ffffff1a; 
-    cursor: default;
-    ${'' /* border: 2px solid white; */}
-
+  ${"" /* background-color: #4fb053; */}
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 15px;
+  /* box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background-color: #ffffff1a;
+  cursor: default;
+  ${"" /* border: 2px solid white; */}
 
   &:hover {
     transform: translateY(-3px);
@@ -194,7 +201,7 @@ export const TaskItem = styled.div`
     $completed &&
     `
     background-color: #00800017;
-    ${'' /* border: 2px solid #6aeb6a91; */}
+    ${"" /* border: 2px solid #6aeb6a91; */}
 
     cursor: default;
     &:hover {
@@ -233,16 +240,15 @@ export const TaskPoints = styled.div`
   border-radius: 12px;
   font-weight: bold;
   font-size: 16px;
-  display: flex;         /* Use flexbox */
-  align-items: center;   /* Align items vertically */
+  display: flex; /* Use flexbox */
+  align-items: center; /* Align items vertically */
   justify-content: center; /* Center items horizontally */
-  gap: 2px;              /* Add space between crown icon and points text */
+  gap: 2px; /* Add space between crown icon and points text */
 
   @media (max-width: 480px) {
     font-size: 14px;
   }
 `;
-
 
 export const TaskIcon = styled.div`
   font-size: 20px;
@@ -336,7 +342,7 @@ export const Modal = styled.div`
 export const ModalHeader = styled.div`
   font-size: 30px;
   color: #ffffff;
-  ${'' /* margin-bottom: 18px; */}
+  ${"" /* margin-bottom: 18px; */}
   font-weight: bold;
 
   @media (max-width: 480px) {
@@ -350,7 +356,7 @@ export const ModalContent = styled.div`
   font-size: 18px;
   color: #ffffff;
   padding: 10px;
-  ${'' /* background-color: rgba(255, 255, 255, 0.1); */}
+  ${"" /* background-color: rgba(255, 255, 255, 0.1); */}
   border-radius: 8px;
   margin-bottom: 8px;
 
@@ -380,7 +386,6 @@ export const CoinIcon = styled.img`
   margin-right: 10px;
 `;
 
-
 // Start Task Button with updated styles
 export const ModalButton = styled.button`
   background-color: #3e9ed1;
@@ -394,7 +399,7 @@ export const ModalButton = styled.button`
   transition: background-color 0.3s, transform 0.3s;
 
   &:hover {
-    background-color: #a64ca6;  // Lighten the purple on hover
+    background-color: #a64ca6; // Lighten the purple on hover
     transform: scale(1.05);
   }
 
@@ -413,7 +418,7 @@ export const ModalButton = styled.button`
 export const CloseButtonModel = styled(FaTimes)`
   position: absolute;
   top: 12px;
-    right: 12px;
+  right: 12px;
   font-size: 30px;
   cursor: pointer;
   color: #ffebea; // Red color for close button
@@ -479,7 +484,6 @@ export const ClaimButton = styled.button`
     padding: 10px 20px;
   }
 `;
-
 
 // Timer icon with rotating animation
 const spinAnimation = keyframes`
