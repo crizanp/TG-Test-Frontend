@@ -27,7 +27,7 @@ const BottomMenuContainer = styled.div`
   padding: 0px 0px 10px 0px; 
   margin: 0 auto;
   z-index: 10;
-  border-top: 2px solid #ffffff; 
+  border-top: 2px solid #c5b8b8; 
 
   @media (max-width: 768px) {
     flex-direction: column;

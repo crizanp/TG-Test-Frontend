@@ -4,9 +4,8 @@ import { FaCrown } from 'react-icons/fa';
 import { usePoints } from '../context/PointsContext';
 
 const UserInfoContainer = styled.div`
-  background: #1c1c1c;  
   color: white;
-  padding: 10px 20px;  
+  padding: 5px 20px;  
   border-radius: 25px;
   margin-top: 10px;
   width: 100%;

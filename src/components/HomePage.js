@@ -15,6 +15,7 @@ import {
   SlapEmoji,
   EnergyContainer,
   EarnMoreBox,
+  CurvedBorderContainer,
   EnergyCounter,
   EnergyIcon,
   BottomContainer
@@ -142,6 +143,8 @@ function HomePage() {
   return (
     <HomeContainer>
       <UserInfo />
+      <CurvedBorderContainer />
+
       <PointsDisplayContainer>
         <PointsDisplay>
           <DollarIcon src={dollarImage} alt="Dollar Icon" />

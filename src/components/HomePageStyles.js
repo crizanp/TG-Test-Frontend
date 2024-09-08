@@ -47,7 +47,6 @@ export const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 77px;
 `;
 
 export const PointsDisplay = styled.div`
@@ -74,7 +73,7 @@ export const MiddleSection = styled.div`
     justify-content: space-around;
     align-content: space-around;
     flex-direction: column;
-    margin-top: 30px;
+    margin-top: 5px;
 `;
 
 export const Message = styled.div`
@@ -194,4 +193,24 @@ export const SlapEmoji = styled.div`
   z-index: 10;
   transform: translate(-50%, -50%);
   animation: ${slapEffectAnimation} 0.6s ease forwards;
+`;
+export const CurvedBorderContainer = styled.div`
+  width: 110%;
+    height: 21px;
+    margin-top: 70px;
+    border-top: solid 3px #c5b8b8;
+    border-radius: 50% / 100px 100px 0 0;
+    position: relative;
+    box-sizing: border-box;
+`;
+
+
+export const UserInfoSection = styled.div`
+  /* Your existing styles for the UserInfo component */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  position: relative;
 `;
