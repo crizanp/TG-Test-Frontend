@@ -38,8 +38,8 @@ function EcosystemPage() {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px;
-    background-color: #0d2457;
+    padding: 80px 20px;
+    background-color:#000000;
     color: white;
     min-height: 87vh;
     text-align: center;
@@ -70,6 +70,7 @@ function EcosystemPage() {
     margin-right: 10px;
   `;
 
+  // Fetch categories (unchanged)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -85,30 +86,20 @@ function EcosystemPage() {
     fetchCategories();
   }, []);
 
+  // Fetch remaining quizzes for the user instead of random ones
   useEffect(() => {
-    const fetchRandomQuiz = async () => {
+    const fetchRemainingQuizzes = async () => {
       try {
-        const url =
-          selectedCategory === "random"
-            ? `${process.env.REACT_APP_API_URL}/quiz/quizzes/random`
-            : `${process.env.REACT_APP_API_URL}/quiz/quizzes/random?category=${selectedCategory}`;
-        const response = await axios.get(url);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`
+        );
 
-        if (!response.data) {
+        if (!response.data || response.data.message === 'No remaining quizzes found') {
           setCurrentQuiz(null);
-          setNoMoreQuizzes(true); // No more quizzes in this category
+          setNoMoreQuizzes(true); // No more quizzes left for the user
         } else {
-          setCurrentQuiz(response.data);
-
-          const userResponse = await axios.get(
-            `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-          );
-          const userData = userResponse.data;
-          const quizCompleted = userData.quizHistory.some(
-            (q) => q.quizId === response.data._id
-          );
-          setAlreadyCompleted(quizCompleted);
-          setNoMoreQuizzes(false); 
+          setCurrentQuiz(response.data[0]); // Set the first remaining quiz
+          setNoMoreQuizzes(false);
         }
 
         setLoading(false);
@@ -117,15 +108,15 @@ function EcosystemPage() {
         setCorrectOption(null);
         setShowFeedback(false);
       } catch (error) {
-        console.error("Error fetching random quiz:", error);
+        console.error("Error fetching remaining quizzes:", error);
         setLoading(false);
         setCurrentQuiz(null); 
         setNoMoreQuizzes(true); 
       }
     };
 
-    fetchRandomQuiz();
-  }, [selectedCategory, userID]);
+    fetchRemainingQuizzes();
+  }, [userID]);
 
   const handleOptionSelect = (index) => {
     if (!disableSubmit) {
@@ -174,29 +165,17 @@ function EcosystemPage() {
     setLoading(true);
 
     try {
-      const url =
-        selectedCategory === "random"
-          ? `${process.env.REACT_APP_API_URL}/quiz/quizzes/random`
-          : `${process.env.REACT_APP_API_URL}/quiz/quizzes/random?category=${selectedCategory}`;
-      const response = await axios.get(url);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`
+      );
 
-      if (!response.data) {
+      if (!response.data || response.data.message === 'No remaining quizzes found') {
         setCurrentQuiz(null);
         setNoMoreQuizzes(true); 
       } else {
-        setCurrentQuiz(response.data);
+        setCurrentQuiz(response.data[0]); // Set the next remaining quiz
         setSelectedOption(null);
         setDisableSubmit(false);
-
-        const userResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-        );
-        const userData = userResponse.data;
-        const quizCompleted = userData.quizHistory.some(
-          (q) => q.quizId === response.data._id
-        );
-        setAlreadyCompleted(quizCompleted);
-        setNoMoreQuizzes(false); 
       }
 
       setLoading(false);
@@ -211,12 +190,12 @@ function EcosystemPage() {
   return (
     <QuizContainer>
       <UserInfo />
-      <PointsDisplayContainer>
+      {/* <PointsDisplayContainer>
         <PointsDisplay>
           <DollarIcon src={dollarImage} alt="Dollar Icon" />{" "}
           {Math.floor(points)}
         </PointsDisplay>
-      </PointsDisplayContainer>
+      </PointsDisplayContainer> */}
       <HeaderText>Answer and Earn</HeaderText>
       <CategoryContainer>
         {categories.map((category) => (
@@ -235,8 +214,7 @@ function EcosystemPage() {
           <p>Loading quiz...</p>
         ) : noMoreQuizzes ? (
           <NoQuestionsMessage>
-            No quiz within this category, you can surf more in the next
-            category.
+            You are all done! No remaining quizzes available.
           </NoQuestionsMessage>
         ) : currentQuiz ? (
           <QuizBox>
@@ -266,8 +244,7 @@ function EcosystemPage() {
           </QuizBox>
         ) : (
           <NoQuestionsMessage>
-            No quiz within this category, you can surf more in the next
-            category.
+            No quiz available at the moment.
           </NoQuestionsMessage>
         )}
       </ScrollableContent>

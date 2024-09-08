@@ -4,13 +4,14 @@ import { usePoints } from "../context/PointsContext";
 import UserInfo from "./UserInfo";
 import axios from "axios";
 import dollarImage from "../assets/dollar-homepage.png"; // Import the dollar image
+import { FaLock } from 'react-icons/fa';
 
 const SpinContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 40px 20px;
-  background-color: #0d2457;
+  background-color: #000000;
   color: white;
   min-height: 87vh;
   text-align: center;
@@ -75,7 +76,7 @@ const PointsDisplayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 70px;
 `;
 
 const PointsDisplay = styled.div`
@@ -292,13 +293,18 @@ function SpinWheelPage() {
           alt="Inner Wheel"
         />
       </WheelContainer>
-      <SpinButton onClick={spinWheel} disabled={spinning || spinLocked}>
-        {spinning
-          ? "Spinning..."
-          : spinLocked
-          ? `Unlock more spins after ${formatTime(timeLeft)}`
-          : "Spin the Wheel"}
-      </SpinButton>
+      {/* <SpinButton onClick={spinWheel} disabled={spinning || spinLocked}> */}
+      <SpinButton onClick={spinWheel} disabled>
+    {spinning ? (
+      "Spinning..."
+    ) : spinLocked ? (
+      `Unlock more spins after ${formatTime(timeLeft)}`
+    ) : (
+      <>
+        <FaLock  /> Locked 
+      </>
+    )}
+  </SpinButton>
       {prize && <PrizeText>You won {prize} points!</PrizeText>}
       {spinLocked && !spinning && actionType !== "none" && (
         <>

@@ -5,7 +5,7 @@ import { usePoints } from '../context/PointsContext';
 
 const UserInfoContainer = styled.div`
   color: white;
-  background-color:black;
+  background-color: black;
   padding: 5px 20px;  
   border-radius: 25px;
   margin-top: 10px;
@@ -65,8 +65,8 @@ const UserInfo = () => {
   // Get the first name from Telegram WebApp or 'User' as fallback
   let firstName = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name || 'User';
   
-  
-  firstName = firstName.split(/[^\w]+/)[0]; // Stops at any non-alphanumeric character
+  // Keep the first 10 alphanumeric characters only
+  firstName = firstName.split(/[^\w]+/)[0].slice(0, 10); 
 
   return (
     <UserInfoContainer>

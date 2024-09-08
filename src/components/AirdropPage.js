@@ -79,7 +79,7 @@ const NameLogoContainer = styled.div`
 
 const AirdropLogo = styled.img`
   width: 50px;
-  height: 50px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
   flex: 0 0 18%;

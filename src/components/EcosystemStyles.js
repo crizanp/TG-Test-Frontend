@@ -1,17 +1,16 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const QuizContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #1c1c1c;
+  background-color: #0e1621;
   color: white;
   text-align: center;
-  font-family: 'Arial, sans-serif';
+  font-family: "Arial, sans-serif";
   min-height: 100vh;
-  padding-top: 70px;
+  padding-top: 60px;
   position: relative;
-  overflow: hidden;
 `;
 
 export const ScrollableContent = styled.div`
@@ -37,16 +36,17 @@ export const ScrollableContent = styled.div`
 `;
 
 export const QuizBox = styled.div`
-  background-color: #252525;
-  border-radius: 15px;
+  background-color: #1b2b40;
+  border-radius: 12px;
   padding: 20px;
   margin: 10px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
+  border: 2px solid #13326e; /* Telegram blue tone */
+  transform: translateY(0);
+  cursor: pointer;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+    transform: translateY(-3px);
   }
 
   @media (max-width: 480px) {
@@ -55,83 +55,78 @@ export const QuizBox = styled.div`
 `;
 
 export const QuestionText = styled.h3`
-  color: #ff9800;
-  font-size: 20px;
-  margin-bottom: 10px;
+  color: #00aced; /* Lighter telegram blue */
+  font-size: 22px;
+  margin-bottom: 12px;
+  font-weight: 600;
 `;
 
 export const Option = styled.div`
   background-color: ${({ $correct, $wrong, $selected, $submitted }) => {
     if (!$submitted) {
-      return $selected ? '#444' : '#252525';
+      return $selected ? "#375a7f" : "#1b2b40";
     }
     if ($correct) {
-      return '#4caf50'; // Green for correct answer
+      return "#00c851"; /* Green for correct answer */
     }
     if ($wrong) {
-      return '#ff4d4d'; // Red for incorrect answer
+      return "#ff3547"; /* Red for incorrect answer */
     }
-    return '#252525'; // Default color
+    return "#1b2b40"; /* Default color */
   }};
   color: white;
-  padding: 15px;
+  padding: 12px;
   border-radius: 8px;
   margin-bottom: 10px;
-  cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
-  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-  pointer-events: ${({ $isDisabled }) => ($isDisabled ? 'none' : 'auto')};
-  box-shadow: ${({ $selected }) => ($selected ? '0 0 10px rgba(0, 0, 0, 0.7)' : '0 2px 4px rgba(0, 0, 0, 0.5)')};
-  opacity: ${({ $selected }) => ($selected ? '1' : '0.9')};
-  transform: ${({ $selected }) => ($selected ? 'scale(1.02)' : 'scale(1)')};
-  border: 1px solid ${({ $selected }) => ($selected ? '#ff9800' : 'transparent')};
+  cursor: ${({ $isDisabled }) => ($isDisabled ? "not-allowed" : "pointer")};
+  pointer-events: ${({ $isDisabled }) => ($isDisabled ? "none" : "auto")};
+  border: ${({ $selected }) =>
+    $selected ? "2px solid #00aced" : "2px solid transparent"};
+  opacity: 0.95;
+  transform: ${({ $selected }) => ($selected ? "scale(1.02)" : "scale(1)")};
+  transition: transform 0.2s, background-color 0.2s, border 0.2s;
 
   &:hover {
     background-color: ${({ $selected, $isDisabled }) =>
-      $isDisabled ? '#252525' : $selected ? '#555' : '#333'};
-  }
-
-  &:not(:last-child) {
-    margin-bottom: 15px;
+      $isDisabled ? "#1b2b40" : $selected ? "#2d4566" : "#243b55"};
   }
 
   @media (max-width: 480px) {
     font-size: 14px;
-    padding: 12px;
+    padding: 10px;
   }
 `;
 
-
-
-
 export const SubmitButton = styled.button`
-  background-color: ${({ disabled }) => (disabled ? 'grey' : '#ff9800')};
+  background-color: ${({ disabled }) => (disabled ? "grey" : "#0088cc")};
   color: white;
-  padding: 10px 20px;
-  border-radius: 12px;
+  padding: 12px 25px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
   border: none;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: ${({ disabled }) => (disabled ? 'grey' : '#ffb74d')};
+    background-color: ${({ disabled }) => (disabled ? "grey" : "#00aced")};
   }
 
   @media (max-width: 480px) {
     font-size: 14px;
-    padding: 8px 16px;
+    padding: 10px 20px;
   }
 `;
 
 export const HeaderText = styled.h2`
-  color: #ff9800;
+  color: #00aced;
   margin-top: 20px;
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 700;
   text-align: center;
 
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 22px;
   }
 `;
 
@@ -142,14 +137,14 @@ export const CategoryContainer = styled.div`
   padding: 10px 0;
   width: 100%;
   max-width: 600px;
-  
+
   &::-webkit-scrollbar {
     display: none;
   }
 `;
 
 export const CategoryButton = styled.button`
-  background-color: ${({ selected }) => (selected ? '#4caf50' : '#252525')};
+  background-color: ${({ selected }) => (selected ? "#0088cc" : "#1b2b40")};
   color: white;
   padding: 10px 15px;
   border-radius: 8px;
@@ -159,7 +154,7 @@ export const CategoryButton = styled.button`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #4caf50;
+    background-color: #00aced;
   }
 
   @media (max-width: 480px) {
