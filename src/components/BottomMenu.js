@@ -23,7 +23,7 @@ const BottomMenuContainer = styled.div`
   position: fixed;
   bottom: 0;
   width: 100%;
-  max-width: 470px;
+  max-width: 460px;
   padding: 0px 0px 10px 0px; 
   margin: 0 auto;
   z-index: 10;

@@ -71,7 +71,7 @@ export const MiddleSection = styled.div`
   display: flex;
     flex-grow: 1;
     position: relative;
-    justify-content: flex-start;
+    justify-content: space-around;
     align-content: space-around;
     flex-direction: column;
     margin-top: 30px;
@@ -95,7 +95,7 @@ export const EagleContainer = styled.div`
 `;
 
 export const EagleImage = styled.img`
-  width: 90%;
+  width: 95%;
   height: auto;
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
@@ -129,7 +129,7 @@ export const EarnMoreBox = styled.div`
     height: 45px;
     text-align: right;
     border: 2px solid #1fa3e6;
-    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
   & svg {
     margin-right: 5px;
@@ -143,18 +143,17 @@ export const EarnMoreBox = styled.div`
 export const EnergyContainer = styled.div`
   display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     background-color: #2a2a2a00;
-    border-radius: 12px;
-    padding: 10px;
+    border-radius: 30px;
+    padding: 5px 17px;
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
     width: 100px;
     height: 45px;
-    text-align: right;
+    text-align: justify;
     border: 2px solid #1fa3e6;
-    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
   & svg {
     margin-right: 5px;
