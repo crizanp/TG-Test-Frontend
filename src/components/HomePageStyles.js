@@ -99,6 +99,7 @@ export const EagleImage = styled.img`
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
   -webkit-tap-highlight-color: transparent;
+  margin-top: 10px;s
 
   &:hover {
     transform: scale(1.05);
@@ -145,7 +146,7 @@ export const EnergyContainer = styled.div`
     justify-content: center;
     background-color: #2a2a2a00;
     border-radius: 30px;
-    padding: 5px 17px;
+    padding: 0px 17px;
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
