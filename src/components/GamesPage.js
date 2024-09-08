@@ -1,7 +1,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
-import { FaQuestionCircle, FaWheelchair, FaGamepad, FaBoxOpen  } from "react-icons/fa"; // Added FaTreasureChest for Treasure Hunt
 import UserInfo from './UserInfo';
 
 // Animations
@@ -100,11 +99,17 @@ const ComingSoonText = styled.small`
   color: grey;
 `;
 
+const GameIcon = styled.img`
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+`;
+
 // GamesPage Component
 function GamesPage() {
   return (
     <GamesContainer>
-    <UserInfo/>
+      <UserInfo/>
       <GameTitle>Choose Your Game</GameTitle>
       <GameDescription>
         Play and earn points by completing exciting challenges!
@@ -113,7 +118,7 @@ function GamesPage() {
         {/* Quiz Game */}
         <GameItem to="/ecosystem">
           <IconWrapper>
-            <FaQuestionCircle />
+            <GameIcon src="https://i.postimg.cc/Nf97MvkN/Quiz.png" alt="Quiz Icon" />
           </IconWrapper>
           <div>Quiz</div>
           <small>Test your knowledge!</small>
@@ -122,7 +127,7 @@ function GamesPage() {
         {/* Spin the Wheel */}
         <GameItem to="/spin-wheel">
           <IconWrapper>
-            <FaWheelchair />
+            <GameIcon src="https://i.postimg.cc/Kv673p9m/Spinwheel.png" alt="Spin the Wheel Icon" />
           </IconWrapper>
           <div>Spin the Wheel</div>
           <small>Spin and win points!</small>
@@ -131,7 +136,7 @@ function GamesPage() {
         {/* Treasure Hunt - No link */}
         <GameItem comingSoon>
           <IconWrapper>
-            <FaBoxOpen  />
+            <GameIcon src="https://i.postimg.cc/XY9ffKhd/treasure-hunt.png" alt="Treasure Hunt Icon" />
           </IconWrapper>
           <div>Treasure Hunt</div>
           <ComingSoonText>Uncover hidden treasures soon!</ComingSoonText>
@@ -140,7 +145,7 @@ function GamesPage() {
         {/* Coming Soon Game */}
         <GameItem comingSoon>
           <IconWrapper>
-            <FaGamepad />
+            <GameIcon src="https://i.postimg.cc/J7d5MzZD/Comin-soon.png" alt="Coming Soon Icon" />
           </IconWrapper>
           <div>Coming Soon</div>
           <ComingSoonText>More games on the way!</ComingSoonText>
