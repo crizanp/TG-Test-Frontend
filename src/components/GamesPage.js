@@ -19,8 +19,9 @@ const fadeIn = keyframes`
 const GamesContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 73px 20px ;
+  padding: 73px 20px;
   background-color: #121212;
   color: white;
   min-height: 87vh;
@@ -38,6 +39,7 @@ const GameList = styled.div`
   animation: ${fadeIn} 1s ease;
   width: 100%;
   max-width: 1200px;
+  justify-content: center;
 `;
 
 const GameItem = styled(Link)`
@@ -46,11 +48,11 @@ const GameItem = styled(Link)`
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: center;  // Centering content vertically
+  align-items: center;  // Centering content horizontally
   color: white;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 22px;  // Increased text size
   text-align: center;
   transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
   backdrop-filter: blur(10px);
@@ -76,20 +78,24 @@ const GameItem = styled(Link)`
 `;
 
 const IconWrapper = styled.div`
-  font-size: 60px;
+  font-size: 80px;  // Icon size
   margin-bottom: 10px;
   color: #00bfff;
+  display: flex;
+  justify-content: center;  // Horizontal centering
+  align-items: center;  // Vertical centering
+  height: 100px;  // Set a fixed height for proper vertical alignment
 `;
 
 const GameTitle = styled.h2`
-  font-size: 40px;
+  font-size: 40px;  // Made title quite big
   font-weight: bold;
   margin-bottom: 20px;
-  color:#cad2d5;
+  color: #cad2d5;
 `;
 
 const GameDescription = styled.p`
-  font-size: 18px;
+  font-size: 16px;  // Made description smaller
   color: #cfcfcf;
   max-width: 600px;
 `;
@@ -100,9 +106,9 @@ const ComingSoonText = styled.small`
 `;
 
 const GameIcon = styled.img`
-  width: 60px;
-  height: 60px;
-  margin-bottom: 10px;
+  width: 100px;  // Increased logo size
+  height: 100px;  // Increased logo size
+  margin-bottom: 20px;  // Added some space below the icon
 `;
 
 // GamesPage Component
