@@ -68,12 +68,12 @@ const TaskLogo = styled.img`
   border-radius: 8px;
 `;
 const ModalTaskLogo = styled(TaskLogo)`
-  width: 150px;
-  height: 150px;
-  margin: 20px auto;
-  object-fit: contain;
-  display: block;
-  border-radius: 8px;
+  width: 117px;
+    height: 99px;
+    margin: 20px auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 8px;
 `;
 
 const TaskTextContainer = styled.div`

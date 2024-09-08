@@ -5,6 +5,7 @@ import { usePoints } from '../context/PointsContext';
 
 const UserInfoContainer = styled.div`
   color: white;
+  background-color:black;
   padding: 5px 20px;  
   border-radius: 25px;
   margin-top: 10px;

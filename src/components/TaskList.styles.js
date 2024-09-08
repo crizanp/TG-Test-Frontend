@@ -328,7 +328,7 @@ export const Modal = styled.div`
   border-radius: 20px;
   width: 100%;
   max-width: 400px;
-  min-height: 50vh;
+  ${'' /* min-height: 50vh; */}
   text-align: center;
   box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8);
   display: flex;
