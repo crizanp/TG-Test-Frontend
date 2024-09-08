@@ -191,8 +191,11 @@ const ReferralUsername = styled.div`
 `;
 
 const ReferralPoints = styled.div`
+  display: flex;
+  align-items: center; // Aligns crown and points vertically
   font-size: 16px;
   color: ${white};
+  gap: 8px; // Adds spacing between crown and points
 `;
 
 const PointText = styled.span`
