@@ -4,7 +4,7 @@ export const QuizContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #0e1621;
+  background-color: #000000;
   color: white;
   text-align: center;
   font-family: "Arial, sans-serif";
@@ -36,12 +36,11 @@ export const ScrollableContent = styled.div`
 `;
 
 export const QuizBox = styled.div`
-  background-color: #1b2b40;
+  background-color: #1f2937a1;
   border-radius: 12px;
   padding: 20px;
   margin: 10px 0;
   transition: transform 0.2s;
-  border: 2px solid #13326e; /* Telegram blue tone */
   transform: translateY(0);
   cursor: pointer;
 
@@ -55,7 +54,7 @@ export const QuizBox = styled.div`
 `;
 
 export const QuestionText = styled.h3`
-  color: #00aced; /* Lighter telegram blue */
+  color: #e0d3d3; /* Lighter telegram blue */
   font-size: 22px;
   margin-bottom: 12px;
   font-weight: 600;
@@ -81,7 +80,7 @@ export const Option = styled.div`
   cursor: ${({ $isDisabled }) => ($isDisabled ? "not-allowed" : "pointer")};
   pointer-events: ${({ $isDisabled }) => ($isDisabled ? "none" : "auto")};
   border: ${({ $selected }) =>
-    $selected ? "2px solid #00aced" : "2px solid transparent"};
+    $selected ? "2px solid #00aced" : ""};
   opacity: 0.95;
   transform: ${({ $selected }) => ($selected ? "scale(1.02)" : "scale(1)")};
   transition: transform 0.2s, background-color 0.2s, border 0.2s;
@@ -113,20 +112,22 @@ export const SubmitButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 14px;
-    padding: 10px 20px;
+   
+    font-size: 19px;
+        padding: 11px 20px;
+        width: 100%;
   }
 `;
 
 export const HeaderText = styled.h2`
-  color: #00aced;
-  margin-top: 20px;
+  color: #ffffff;
+  margin-top: 42px;
   font-size: 26px;
   font-weight: 700;
   text-align: center;
 
   @media (max-width: 480px) {
-    font-size: 22px;
+    font-size: 27px;
   }
 `;
 
@@ -164,7 +165,7 @@ export const CategoryButton = styled.button`
 `;
 
 export const NextButton = styled.button`
-  background-color: #4caf50;
+  background-color: #1fa3e6;
   color: white;
   padding: 15px 30px;
   border-radius: 12px;
@@ -179,8 +180,8 @@ export const NextButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 16px;
-    padding: 10px 20px;
+    font-size: 22px;
+        padding: 8px 31px;
   }
 `;
 
