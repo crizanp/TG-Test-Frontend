@@ -93,7 +93,7 @@ const BonusText = styled.div`
 `;
 
 const CrownText = styled.span`
-  font-size: 14px;
+  font-size: 16px;
   color: #f3e9e9;
   margin-top: 5px;
   display: flex;
@@ -200,7 +200,7 @@ const ReferralPoints = styled.div`
 
 const PointText = styled.span`
   margin-top: 0;
-  font-size: 14px;
+  font-size: 16px;
 `;
 
 export const CrownIcon = styled(FaCrown)`
@@ -348,7 +348,7 @@ const FriendPage = () => {
         <ButtonRow>
           <ReferralButton onClick={handleForwardLink}>
             <FaTelegramPlane />
-            Invite via Telegram
+            Invite Friend
           </ReferralButton>
           <CopyIcon onClick={handleCopyLink} />
         </ButtonRow>
