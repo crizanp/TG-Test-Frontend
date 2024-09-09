@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { usePoints } from "../context/PointsContext";
 import UserInfo from "./UserInfo";
-import dollarImage from "../assets/dollar-homepage.png";
 import styled from "styled-components";
 import FloatingMessage from "./FloatingMessage";
+import Modal from "./Modal"; // Modal for showing correct answer
 
 import {
   QuizContainer,
@@ -21,26 +21,21 @@ import {
 } from "./EcosystemStyles";
 
 // Styled Components for Points and Quiz Container
-const PointsDisplayContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 35px;
-`;
-
-const PointsDisplay = styled.div`
-  font-size: 50px;
+const CorrectAnswerButton = styled.button`
+  background-color: #0088cc;
   color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
 
-const DollarIcon = styled.img`
-  width: 48px;
-  height: 48px;
-  margin-right: 10px;
+  &:hover {
+    background-color: #00aced;
+  }
 `;
 
 function EcosystemPage() {
@@ -50,12 +45,14 @@ function EcosystemPage() {
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("random");
   const [loading, setLoading] = useState(true);
-  const [alreadyCompleted, setAlreadyCompleted] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [correctOption, setCorrectOption] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [noMoreQuizzes, setNoMoreQuizzes] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+  const [showCorrectAnswerModal, setShowCorrectAnswerModal] = useState(false);
+  const [floatingMessage, setFloatingMessage] = useState(null); // Floating message state
+  const [floatingMessageType, setFloatingMessageType] = useState("success"); // Floating message type
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -74,48 +71,47 @@ function EcosystemPage() {
   }, []);
 
   // Fetch remaining quizzes when userID or selectedCategory changes
-  // Fetch remaining quizzes when userID or selectedCategory changes
-useEffect(() => {
-  const fetchRemainingQuizzes = async () => {
-    try {
-      let url = `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`;
+  useEffect(() => {
+    const fetchRemainingQuizzes = async () => {
+      try {
+        let url = `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`;
 
-      // If category is "random", use the specific URL
-      if (selectedCategory === "Random") {
-        url = `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`;
-      } else {
-        url += `?category=${selectedCategory}`;
-      }
+        if (selectedCategory === "Random") {
+          url = `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`;
+        } else {
+          url += `?category=${selectedCategory}`;
+        }
 
-      const response = await axios.get(url);
+        const response = await axios.get(url);
 
-      console.log("API Response:", response.data);
+        if (
+          !response.data ||
+          response.data.message === "No remaining quizzes found"
+        ) {
+          setCurrentQuiz(null);
+          setNoMoreQuizzes(true);
+        } else {
+          setCurrentQuiz(response.data[0]);
+          setNoMoreQuizzes(false);
+        }
 
-      if (!response.data || response.data.message === 'No remaining quizzes found') {
+        // Reset states when new quiz is loaded
+        setLoading(false);
+        setSelectedOption(null);
+        setDisableSubmit(false);
+        setCorrectOption(null);
+        setShowFeedback(false);
+        setShowCorrectAnswer(false); // Reset correct answer visibility
+      } catch (error) {
+        console.error("Error fetching remaining quizzes:", error);
+        setLoading(false);
         setCurrentQuiz(null);
         setNoMoreQuizzes(true);
-      } else {
-        setCurrentQuiz(response.data[0]); // Set the first quiz from the response
-        setNoMoreQuizzes(false);
       }
+    };
 
-      setLoading(false);
-      setSelectedOption(null);
-      setDisableSubmit(false);
-      setCorrectOption(null);
-      setShowFeedback(false);
-    } catch (error) {
-      console.error("Error fetching remaining quizzes:", error);
-      setLoading(false);
-      setCurrentQuiz(null);
-      setNoMoreQuizzes(true);
-    }
-  };
-
-  fetchRemainingQuizzes();
-}, [userID, selectedCategory]);
-
-  
+    fetchRemainingQuizzes();
+  }, [userID, selectedCategory]);
 
   const handleOptionSelect = (index) => {
     if (!disableSubmit) {
@@ -124,7 +120,7 @@ useEffect(() => {
   };
 
   const handleSubmit = async () => {
-    if (selectedOption === null || alreadyCompleted) return;
+    if (selectedOption === null) return;
 
     const isCorrect = currentQuiz.options[selectedOption].isCorrect;
     const pointsEarned = isCorrect ? currentQuiz.points : 0;
@@ -148,43 +144,66 @@ useEffect(() => {
       );
       setShowFeedback(true);
 
-      setMessage({
-        text: isCorrect
-          ? "Points awarded: Correct answer"
-          : "Points not added: Wrong answer",
-        type: isCorrect ? "success" : "error",
-      });
+      // Set floating message based on whether the answer is correct or wrong
+      if (isCorrect) {
+        setFloatingMessage("Correct answer!");
+        setFloatingMessageType("success");
+      } else {
+        setFloatingMessage("Wrong answer!");
+        setFloatingMessageType("error");
+      }
     } catch (error) {
       console.error("Error submitting quiz:", error);
     }
   };
 
+  const handleShowCorrectAnswer = () => {
+    setShowCorrectAnswerModal(true);
+  };
+
+  const handleGoAhead = () => {
+    setPoints((prevPoints) => prevPoints - 50);
+    setShowCorrectAnswer(true);
+    setShowCorrectAnswerModal(false); // Close the modal after deduction
+  };
+
   const handleNextQuiz = async () => {
+    // Reset the state before loading the new quiz
+    setSelectedOption(null);
+    setDisableSubmit(false);
+    setCorrectOption(null);
+    setShowFeedback(false);
+    setShowCorrectAnswer(false);
+    setFloatingMessage(null); // Clear floating message on next quiz
+
     setLoading(true);
-  
+
     try {
       let url = `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`;
-  
-      // If category is "random", use the specific URL
+
       if (selectedCategory === "Random") {
         url = `${process.env.REACT_APP_API_URL}/user-info/${userID}/remaining-quizzes`;
       } else {
         url += `?category=${selectedCategory}`;
       }
-  
+
       const response = await axios.get(url);
-  
-      console.log("Next Quiz API Response:", response.data);
-  
-      if (!response.data || response.data.message === 'No remaining quizzes found') {
+
+      if (
+        !response.data ||
+        response.data.message === "No remaining quizzes found"
+      ) {
         setCurrentQuiz(null);
         setNoMoreQuizzes(true);
       } else {
         setCurrentQuiz(response.data[0]);
         setSelectedOption(null);
         setDisableSubmit(false);
+        setCorrectOption(null);
+        setShowFeedback(false);
+        setShowCorrectAnswer(false);
       }
-  
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching next quiz:", error);
@@ -195,80 +214,101 @@ useEffect(() => {
   };
 
   return (
-    <QuizContainer>
-      <UserInfo />
-      <HeaderText>Answer and Earn</HeaderText>
-
-      <CategoryContainer>
-        {categories.map((category) => (
-          <CategoryButton
-            key={category._id}
-            selected={category.name === selectedCategory}
-            onClick={() => {
-              console.log("Category selected:", category.name); // Log selected category
-              setSelectedCategory(category.name); // Use category name instead of ID
-            }}
-          >
-            {category.name}
-          </CategoryButton>
-        ))}
-      </CategoryContainer>
-
-      <ScrollableContent>
-        {loading ? (
-          <p>Loading quiz...</p>
-        ) : noMoreQuizzes ? (
-          <NoQuestionsMessage>
-            You are all done! No remaining quizzes available.
-          </NoQuestionsMessage>
-        ) : currentQuiz ? (
-          <QuizBox>
-            <QuestionText>{currentQuiz.questionText}</QuestionText>
-            {currentQuiz.options.map((option, index) => (
-              <Option
-                key={index}
-                $selected={selectedOption === index}
-                $correct={showFeedback && index === correctOption}
-                $wrong={
-                  showFeedback && index === selectedOption && !option.isCorrect
-                }
-                $isDisabled={disableSubmit}
-                onClick={() => handleOptionSelect(index)}
-              >
-                {option.text}
-              </Option>
-            ))}
-            <SubmitButton
-              onClick={handleSubmit}
-              disabled={
-                selectedOption === null || alreadyCompleted || disableSubmit
-              }
-            >
-              {alreadyCompleted ? "Quiz Completed" : "Submit"}
-            </SubmitButton>
-          </QuizBox>
-        ) : (
-          <NoQuestionsMessage>
-            No quiz available at the moment.
-          </NoQuestionsMessage>
-        )}
-      </ScrollableContent>
-
-      {!noMoreQuizzes && (
-        <NextButton onClick={handleNextQuiz} disabled={loading}>
-          Next
-        </NextButton>
-      )}
-
-      {message && (
+    <>
+      {/* Floating message placed at the top of the quiz container */}
+      {floatingMessage && (
         <FloatingMessage
-          message={message.text}
-          type={message.type}
+          message={floatingMessage}
+          type={floatingMessageType}
           duration={3000}
-          onClose={() => setMessage(null)}
+          onClose={() => setFloatingMessage(null)}
         />
       )}
-    </QuizContainer>
+
+      <QuizContainer key={currentQuiz ? currentQuiz._id : "no-quiz"}>
+        <UserInfo />
+        <HeaderText>Answer and Earn</HeaderText>
+
+        <CategoryContainer>
+          {categories.map((category) => (
+            <CategoryButton
+              key={category._id}
+              selected={category.name === selectedCategory}
+              onClick={() => setSelectedCategory(category.name)}
+            >
+              {category.name}
+            </CategoryButton>
+          ))}
+        </CategoryContainer>
+
+        <ScrollableContent>
+          {loading ? (
+            <p>Loading quiz...</p>
+          ) : noMoreQuizzes ? (
+            <NoQuestionsMessage>
+              You are all done! No remaining quizzes available.
+            </NoQuestionsMessage>
+          ) : currentQuiz ? (
+            <QuizBox>
+              <QuestionText>{currentQuiz.questionText}</QuestionText>
+              {currentQuiz.options.map((option, index) => (
+                <Option
+                  key={index}
+                  $selected={selectedOption === index}
+                  $correct={showFeedback && index === correctOption}
+                  $wrong={
+                    showFeedback &&
+                    index === selectedOption &&
+                    !option.isCorrect
+                  }
+                  $isDisabled={disableSubmit}
+                  onClick={() => handleOptionSelect(index)}
+                >
+                  {option.text}
+                </Option>
+              ))}
+              <SubmitButton
+                onClick={handleSubmit}
+                disabled={selectedOption === null || disableSubmit}
+              >
+                Submit
+              </SubmitButton>
+
+              {/* Only show the button if the answer is wrong and submitted */}
+              {showFeedback &&
+                selectedOption !== correctOption &&
+                !showCorrectAnswer && (
+                  <CorrectAnswerButton onClick={handleShowCorrectAnswer}>
+                    Show Correct Answer
+                  </CorrectAnswerButton>
+                )}
+
+              {/* Show correct answer after clicking "Go Ahead" */}
+              {showCorrectAnswer && (
+                <p style={{ color: "green", marginTop: "10px" }}>
+                  Correct Answer: {currentQuiz.options[correctOption].text}
+                </p>
+              )}
+            </QuizBox>
+          ) : (
+            <NoQuestionsMessage>No quiz available at the moment.</NoQuestionsMessage>
+          )}
+        </ScrollableContent>
+
+        {!noMoreQuizzes && (
+          <NextButton onClick={handleNextQuiz} disabled={loading}>
+            Next
+          </NextButton>
+        )}
+
+        {showCorrectAnswerModal && (
+          <Modal
+            onGoAhead={handleGoAhead}
+            onClose={() => setShowCorrectAnswerModal(false)}
+          />
+        )}
+      </QuizContainer>
+    </>
   );
 }
 

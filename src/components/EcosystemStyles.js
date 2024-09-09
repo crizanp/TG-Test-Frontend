@@ -8,7 +8,7 @@ export const QuizContainer = styled.div`
   color: white;
   text-align: center;
   font-family: "Arial, sans-serif";
-  min-height: 100vh;
+  min-height: 170%;
   padding-top: 60px;
   position: relative;
 `;
@@ -121,7 +121,7 @@ export const SubmitButton = styled.button`
 
 export const HeaderText = styled.h2`
   color: #ffffff;
-  margin-top: 42px;
+  margin-top: 72px;
   font-size: 26px;
   font-weight: 700;
   text-align: center;
