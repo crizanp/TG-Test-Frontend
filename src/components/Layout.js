@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import BottomMenu from './BottomMenu';
-import LoadingPage from './LoadingPage';
+import BottomMenu from './BottomMenu';  // Make sure the path is correct
+import LoadingPage from './LoadingPage';  // Make sure the path is correct
 
 const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
@@ -13,7 +13,7 @@ const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 `;
 
 const RestrictedContainer = styled.div`
@@ -25,14 +25,14 @@ const RestrictedContainer = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 `;
 
 const Content = styled.div`
   flex: 1;
   overflow-y: auto;
   padding-bottom: 60px;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 `;
 
 function Layout({ children }) {
@@ -49,7 +49,7 @@ function Layout({ children }) {
     if (isLocalhost) {
       console.log('Running on localhost:3000');
       setShowBottomMenu(true);
-      setLoading(false); 
+      setLoading(false);
     } else if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
       const platform = tg.platform;
 
@@ -59,7 +59,7 @@ function Layout({ children }) {
         setShowBottomMenu(true);
         setLoading(false);
 
-        // Disable vertical swipes to prevent the app from collapsing
+        // Disable vertical swipes to prevent app collapse
         tg.disableVerticalSwipes();
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
