@@ -81,51 +81,66 @@ function HomePage() {
       if (energy <= 0) {
         return; 
       }
-
-      const currentTime = Date.now();
-      const tapInterval = currentTime - lastTapTime;
-
-      const isDoubleTap = tapInterval < 300 && tapInterval > 0; 
-      setLastTapTime(currentTime); 
-
+  
+      const isDoubleTap = e.touches && e.touches.length === 2;
       const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1); 
-
+  
       const rect = e.currentTarget.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
+      const clickX = e.touches[0].clientX - rect.left;
+      const clickY = e.touches[0].clientY - rect.top;
       const width = rect.width;
       const height = rect.height;
-
+  
       if (clickX >= 0 && clickX <= width && clickY >= 0 && clickY <= height) {
         setPoints((prevPoints) => {
           const newPoints = prevPoints + pointsToAdd;
           localStorage.setItem(`points_${userID}`, newPoints);
           return newPoints;
         });
-
+  
         setTapCount((prevTapCount) => prevTapCount + 1);
-
-        setFlyingNumbers((prevNumbers) => [
-          ...prevNumbers,
-          { id: Date.now(), x: e.clientX, y: e.clientY, value: pointsToAdd },
-        ]);
-
+  
+        // Function to animate the flying points with gap
+        const animateFlyingPoints = (delay, index) => {
+          setTimeout(() => {
+            const offsetX = (index % 2 === 0 ? 1 : -1) * (10 + index * 5); // Alternate left and right with increasing gap
+            const offsetY = -index * 20; // Move each "+1" up by 20px more than the previous one
+            
+            setFlyingNumbers((prevNumbers) => [
+              ...prevNumbers,
+              { 
+                id: Date.now() + delay, 
+                x: e.touches[0].clientX + offsetX, 
+                y: e.touches[0].clientY + offsetY, 
+                value: pointsToAdd 
+              }
+            ]);
+          }, delay);
+        };
+  
+        // Display the flying points with a staggered delay (e.g., every 100ms)
+        for (let i = 0; i < 4; i++) {
+          animateFlyingPoints(i * 100, i); // Delays of 0ms, 100ms, 200ms, and 300ms, with increasing offsets
+        }
+  
         setSlapEmojis((prevEmojis) => [
           ...prevEmojis,
-          { id: Date.now(), x: e.clientX, y: e.clientY },
+          { id: Date.now(), x: e.touches[0].clientX, y: e.touches[0].clientY },
         ]);
-
+  
         setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
-
+  
         decreaseEnergy(2 * (isDoubleTap ? 2 : 1)); 
-
+  
         if (navigator.onLine) {
           syncPointsWithServer(offlinePoints + pointsToAdd);
         }
       }
     },
-    [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID, lastTapTime]
+    [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
+  
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -157,23 +172,14 @@ function HomePage() {
           <EagleImage
             src={eagleImage}
             alt="Eagle"
-            onClick={handleTap}
+            onTouchStart={handleTap} 
           />
         </EagleContainer>
 
         <BottomContainer>
-          {/* Left Box for "Earn More" */}
-          {/* <EarnMoreBox>
-            <Link to="/tasks" style={{ textDecoration: 'none', color: 'white' }}>
-              <FaTasks size={18} />
-              <span>Earn More</span>
-            </Link>
-          </EarnMoreBox> */}
-
-          {/* Right Box for Energy */}
           <EnergyContainer>
             <EnergyIcon energy={energy} />
-            <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
+            <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
           </EnergyContainer>
         </BottomContainer>
       </MiddleSection>

@@ -7,11 +7,12 @@ export const useEnergy = () => {
 };
 
 export const EnergyProvider = ({ children }) => {
-  const [energy, setEnergy] = useState(1000);
+  const [energy, setEnergy] = useState(3000); // Updated max energy to 3000
 
-  const MAX_ENERGY = 1000;
-  const ENERGY_REGEN_RATE = 1; // 1 energy per second
-  const USER_ID = 'some_user_id'; // Replace this with actual user ID logic
+  const MAX_ENERGY = 3000; // Updated max energy to 3000
+  const ENERGY_REGEN_RATE = 1; // 1 energy point
+  const ENERGY_REGEN_INTERVAL = 3000; // Energy increases by 1 point every 3 seconds (3000ms)
+  const USER_ID = 'some_user_id'; // Replace with actual user ID logic
 
   useEffect(() => {
     const savedEnergy = localStorage.getItem(`energy_${USER_ID}`);
@@ -24,7 +25,7 @@ export const EnergyProvider = ({ children }) => {
       const lastUpdateInt = parseInt(lastUpdate, 10);
 
       if (!isNaN(savedEnergyFloat) && !isNaN(lastUpdateInt)) {
-        const timeElapsed = (Date.now() - lastUpdateInt) / 1000;
+        const timeElapsed = (Date.now() - lastUpdateInt) / ENERGY_REGEN_INTERVAL;
         const regeneratedEnergy = Math.min(MAX_ENERGY, savedEnergyFloat + timeElapsed * ENERGY_REGEN_RATE);
         initialEnergy = regeneratedEnergy;
       }
@@ -39,7 +40,7 @@ export const EnergyProvider = ({ children }) => {
     const regenInterval = setInterval(() => {
       setEnergy((prevEnergy) => {
         const lastUpdate = parseInt(localStorage.getItem(`lastUpdate_${USER_ID}`), 10);
-        const timeElapsed = (Date.now() - lastUpdate) / 1000;
+        const timeElapsed = (Date.now() - lastUpdate) / ENERGY_REGEN_INTERVAL;
         const regeneratedEnergy = Math.min(MAX_ENERGY, prevEnergy + timeElapsed * ENERGY_REGEN_RATE);
 
         localStorage.setItem(`energy_${USER_ID}`, regeneratedEnergy.toFixed(2));
@@ -47,14 +48,14 @@ export const EnergyProvider = ({ children }) => {
 
         return regeneratedEnergy;
       });
-    }, 1000);
+    }, ENERGY_REGEN_INTERVAL); // Energy regenerates every 3 seconds
 
     return () => clearInterval(regenInterval);
   }, []);
 
   const decreaseEnergy = (amount) => {
     setEnergy((prevEnergy) => {
-      const newEnergy = Math.max(prevEnergy - amount, 0);
+      const newEnergy = Math.max(prevEnergy - amount, 0); // Decrease energy by a specified amount
       localStorage.setItem(`energy_${USER_ID}`, newEnergy.toFixed(2));
       localStorage.setItem(`lastUpdate_${USER_ID}`, Date.now().toString());
       return newEnergy;
