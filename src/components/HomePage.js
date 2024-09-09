@@ -83,57 +83,66 @@ function HomePage() {
   const handleTap = useCallback(
     (e) => {
       if (energy <= 0) {
-        return;
+        return; 
       }
-
+  
       // Ensure refs are available before proceeding
       if (curvedBorderRef.current && bottomMenuRef.current) {
         const curvedBorderRect = curvedBorderRef.current.getBoundingClientRect();
         const bottomMenuRect = bottomMenuRef.current.getBoundingClientRect();
-
+  
         const isDoubleTap = e.touches && e.touches.length === 2;
         const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1);
-
+  
         const clickX = e.touches[0].clientX;
         const clickY = e.touches[0].clientY;
-
+  
         // Check if the touch is between CurvedBorderContainer and BottomContainer
         if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
+          // Add the eagle shift-up class for the animation
+          const eagleElement = document.querySelector('.eagle-image');
+          eagleElement.classList.add('shift-up');
+  
+          // Remove the shift-up class after the animation ends
+          setTimeout(() => {
+            eagleElement.classList.remove('shift-up');
+          }, 300); // Match the animation duration
+  
           setPoints((prevPoints) => {
             const newPoints = prevPoints + pointsToAdd;
             localStorage.setItem(`points_${userID}`, newPoints);
             return newPoints;
           });
-
+  
           setTapCount((prevTapCount) => prevTapCount + 1);
-
+  
           const animateFlyingPoints = () => {
             const id = Date.now();
-
+  
             setFlyingNumbers((prevNumbers) => [
               ...prevNumbers,
               { id, x: clickX, y: clickY - 30, value: pointsToAdd }
             ]);
-
+  
             // Remove the flying number after 1 second
             setTimeout(() => {
               setFlyingNumbers((prevNumbers) => prevNumbers.filter((num) => num.id !== id));
             }, 1000);
           };
-
+  
           // Call the function to animate the flying number
           animateFlyingPoints();
-
+  
           // Add slap emoji
           setSlapEmojis((prevEmojis) => [
             ...prevEmojis,
             { id: Date.now(), x: clickX, y: clickY },
           ]);
-
+  
           setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
-
+  
           decreaseEnergy(2 * (isDoubleTap ? 2 : 1));
-
+  
           if (navigator.onLine) {
             syncPointsWithServer(offlinePoints + pointsToAdd);
           }
@@ -142,7 +151,6 @@ function HomePage() {
     },
     [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
-
   useEffect(() => {
     const interval = setInterval(() => {
       setFlyingNumbers((prevNumbers) =>
@@ -169,7 +177,11 @@ function HomePage() {
       <MiddleSection>
         <Message>{getMessage}</Message>
         <EagleContainer>
-          <EagleImage src={eagleImage} alt="Eagle" />
+        <EagleImage
+  src={eagleImage}
+  alt="Eagle"
+  className="eagle-image" // Add this class name for easy targeting
+/>
         </EagleContainer>
 
         <BottomContainer ref={bottomMenuRef} className="bottom-menu">

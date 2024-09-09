@@ -1,6 +1,16 @@
-import styled, { keyframes, css } from 'styled-components';
-import { FaBolt } from 'react-icons/fa'; 
-
+import styled, { keyframes, css } from "styled-components";
+import { FaBolt } from "react-icons/fa";
+const eagleShiftUp = keyframes`
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px); /* Slight upward movement */
+  }
+  100% {
+    transform: translateY(0); /* Return to original position */
+  }
+`;
 const pointFlyingAnimation = keyframes`
   0% {
     opacity: 1;
@@ -28,7 +38,7 @@ const slapEffectAnimation = keyframes`
 `;
 
 export const HomeContainer = styled.div`
-  font-family: 'Orbitron', sans-serif;
+  font-family: "Orbitron", sans-serif;
   color: white;
   display: flex;
   flex-direction: column;
@@ -40,7 +50,6 @@ export const HomeContainer = styled.div`
   user-select: none;
   padding: 20px 20px;
   position: relative;
-  
 `;
 
 export const PointsDisplayContainer = styled.div`
@@ -56,8 +65,6 @@ export const PointsDisplay = styled.div`
   align-items: center;
   font-weight: bold;
   justify-content: center;
-
-
 `;
 
 export const DollarIcon = styled.img`
@@ -68,12 +75,12 @@ export const DollarIcon = styled.img`
 
 export const MiddleSection = styled.div`
   display: flex;
-    flex-grow: 1;
-    position: relative;
-    justify-content: space-around;
-    align-content: space-around;
-    flex-direction: column;
-    margin-top: 5px;
+  flex-grow: 1;
+  position: relative;
+  justify-content: space-around;
+  align-content: space-around;
+  flex-direction: column;
+  margin-top: 5px;
 `;
 
 export const Message = styled.div`
@@ -97,39 +104,37 @@ export const EagleImage = styled.img`
   width: 95%;
   height: auto;
   cursor: pointer;
-  transition: transform 0.1s ease-in-out;
   -webkit-tap-highlight-color: transparent;
-  margin-top: 10px;s
+  margin-top: 10px;
 
-  &:hover {
-    transform: scale(1.05);
+  &.shift-up {
+    animation: ${eagleShiftUp} 0.3s ease-in-out; /* Smooth and fast animation */
   }
 `;
-
 export const BottomContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  
+
   padding: 0 20px;
   box-sizing: border-box;
 `;
 
 export const EarnMoreBox = styled.div`
   display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    background-color: #2a2a2a00;
-    border-radius: 12px;
-    padding: 10px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100px;
-    height: 45px;
-    text-align: right;
-    border: 2px solid #1fa3e6;
-     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  justify-content: flex-end;
+  background-color: #2a2a2a00;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100px;
+  height: 45px;
+  text-align: right;
+  border: 2px solid #1fa3e6;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
   & svg {
     margin-right: 5px;
@@ -142,18 +147,18 @@ export const EarnMoreBox = styled.div`
 
 export const EnergyContainer = styled.div`
   display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #2a2a2a00;
-    border-radius: 30px;
-    padding: 0px 17px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100px;
-    height: 45px;
-    text-align: justify;
-    border: 2px solid #1fa3e6;
+  align-items: center;
+  justify-content: center;
+  background-color: #2a2a2a00;
+  border-radius: 30px;
+  padding: 0px 17px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100px;
+  height: 45px;
+  text-align: justify;
+  border: 2px solid #1fa3e6;
 
   & svg {
     margin-right: 5px;
@@ -163,7 +168,7 @@ export const EnergyContainer = styled.div`
 export const EnergyIcon = styled(FaBolt)`
   width: 20px;
   height: 20px;
-  color: ${({ energy }) => (energy > 500 ? '#ffcc00' : '#ff6600')};
+  color: ${({ energy }) => (energy > 500 ? "#ffcc00" : "#ff6600")};
   transition: color 0.3s ease;
 `;
 
@@ -175,9 +180,9 @@ export const EnergyCounter = styled.div`
 
 export const FlyingNumber = styled.div`
   position: absolute;
-  font-size: 36px;  /* Increased font size */
-  color: #ffffff;   /* Changed color to white */
-  animation: ${pointFlyingAnimation} 1.5s ease-in-out;  /* Increased duration for smoother animation */
+  font-size: 36px; /* Increased font size */
+  color: #ffffff; /* Changed color to white */
+  animation: ${pointFlyingAnimation} 1.5s ease-in-out; /* Increased duration for smoother animation */
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
   z-index: 10;
@@ -197,14 +202,13 @@ export const SlapEmoji = styled.div`
 `;
 export const CurvedBorderContainer = styled.div`
   width: 110%;
-    height: 21px;
-    margin-top: 70px;
-    border-top: solid 3px #c5b8b8;
-    border-radius: 50% / 100px 100px 0 0;
-    position: relative;
-    box-sizing: border-box;
+  height: 21px;
+  margin-top: 70px;
+  border-top: solid 3px #c5b8b8;
+  border-radius: 50% / 100px 100px 0 0;
+  position: relative;
+  box-sizing: border-box;
 `;
-
 
 export const UserInfoSection = styled.div`
   /* Your existing styles for the UserInfo component */
