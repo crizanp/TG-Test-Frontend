@@ -8,7 +8,7 @@ const pointFlyingAnimation = keyframes`
   }
   100% {
     opacity: 0;
-    transform: translateY(-60px) scale(1.5); 
+    transform: translateY(-120px) scale(2);  /* Increased height and size */
   }
 `;
 
@@ -175,9 +175,9 @@ export const EnergyCounter = styled.div`
 
 export const FlyingNumber = styled.div`
   position: absolute;
-  font-size: 24px;
-  color: #ffd700;
-  animation: ${pointFlyingAnimation} 1s ease-in-out;
+  font-size: 36px;  /* Increased font size */
+  color: #ffffff;   /* Changed color to white */
+  animation: ${pointFlyingAnimation} 1.5s ease-in-out;  /* Increased duration for smoother animation */
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
   z-index: 10;
@@ -189,7 +189,7 @@ export const SlapEmoji = styled.div`
   position: absolute;
   top: ${({ y }) => y}px;
   left: ${({ x }) => x}px;
-  font-size: 24px;
+  font-size: 36px;
   color: #ffffff;
   z-index: 10;
   transform: translate(-50%, -50%);
