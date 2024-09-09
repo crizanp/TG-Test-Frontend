@@ -100,22 +100,21 @@ function HomePage() {
   
         setTapCount((prevTapCount) => prevTapCount + 1);
   
-        // Function to animate the flying points with gap
+        // Function to animate the flying points with a gap and remove them after animation
         const animateFlyingPoints = (delay, index) => {
+          const id = Date.now() + delay;
+          const offsetX = (index % 2 === 0 ? 1 : -1) * (10 + index * 5); // Alternate left and right with increasing gap
+          const offsetY = -index * 20; // Move each "+1" up by 20px more than the previous one
+  
+          setFlyingNumbers((prevNumbers) => [
+            ...prevNumbers,
+            { id, x: e.touches[0].clientX + offsetX, y: e.touches[0].clientY + offsetY, value: pointsToAdd }
+          ]);
+  
+          // Remove the flying number after 1 second (1000ms)
           setTimeout(() => {
-            const offsetX = (index % 2 === 0 ? 1 : -1) * (10 + index * 5); // Alternate left and right with increasing gap
-            const offsetY = -index * 20; // Move each "+1" up by 20px more than the previous one
-            
-            setFlyingNumbers((prevNumbers) => [
-              ...prevNumbers,
-              { 
-                id: Date.now() + delay, 
-                x: e.touches[0].clientX + offsetX, 
-                y: e.touches[0].clientY + offsetY, 
-                value: pointsToAdd 
-              }
-            ]);
-          }, delay);
+            setFlyingNumbers((prevNumbers) => prevNumbers.filter((num) => num.id !== id));
+          }, 1000); // Adjust time as per your animation length
         };
   
         // Display the flying points with a staggered delay (e.g., every 100ms)
@@ -139,6 +138,7 @@ function HomePage() {
     },
     [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
+  
   
   
 
