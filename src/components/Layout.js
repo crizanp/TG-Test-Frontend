@@ -56,21 +56,8 @@ function Layout({ children }) {
       if (platform === 'android' || platform === 'ios') {
         console.log('Confirmed: Running inside Telegram mobile app');
         tg.expand(); 
-        tg.disableScrolling(); // Disable Telegram's native scrolling behavior
-
-        // Prevent minimizing during scroll events
-        const handleScroll = () => {
-          tg.expand();
-        };
-
-        window.addEventListener('scroll', handleScroll);
         setShowBottomMenu(true); 
         setLoading(false); 
-
-        // Clean up the scroll event listener on unmount
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-        };
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
         setRestricted(true); 
@@ -82,14 +69,16 @@ function Layout({ children }) {
       navigate('/'); 
     }
 
+    
     const menuTimer = setTimeout(() => {
       setMenuVisible(true);
     }, 4000);
 
+   
     const handleContextMenu = (e) => {
       e.preventDefault();
     };
-
+    
     window.addEventListener('contextmenu', handleContextMenu);
 
     return () => {
@@ -113,4 +102,5 @@ function Layout({ children }) {
     </LayoutContainer>
   );
 }
+
 export default Layout;
