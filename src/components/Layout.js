@@ -45,31 +45,19 @@ function Layout({ children }) {
   useEffect(() => {
     const isLocalhost = window.location.hostname === 'localhost';
     const tg = window.Telegram?.WebApp;
-  
+
     if (isLocalhost) {
       console.log('Running on localhost:3000');
       setShowBottomMenu(true);
       setLoading(false); // Allow localhost and stop loading
     } else if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-      tg.ready(); // Ensures the Telegram WebApp is initialized properly
       const platform = tg.platform;
-  
+
       if (platform === 'android' || platform === 'ios') {
         console.log('Confirmed: Running inside Telegram mobile app');
         tg.expand(); 
-        tg.disableScrolling(); // Disable Telegram's native scrolling behavior
-  
-        const handleScroll = () => {
-          tg.expand();
-        };
-  
-        window.addEventListener('scroll', handleScroll);
         setShowBottomMenu(true); 
         setLoading(false); 
-  
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-        };
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
         setRestricted(true); 
@@ -80,23 +68,24 @@ function Layout({ children }) {
       setLoading(true); 
       navigate('/'); 
     }
-  
+
+    
     const menuTimer = setTimeout(() => {
       setMenuVisible(true);
     }, 4000);
-  
+
+   
     const handleContextMenu = (e) => {
       e.preventDefault();
     };
-  
+    
     window.addEventListener('contextmenu', handleContextMenu);
-  
+
     return () => {
       clearTimeout(menuTimer); 
       window.removeEventListener('contextmenu', handleContextMenu);
     };
   }, [navigate]);
-  
 
   if (loading) {
     return <LoadingPage />; 
