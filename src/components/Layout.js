@@ -49,56 +49,57 @@ function Layout({ children }) {
     if (isLocalhost) {
       console.log('Running on localhost:3000');
       setShowBottomMenu(true);
-      setLoading(false); // Allow localhost and stop loading
+      setLoading(false); 
     } else if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
       const platform = tg.platform;
 
       if (platform === 'android' || platform === 'ios') {
         console.log('Confirmed: Running inside Telegram mobile app');
-        tg.expand(); 
-        setShowBottomMenu(true); 
-        setLoading(false); 
+        tg.expand();
+        setShowBottomMenu(true);
+        setLoading(false);
+
+        // Disable vertical swipes to prevent the app from collapsing
+        tg.disableVerticalSwipes();
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
-        setRestricted(true); 
-        setLoading(false); 
+        setRestricted(true);
+        setLoading(false);
       }
     } else {
       console.log('Not confirmed: Running outside Telegram');
-      setLoading(true); 
-      navigate('/'); 
+      setLoading(true);
+      navigate('/');
     }
 
-    
     const menuTimer = setTimeout(() => {
       setMenuVisible(true);
     }, 4000);
 
-   
     const handleContextMenu = (e) => {
       e.preventDefault();
     };
-    
+
     window.addEventListener('contextmenu', handleContextMenu);
 
     return () => {
-      clearTimeout(menuTimer); 
+      clearTimeout(menuTimer);
       window.removeEventListener('contextmenu', handleContextMenu);
     };
   }, [navigate]);
 
   if (loading) {
-    return <LoadingPage />; 
+    return <LoadingPage />;
   }
 
   if (restricted) {
-    return <RestrictedContainer />; 
+    return <RestrictedContainer />;
   }
 
   return (
     <LayoutContainer>
       <Content>{children}</Content>
-      {showBottomMenu && menuVisible && <BottomMenu />} 
+      {showBottomMenu && menuVisible && <BottomMenu />}
     </LayoutContainer>
   );
 }
