@@ -50,6 +50,12 @@ export const HomeContainer = styled.div`
   user-select: none;
   padding: 20px 20px;
   position: relative;
+
+  /* Add the background image to the whole screen */
+  background-image: url('https://i.postimg.cc/brdcPcrW/newbgigh.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 export const PointsDisplayContainer = styled.div`
@@ -217,5 +223,17 @@ export const UserInfoSection = styled.div`
   align-items: center;
   width: 100%;
   margin-bottom: 20px;
+  position: relative;
+`;
+export const BackgroundWrapper = styled.div`
+  background-image: url(${(props) => props.backgroundImage});
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: calc(100vh - 150px); // Adjusted to fit between sections
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: relative;
 `;

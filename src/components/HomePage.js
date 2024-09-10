@@ -18,12 +18,11 @@ import {
   CurvedBorderContainer,
   EnergyCounter,
   EnergyIcon,
-  BottomContainer
+  BottomContainer,
 } from './HomePageStyles';
 import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
-import eagleImage from '../assets/eagle.png';
-import dollarImage from '../assets/dollar-homepage.png';
+import dollarImage from '../assets/dollar-homepage.png'; // Keeping local images where necessary
 import { getUserID } from '../utils/getUserID';
 import { Link } from 'react-router-dom';
 import { FaTasks } from 'react-icons/fa';
@@ -174,23 +173,24 @@ function HomePage() {
           {Math.floor(points)}
         </PointsDisplay>
       </PointsDisplayContainer>
+
       <MiddleSection>
         <Message>{getMessage}</Message>
         <EagleContainer>
-        <EagleImage
-  src={eagleImage}
-  alt="Eagle"
-  className="eagle-image" // Add this class name for easy targeting
-/>
+          <EagleImage
+            src="https://i.postimg.cc/0jz33YHq/up-2.png" // Updated eagle image URL
+            alt="Eagle"
+            className="eagle-image" // Add this class name for easy targeting
+          />
         </EagleContainer>
-
-        <BottomContainer ref={bottomMenuRef} className="bottom-menu">
-          <EnergyContainer>
-            <EnergyIcon energy={energy} />
-            <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
-          </EnergyContainer>
-        </BottomContainer>
       </MiddleSection>
+
+      <BottomContainer ref={bottomMenuRef} className="bottom-menu">
+        <EnergyContainer>
+          <EnergyIcon energy={energy} />
+          <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
+        </EnergyContainer>
+      </BottomContainer>
 
       {flyingNumbers.map((number) => (
         <FlyingNumber key={number.id} x={number.x} y={number.y}>
