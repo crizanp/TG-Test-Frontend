@@ -24,6 +24,7 @@ import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import dollarImage from '../assets/dollar-homepage.png'; // Keeping local images where necessary
 import { getUserID } from '../utils/getUserID';
+import eagleImage from '../assets/eagle.png';
 import { Link } from 'react-router-dom';
 import { FaTasks } from 'react-icons/fa';
 
@@ -177,8 +178,8 @@ function HomePage() {
       <MiddleSection>
         <Message>{getMessage}</Message>
         <EagleContainer>
-          <EagleImage
-            src="https://i.postimg.cc/0jz33YHq/up-2.png" // Updated eagle image URL
+        <EagleImage
+            src={eagleImage}  // Use the imported local image here
             alt="Eagle"
             className="eagle-image" // Add this class name for easy targeting
           />
