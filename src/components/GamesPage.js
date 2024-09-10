@@ -13,7 +13,7 @@ const fadeIn = keyframes`
     opacity: 1;
     transform: translateY(0);
   }
-`; 
+`;
 
 // Styled Components
 const GamesContainer = styled.div`
@@ -140,7 +140,7 @@ function GamesPage() {
         </GameItem>
 
         {/* Treasure Hunt - No link */}
-        <GameItem to="/treasure-igh">
+        <GameItem comingSoon>
           <IconWrapper>
             <GameIcon src="https://i.postimg.cc/XY9ffKhd/treasure-hunt.png" alt="Treasure Hunt Icon" />
           </IconWrapper>

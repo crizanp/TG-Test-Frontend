@@ -12,7 +12,6 @@ import GamesPage from './components/GamesPage';
 import SpinWheelPage from './components/SpinWheelPage';
 import LoadingPage from './components/LoadingPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import TreasureHuntPage from './components/TreasureHuntPage';
 
 function App() {
   return (
@@ -80,14 +79,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/treasure-igh"
-                element={
-                  <ProtectedRoute>
-                    <TreasureHuntPage />
-                  </ProtectedRoute>
-                }
-              />
+             
             </Routes>
           </Layout>
         </Router>
