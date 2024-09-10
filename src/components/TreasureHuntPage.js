@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled, { keyframes } from 'styled-components';
 import UserInfo from './UserInfo';
+import { getUserID } from '../utils/getUserID'; // Import the getUserID utility
+
 
 // Animations
 const fadeIn = keyframes`
@@ -199,16 +202,14 @@ const ModalButton = styled.button`
   }
 `;
 
-// Timer function
-const calculateTimeLeft = () => {
-  const eventStartTime = new Date('2024-09-10T08:00:00Z'); // Starting time in UTC
-  const eventEndTime = new Date('2024-09-10T16:00:00Z'); // Ending time in UTC
+// Animations and Styled Components
+// (Styled components here remain the same)
+
+// Timer function to calculate time remaining
+const calculateTimeLeft = (endTime) => {
+  const eventEndTime = new Date(endTime); // Dynamic ending time from backend
   const now = new Date();
-  
-  if (now > eventEndTime) {
-    return 'Treasure Hunt is Over';
-  }
-  
+
   const difference = eventEndTime - now;
   let timeLeft = {};
 
@@ -227,20 +228,98 @@ const TreasureHuntPage = () => {
   const [inputCode, setInputCode] = useState('');
   const [submitted, setSubmitted] = useState(false); // Tracks if the user has submitted the code
   const [showModal, setShowModal] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [settings, setSettings] = useState(null); // Settings from backend
+  const [timeLeft, setTimeLeft] = useState({});
+  const [leaderboard, setLeaderboard] = useState([]); // Leaderboard data
+  const [loading, setLoading] = useState(true);
+  const [userID, setUserID] = useState(''); // Store the fetched user ID
+  const [username, setUsername] = useState(''); // Optional: Store username
+  const [submittedCode, setSubmittedCode] = useState(null); // Store previously submitted code
 
+  // Fetch userID from Telegram or mock on localhost
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
+    const fetchUserID = async () => {
+      try {
+        const fetchedUserID = await getUserID(setUserID, setUsername); // Use getUserID to fetch userID
+        console.log('Fetched User ID:', fetchedUserID);
+      } catch (error) {
+        console.error('Error fetching User ID:', error);
+      }
+    };
 
-    return () => clearInterval(timer);
+    fetchUserID();
   }, []);
 
-  const handleSubmit = () => {
-    if (!submitted) { // Prevent resubmission
-      setShowModal(true);
-      setSubmitted(true); // Lock further submissions
+  // Fetch Treasure Hunt settings and leaderboard from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch treasure hunt settings
+        const settingsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/treasure-hunt-settings`);
+        setSettings(settingsResponse.data);
+
+        // Fetch leaderboard
+        const leaderboardResponse = await axios.get(`${process.env.REACT_APP_API_URL}/treasure-hunt/leaderboard`);
+        setLeaderboard(leaderboardResponse.data);
+
+        setLoading(false); // Data is now loaded
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Fetch user submission status and previously submitted code
+  useEffect(() => {
+    const checkUserSubmission = async () => {
+      if (userID) {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/treasure-hunt/check-submission/${userID}`);
+          
+          if (response.data.submitted) {
+            setSubmitted(true); // Set the form to submitted state
+            setSubmittedCode(response.data.code); // Store the previously submitted code
+          }
+        } catch (error) {
+          console.error('Error checking user submission status:', error);
+        }
+      }
+    };
+
+    checkUserSubmission();
+  }, [userID]);
+
+  // Update timer every second
+  useEffect(() => {
+    if (settings) {
+      const timer = setInterval(() => {
+        setTimeLeft(calculateTimeLeft(settings.endTime));
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [settings]);
+
+  const handleSubmit = async () => {
+    if (!submitted && userID) { // Prevent resubmission and ensure userID is available
+      try {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/treasure-hunt/submit-treasure-hunt-code`, {
+          userID: userID, // Use fetched userID here
+          code: inputCode,
+        });
+
+        if (response.status === 200) {
+          setShowModal(true);
+          setSubmitted(true); // Lock further submissions
+          setSubmittedCode(inputCode); // Set the submitted code
+        }
+      } catch (error) {
+        console.error('Error submitting code:', error);
+        alert('Submission failed. Please try again.');
+      }
     }
   };
 
@@ -248,9 +327,13 @@ const TreasureHuntPage = () => {
     setShowModal(false);
   };
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <Container>
-      <UserInfo />
+      <UserInfo userID={userID} username={username} /> {/* Pass userID and username to UserInfo */}
 
       {/* Icon above the header */}
       <Icon src="https://i.postimg.cc/XY9ffKhd/treasure-hunt.png" alt="Treasure Hunt Icon" />
@@ -259,77 +342,58 @@ const TreasureHuntPage = () => {
 
       {/* Timer Box */}
       <TimerBox>
-        Treasure Hunt Today: {timeLeft.hours || '0'}:{timeLeft.minutes || '00'}:{timeLeft.seconds || '00'} (Ends at 16:00 UTC)
+        Treasure Hunt Today: {timeLeft.hours || '0'}:{timeLeft.minutes || '00'}:{timeLeft.seconds || '00'} (Ends at {new Date(settings.endTime).toLocaleTimeString('en-US')} UTC)
       </TimerBox>
 
-      <WebsiteLink href="https://example.com" target="_blank" rel="noopener noreferrer">
+      <WebsiteLink href={settings.link} target="_blank" rel="noopener noreferrer">
         Follow this link and find the code
       </WebsiteLink>
 
       <p style={{ color: '#cfcfcf', fontSize: '18px', marginBottom: '20px' }}>
-        Search all active ICO lists and inside the content, there is a 5-digit code ending with an eagle emoji .
+        {settings.shortDescription}
       </p>
 
-      <InputBox
-        type="text"
-        placeholder="Enter the secret code..."
-        value={inputCode}
-        onChange={(e) => setInputCode(e.target.value)}
-        disabled={submitted} // Disable input if already submitted
-      />
+      {submitted ? (
+        <p style={{ color: '#00aced', fontSize: '22px', marginBottom: '20px' }}>
+          You have already submitted the code: <strong>{submittedCode}</strong>
+        </p>
+      ) : (
+        <>
+          <InputBox
+            type="text"
+            placeholder="Enter the secret code..."
+            value={inputCode}
+            onChange={(e) => setInputCode(e.target.value)}
+            disabled={submitted} // Disable input if already submitted
+          />
 
-      <SubmitButton onClick={handleSubmit} disabled={!inputCode || submitted}>
-        {submitted ? 'Code Submitted' : 'Submit Code'}
-      </SubmitButton>
+          <SubmitButton onClick={handleSubmit} disabled={!inputCode || submitted}>
+            {submitted ? 'Code Submitted' : 'Submit Code'}
+          </SubmitButton>
+        </>
+      )}
 
       {/* Leaderboard for previous day’s results */}
       <Leaderboard>
         <h2>Leaderboard (Previous Day's Winners)</h2>
         <ul>
-          <li>
-            <span>Username1</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username2</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username3</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username4</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username5</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username6</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username7</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username8</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username9</span> - 10,000 Crowns
-          </li>
-          <li>
-            <span>Username10</span> - 10,000 Crowns
-          </li>
+          {leaderboard.map((entry, index) => (
+            <li key={index}>
+              <span>{entry.userID.username}</span> - {entry.pointsEarned} Crowns
+            </li>
+          ))}
         </ul>
       </Leaderboard>
 
       {/* Instructions at the bottom */}
       <InstructionContainer>
         <h3>Instructions</h3>
-        <p>
-          Welcome to the Treasure Hunt! Your task is to find the secret code hidden somewhere on our website. Here’s how you can participate:
-        </p>
+        <p>{settings.description}</p>
         <p>
           <strong>1.</strong> Visit the website linked above and explore its pages carefully.
         </p>
         <p>
-          <strong>2.</strong> Look for the 5 digit code in places like Links, description text, or even in the page images.
+          <strong>2.</strong> Look for the 5 digit code in places like links, description text, or even in the page images.
         </p>
         <p>
           <strong>3.</strong> Once you find the code, enter it in the field above and click submit.
@@ -337,7 +401,6 @@ const TreasureHuntPage = () => {
         <p>
           <strong>4.</strong> The first 10 users to submit the correct code will be awarded <strong>10,000 crowns</strong> each.
         </p>
-        
         <p>
           After the submission period, the system will automatically select and display the top 10 winners in the leaderboard above.
         </p>
