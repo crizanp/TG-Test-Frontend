@@ -7,7 +7,7 @@ const LoadingContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('https://i.postimg.cc/0NRZhLDd/igh-tap-game.gif');
+  background-image: url('https://i.ibb.co/YhpdpCt/igh-tap-game.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover; /* Optionally cover the entire background */

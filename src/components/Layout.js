@@ -21,7 +21,7 @@ const RestrictedContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('https://i.postimg.cc/qBX0zdSb/igh-tap-game-2.jpg');
+  background-image: url('https://i.ibb.co/YhpdpCt/igh-tap-game.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
