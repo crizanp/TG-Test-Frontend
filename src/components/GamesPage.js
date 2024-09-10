@@ -13,7 +13,7 @@ const fadeIn = keyframes`
     opacity: 1;
     transform: translateY(0);
   }
-`;
+`; 
 
 // Styled Components
 const GamesContainer = styled.div`
