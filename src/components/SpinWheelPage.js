@@ -15,7 +15,7 @@ const SpinContainer = styled.div`
   color: white;
   min-height: 87vh;
   text-align: center;
-  background-image: url("https://i.ibb.co/wYKcvh3/bg.png");
+  background-image: url("https://i.ibb.co/8cFCmFk/bg-1.png");
   background-size: cover;
   background-position: center;
 `;
