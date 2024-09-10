@@ -140,7 +140,7 @@ function GamesPage() {
         </GameItem>
 
         {/* Treasure Hunt - No link */}
-        <GameItem comingSoon>
+        <GameItem to="/treasure-igh">
           <IconWrapper>
             <GameIcon src="https://i.postimg.cc/XY9ffKhd/treasure-hunt.png" alt="Treasure Hunt Icon" />
           </IconWrapper>
