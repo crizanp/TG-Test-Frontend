@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { debounce } from "lodash";
 import { FaTelegramPlane, FaCopy, FaArrowRight, FaCrown } from "react-icons/fa";
 import UserInfo from "./UserInfo"; 
+import SkeletonLoader from "./SkeletonLoader"; // Import the skeleton loader
 
 // Color Palette
 const mainBackground = "#1f1f1f"; // Dark background for the app
@@ -208,7 +209,7 @@ export const CrownIcon = styled(FaCrown)`
   font-size: 1.5rem;
 `;
 
-// FriendPage Component
+
 const FriendPage = () => {
   const [userID, setUserID] = useState(null);
   const [points, setPoints] = useState(0);
@@ -216,6 +217,7 @@ const FriendPage = () => {
   const [copySuccess, setCopySuccess] = useState("");
   const [referralCount, setReferralCount] = useState(0);
   const [referrals, setReferrals] = useState([]);
+  const [loading, setLoading] = useState(true); // New loading state
 
   useEffect(() => {
     const getUserID = async () => {
@@ -256,6 +258,8 @@ const FriendPage = () => {
         setReferrals(response.data.referrals);
       } catch (error) {
         console.error("Error fetching referral stats:", error);
+      } finally {
+        setLoading(false); // Stop loading after data fetch
       }
     }, 1000),
     [userID]
@@ -358,9 +362,13 @@ const FriendPage = () => {
       {/* Referral Stats Section */}
       <ReferralStatsContainer>
         <ReferralStatsHeading>Referral Stats</ReferralStatsHeading>
-        <p>Total Referrals: {referralCount}</p>
 
-        {referralCount === 0 ? (
+        {/* Show total referrals with loading state */}
+        <p>Total Referrals: {loading ? "Loading..." : referralCount}</p>
+
+        {loading ? (
+          <SkeletonLoader /> // Display skeleton loader while loading
+        ) : referralCount === 0 ? (
           <NoReferralsMessage>You have no referrals yet</NoReferralsMessage>
         ) : (
           <div>

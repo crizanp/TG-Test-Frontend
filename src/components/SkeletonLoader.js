@@ -36,7 +36,7 @@ const SkeletonCell = styled.div`
 
 const SkeletonLoader = () => (
   <SkeletonTable>
-    {Array(20)
+    {Array(7)
       .fill(0)
       .map((_, index) => (
         <SkeletonRow key={index}>
