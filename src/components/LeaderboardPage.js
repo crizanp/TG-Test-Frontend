@@ -310,7 +310,7 @@ function LeaderboardPage() {
           );
           const sortedUsers = response.data
             .sort((a, b) => b.points - a.points)
-            .slice(0, 20); // Top 20 users
+            .slice(0, 50); // Top 20 users
           setUsers(sortedUsers);
         } catch (error) {
           console.error("Error fetching top users:", error);
@@ -323,7 +323,7 @@ function LeaderboardPage() {
     }, []);
   
     const truncateUserID = (userID) => {
-      return `${userID.slice(0, 3)}...${userID.slice(-3)}`;
+      return `${userID.slice(0, 3)}...${userID.slice(-2)}`;
     };
   
     return (
@@ -389,7 +389,7 @@ function LeaderboardPage() {
                   <RankCell rank={index + 1}>{index + 1}</RankCell>
                   <UserCell>
                     <UserIcon />
-                    <UserID>{truncateUserID(user.userID)}</UserID>
+                    <UserID>{truncateUserID(user.username)}</UserID>
                   </UserCell>
                   <PointsCell>
                     <FaCrown style={{ marginRight: "8px", color: "#ffd700" }} />
