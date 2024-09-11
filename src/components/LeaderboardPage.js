@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled, { css } from "styled-components";
-import { FaUserCircle, FaGamepad, FaTasks, FaUserFriends, FaCoins, FaCrown } from "react-icons/fa";
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import {
+  FaUserCircle,
+  FaGamepad,
+  FaTasks,
+  FaUserFriends,
+  FaCoins,
+  FaCrown,
+} from "react-icons/fa";
+import { Link } from "react-router-dom"; // Import Link for navigation
 import SkeletonLoader from "./SkeletonLoader"; // Import the SkeletonLoader component
 
-const telegramColor = '#0088cc'; // Telegram color (blue)
+const telegramColor = "#0088cc"; // Telegram color (blue)
 
 const LeaderboardContainer = styled.div`
   background-color: #1e1e1e;
@@ -115,31 +122,31 @@ const RankCell = styled.td`
   ${({ rank }) =>
     rank === 1 &&
     css`
-      background: #b9f2ff;
-      clip-path: polygon(49% 19%, 65% 35%, 60% 65%, 40% 66%, 33% 36%);
-      color: #1e1e1e;
-      box-shadow: 0px 0px 10px rgba(0, 255, 255, 0.5);
-      height: 40px;
+      background: none; /* Remove the background */
+      img {
+        width: 40px; /* Adjust size accordingly */
+        height: 40px;
+      }
     `}
 
   ${({ rank }) =>
     rank === 2 &&
     css`
-      background: #ffd700;
-      clip-path: polygon(49% 19%, 65% 35%, 60% 65%, 40% 66%, 33% 36%);
-      color: #1e1e1e;
-      box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.5);
-      height: 40px;
+      background: none; /* Remove the background */
+      img {
+        width: 40px; /* Adjust size accordingly */
+        height: 40px;
+      }
     `}
 
   ${({ rank }) =>
     rank === 3 &&
     css`
-      background: #c0c0c0;
-      clip-path: polygon(49% 19%, 65% 35%, 60% 65%, 40% 66%, 33% 36%);
-      color: #1e1e1e;
-      box-shadow: 0px 0px 10px rgba(192, 192, 192, 0.5);
-      height: 40px;
+      background: none; /* Remove the background */
+      img {
+        width: 40px; /* Adjust size accordingly */
+        height: 40px;
+      }
     `}
 
   ${({ rank }) =>
@@ -185,7 +192,7 @@ const PointsCell = styled.td`
   font-size: 18px;
   text-align: center;
   vertical-align: middle; /* Align content vertically */
-  
+
   @media (max-width: 768px) {
     font-size: 16px;
   }
@@ -202,7 +209,6 @@ const PointsCell = styled.td`
     line-height: normal;
   }
 `;
-
 
 const UserIcon = styled(FaUserCircle)`
   width: 30px;
@@ -254,7 +260,8 @@ const EarnMoreContainer = styled.div`
   }
 `;
 
-const EarnBox = styled(Link)` /* Change div to Link for routing */
+const EarnBox = styled(Link)`
+  /* Change div to Link for routing */
   background-color: #1e1e1e;
   border: 2px solid ${telegramColor}; /* Use Telegram color for border */
   border-radius: 10px;
@@ -299,36 +306,36 @@ const EarnBoxTitle = styled.h2`
 `;
 
 function LeaderboardPage() {
-    const [users, setUsers] = useState([]);
-    const [isLoading, setIsLoading] = useState(true); // Loading state
-  
-    useEffect(() => {
-      const fetchTopUsers = async () => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/user-info/fetchdata`
-          );
-          const sortedUsers = response.data
-            .sort((a, b) => b.points - a.points)
-            .slice(0, 50); // Top 20 users
-          setUsers(sortedUsers);
-        } catch (error) {
-          console.error("Error fetching top users:", error);
-        } finally {
-          setIsLoading(false); // Set loading to false after data is fetched
-        }
-      };
-  
-      fetchTopUsers();
-    }, []);
-  
-    const truncateUserID = (userID) => {
-      return `${userID.slice(0, 3)}...${userID.slice(-2)}`;
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+
+  useEffect(() => {
+    const fetchTopUsers = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user-info/fetchdata`
+        );
+        const sortedUsers = response.data
+          .sort((a, b) => b.points - a.points)
+          .slice(0, 50); // Top 20 users
+        setUsers(sortedUsers);
+      } catch (error) {
+        console.error("Error fetching top users:", error);
+      } finally {
+        setIsLoading(false); // Set loading to false after data is fetched
+      }
     };
-  
-    return (
-      <LeaderboardContainer>
-        <EarnMoreContainer>
+
+    fetchTopUsers();
+  }, []);
+
+  const truncateUserID = (userID) => {
+    return `${userID.slice(0, 3)}...${userID.slice(-2)}`;
+  };
+
+  return (
+    <LeaderboardContainer>
+      <EarnMoreContainer>
         <EarnBox to="/home">
           <EarnBoxIcon>
             <FaGamepad />
@@ -349,60 +356,80 @@ function LeaderboardPage() {
           </EarnBoxIcon>
           <EarnBoxTitle>Refer Friends</EarnBoxTitle>
         </EarnBox>
-        </EarnMoreContainer>
-  
-        <PointsDisplayContainer id="pointsDisplay">
-          <PointsDisplay>
-          <PointsDisplay>
-          <img
-            src="https://cdn3d.iconscout.com/3d/premium/thumb/champion-trophys-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--winner-podium-display-leaderboard-business-pack-illustrations-6516638.png?f=webp"
-            alt="Leaderboard Logo"
-            style={{
-              width: "250px",
-              height: "150px",
-              marginTop: "20px",
-            }}
-          />
-        </PointsDisplay>
-          </PointsDisplay>
-        </PointsDisplayContainer>
-  
-        <Title>Top Leaderboard</Title>
-  
-        {/* Conditionally show the SkeletonLoader if data is still loading */}
-        {isLoading ? (
-          <SkeletonLoader /> // Show skeleton loader
-        ) : users.length === 0 ? (
-          <NoUsersMessage>No users found</NoUsersMessage>
-        ) : (
-          <Table>
-            <thead>
-              <tr>
-                <TableHeader style={{ textAlign: "center" }}>#</TableHeader>
-                <TableHeader>User</TableHeader>
-                <TableHeader style={{ textAlign: "center" }}>Total</TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, index) => (
-                <TableRow key={user.userID}>
-                  <RankCell rank={index + 1}>{index + 1}</RankCell>
-                  <UserCell>
-                    <UserIcon />
-                    <UserID>{truncateUserID(user.username)}</UserID>
-                  </UserCell>
-                  <PointsCell>
-                    <FaCrown style={{ marginRight: "8px", color: "#ffd700" }} />
-                    {user.points.toFixed(0)}
-                  </PointsCell>
-                </TableRow>
-              ))}
-            </tbody>
-          </Table>
-        )}
-      </LeaderboardContainer>
-    );
-  }
-  
-  export default LeaderboardPage;
+      </EarnMoreContainer>
 
+      <PointsDisplayContainer id="pointsDisplay">
+        <PointsDisplay>
+          <PointsDisplay>
+            <img
+              src="https://i.ibb.co/pxGzrY8/leaderboard-1.png"
+              alt="Leaderboard Logo"
+              style={{
+                width: "150px",
+                height: "150px",
+                marginTop: "20px",
+              }}
+            />
+          </PointsDisplay>
+        </PointsDisplay>
+      </PointsDisplayContainer>
+
+      <Title>Top Leaderboard</Title>
+
+      {/* Conditionally show the SkeletonLoader if data is still loading */}
+      {isLoading ? (
+        <SkeletonLoader /> // Show skeleton loader
+      ) : users.length === 0 ? (
+        <NoUsersMessage>No users found</NoUsersMessage>
+      ) : (
+        <Table>
+          <thead>
+            <tr>
+              <TableHeader style={{ textAlign: "center" }}>#</TableHeader>
+              <TableHeader>User</TableHeader>
+              <TableHeader style={{ textAlign: "center" }}>Total</TableHeader>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user, index) => (
+              <TableRow key={user.userID}>
+                <RankCell rank={index + 1}>
+                  {index + 1 === 1 && (
+                    <img
+                      src="https://i.ibb.co/5cZBk7J/3d-5.png"
+                      alt="First Place"
+                    />
+                  )}
+                  {index + 1 === 2 && (
+                    <img
+                      src="https://i.ibb.co/swJQnL0/3d-6.png"
+                      alt="Second Place"
+                    />
+                  )}
+                  {index + 1 === 3 && (
+                    <img
+                      src="https://i.ibb.co/tqBDBFv/3d-7.png"
+                      alt="Third Place"
+                    />
+                  )}
+                  {index + 1 > 3 && index + 1}{" "}
+                  {/* Display rank for other users */}
+                </RankCell>
+                <UserCell>
+                  <UserIcon />
+                  <UserID>{truncateUserID(user.username)}</UserID>
+                </UserCell>
+                <PointsCell>
+                  <FaCrown style={{ marginRight: "8px", color: "#ffd700" }} />
+                  {user.points.toFixed(0)}
+                </PointsCell>
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
+      )}
+    </LeaderboardContainer>
+  );
+}
+
+export default LeaderboardPage;

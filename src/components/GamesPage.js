@@ -94,11 +94,10 @@ const GameItem = styled(Link)`
 // Lock icon styling on the left with silver color
 const LockIcon = styled(FaLock)`
   position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  font-size: 40px;
-  color: #c0c0c0;  // Silver color for lock
+  top: 10px;      // Position at the top
+  left: 10px;     // Position at the left
+  font-size: 18px; // Smaller size for the lock icon
+  color: #c0c0c0; // Silver color for lock
 `;
 
 // Dimmed styling for locked items
