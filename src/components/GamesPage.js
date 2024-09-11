@@ -163,7 +163,7 @@ function GamesPage() {
         <GameItem locked>
           <LockIcon /> {/* Displaying the lock icon at the left */}
           <DimmedIconWrapper>
-            <GameIcon src="https://i.postimg.cc/Nf97MvkN/Quiz.png" alt="Quiz Icon" />
+            <GameIcon src="https://i.ibb.co/rMcfScz/3d-1.png" alt="Quiz Icon" />
           </DimmedIconWrapper>
           <div>Quiz</div>
           <small>Test your knowledge!</small>
@@ -172,7 +172,7 @@ function GamesPage() {
         {/* Spin the Wheel */}
         <GameItem to="/spin-wheel">
           <IconWrapper>
-            <GameIcon src="https://i.postimg.cc/Kv673p9m/Spinwheel.png" alt="Spin the Wheel Icon" />
+            <GameIcon src="https://i.ibb.co/W3tQ6hf/3d-2.png" alt="Spin the Wheel Icon" />
           </IconWrapper>
           <div>Spin the Wheel</div>
           <small>Spin and win points!</small>
@@ -182,7 +182,7 @@ function GamesPage() {
         <GameItem locked>
           <LockIcon /> {/* Displaying the lock icon at the left */}
           <DimmedIconWrapper>
-            <GameIcon src="https://i.postimg.cc/XY9ffKhd/treasure-hunt.png" alt="Treasure Hunt Icon" />
+            <GameIcon src="https://i.ibb.co/20zNsDw/3d-3.png" alt="Treasure Hunt Icon" />
           </DimmedIconWrapper>
           <div>Treasure Hunt</div>
           <small>Uncover hidden treasures and win big reward!</small>
@@ -191,7 +191,7 @@ function GamesPage() {
         {/* Coming Soon Game */}
         <GameItem comingSoon>
           <IconWrapper>
-            <GameIcon src="https://i.postimg.cc/J7d5MzZD/Comin-soon.png" alt="Coming Soon Icon" />
+            <GameIcon src="https://i.ibb.co/887LhN5/3d-4.png" alt="Coming Soon Icon" />
           </IconWrapper>
           <div>Coming Soon</div>
           <ComingSoonText>More games on the way!</ComingSoonText>
