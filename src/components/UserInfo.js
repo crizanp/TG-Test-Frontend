@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaCrown } from 'react-icons/fa';  
+import { FaRegGem } from 'react-icons/fa';  
 import { usePoints } from '../context/PointsContext';
 
 const UserInfoContainer = styled.div`
@@ -35,8 +35,8 @@ const Username = styled.div`
   align-items: center;
 `;
 
-const CrownIcon = styled(FaCrown)`
-  color: #ffd700;  
+const GemIcon = styled(FaRegGem)`
+  color: #36a8e5;  
   margin-left: 8px;
   margin-right: 8px;
   font-size: 1.5rem;
@@ -74,7 +74,7 @@ const UserInfo = () => {
         Hi {firstName}
       </Username>
       <PointsContainer>
-        <CrownIcon /> {Math.floor(points)} Crowns
+        <GemIcon /> {Math.floor(points)} GEMS
       </PointsContainer>
     </UserInfoContainer>
   );

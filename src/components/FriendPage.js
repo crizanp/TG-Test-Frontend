@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { debounce } from "lodash";
-import { FaTelegramPlane, FaCopy, FaArrowRight, FaCrown } from "react-icons/fa";
+import { FaTelegramPlane, FaCopy, FaArrowRight, FaRegGem } from "react-icons/fa";
 import UserInfo from "./UserInfo"; 
 import SkeletonLoader from "./SkeletonLoader"; // Import the skeleton loader
 
@@ -204,9 +204,9 @@ const PointText = styled.span`
   font-size: 16px;
 `;
 
-export const CrownIcon = styled(FaCrown)`
+export const GemIcon = styled(FaRegGem)`
   color: #f3e9e9;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 `;
 
 
@@ -321,7 +321,7 @@ const FriendPage = () => {
             <BonusText>
               Invite Premium User
               <CrownText>
-                <CrownIcon /> <PointText>3000</PointText>
+                <GemIcon /> <PointText>3000</PointText>
               </CrownText>
             </BonusText>
           </BonusContent>
@@ -339,7 +339,7 @@ const FriendPage = () => {
             <BonusText>
               Invite a Friend
               <CrownText>
-                <CrownIcon /> 2000
+                <GemIcon /> 2000
               </CrownText>
             </BonusText>
           </BonusContent>
@@ -376,7 +376,7 @@ const FriendPage = () => {
               <ReferralItem key={referral.id}>
                 <ReferralUsername>{referral.username}</ReferralUsername>
                 <ReferralPoints>
-                  <CrownIcon /> {referral.pointsAwarded}
+                  <GemIcon /> {referral.pointsAwarded}
                 </ReferralPoints>
               </ReferralItem>
             ))}

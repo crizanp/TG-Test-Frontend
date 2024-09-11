@@ -7,7 +7,7 @@ import {
   FaTasks,
   FaUserFriends,
   FaCoins,
-  FaCrown,
+  FaRegGem,
 } from "react-icons/fa";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import SkeletonLoader from "./SkeletonLoader"; // Import the SkeletonLoader component
@@ -420,7 +420,7 @@ function LeaderboardPage() {
                   <UserID>{truncateUserID(user.username)}</UserID>
                 </UserCell>
                 <PointsCell>
-                  <FaCrown style={{ marginRight: "8px", color: "#ffd700" }} />
+                  <FaRegGem style={{ marginRight: "8px", color: "#36a8e5" }} />
                   {user.points.toFixed(0)}
                 </PointsCell>
               </TableRow>

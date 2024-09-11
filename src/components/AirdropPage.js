@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled, { keyframes } from "styled-components";
-
-import { LoadingSpinner } from "./TaskList.styles";
+import AirdropSkeletonLoadingPage from "./AirdropSkeletonLoadingPage"; // Import SkeletonLoadingPage
 
 const AirdropContainer = styled.div`
   color: white;
@@ -38,6 +37,28 @@ const AirdropDescription = styled.p`
   margin-left: 10px;
   text-align: left;
   font-size: 14px;
+  line-height: 1.5;
+`;
+
+const TopSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px; /* Space between top section and content */
+`;
+
+const Logo = styled.img`
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px; /* Space between logo and text */
+  margin-top: 20px;
+`;
+
+const DescriptionText = styled.p`
+  color: #ffffff;
+  font-size: 20px;
+  max-width: 600px;
   line-height: 1.5;
 `;
 
@@ -200,61 +221,73 @@ function AirdropPage() {
 
   return (
     <AirdropContainer>
+      {/* Top section with logo and description */}
+      <TopSection>
+        <Logo src="https://i.postimg.cc/y6Pn7xpB/square-3.png" alt="Earn Logo" />
+        <DescriptionText>
+          Earn tokens by participating in exciting airdrop campaigns
+        </DescriptionText>
+      </TopSection>
+
       <AirdropDescription>
-        These are the campaigns run within the IGH ecosystem, distributed according to the allocated amount. Please note that these campaigns are not managed within this mini app.
+        Note: These are the campaigns run within the IGH ecosystem, distributed according to the allocated amount. Please note that these campaigns are not managed within this mini app.
       </AirdropDescription>
-      
+
       <AirdropTitle>Active Airdrops Lists</AirdropTitle>
-      <AirdropList>
-        {activeAirdrops.map((airdrop) => (
-          <AirdropCard
-            key={airdrop._id}
-            clickable={true}
-            onClick={() => window.open('https://icogemhunters.com/hemeraai', '_blank')}
-          >
-            <NameLogoContainer>
-              <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
-              <AirdropName>{airdrop.name}</AirdropName>
-            </NameLogoContainer>
-            <AirdropDesc>{airdrop.description}</AirdropDesc>
-            <AirdropReward>Reward: {airdrop.reward}</AirdropReward>
-            <CountdownContainer>
-              <CountdownTimer active={true}>
-                Ends in: {formatTime(airdrop.timeLeft)}
-              </CountdownTimer>
-              <TickingClock>⏳</TickingClock>
-            </CountdownContainer>
-          </AirdropCard>
-        ))}
-      </AirdropList>
+      {loadingActive ? (
+        <AirdropSkeletonLoadingPage /> // Show skeleton loader if loading
+      ) : (
+        <AirdropList>
+          {activeAirdrops.map((airdrop) => (
+            <AirdropCard
+              key={airdrop._id}
+              clickable={true}
+              onClick={() => window.open('https://icogemhunters.com/hemeraai', '_blank')}
+            >
+              <NameLogoContainer>
+                <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
+                <AirdropName>{airdrop.name}</AirdropName>
+              </NameLogoContainer>
+              <AirdropDesc>{airdrop.description}</AirdropDesc>
+              <AirdropReward>Reward: {airdrop.reward}</AirdropReward>
+              <CountdownContainer>
+                <CountdownTimer active={true}>
+                  Ends in: {formatTime(airdrop.timeLeft)}
+                </CountdownTimer>
+                <TickingClock>⏳</TickingClock>
+              </CountdownContainer>
+            </AirdropCard>
+          ))}
+        </AirdropList>
+      )}
 
-      {loadingActive && <LoadingSpinner />}
-      
       <AirdropTitle>Upcoming Airdrops Lists</AirdropTitle>
-      <AirdropList>
-        {upcomingAirdrops.map((airdrop) => (
-          <AirdropCard
-            key={airdrop._id}
-            clickable={false}
-          >
-            <NameLogoContainer>
-              <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
-              <AirdropName>{airdrop.name}</AirdropName>
-            </NameLogoContainer>
-            <AirdropDesc>{airdrop.description}</AirdropDesc>
-            <AirdropReward>Reward: {airdrop.reward}</AirdropReward>
-            <CountdownContainer>
-              <CountdownTimer active={false}>
-                Starts in: {formatTime(airdrop.timeLeft)}
-              </CountdownTimer>
-              <TickingClock>⏳</TickingClock>
-            </CountdownContainer>
-          </AirdropCard>
-        ))}
-      </AirdropList>
+      {loadingUpcoming ? (
+        <AirdropSkeletonLoadingPage /> // Show skeleton loader if loading
+      ) : (
+        <AirdropList>
+          {upcomingAirdrops.map((airdrop) => (
+            <AirdropCard
+              key={airdrop._id}
+              clickable={false}
+            >
+              <NameLogoContainer>
+                <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
+                <AirdropName>{airdrop.name}</AirdropName>
+              </NameLogoContainer>
+              <AirdropDesc>{airdrop.description}</AirdropDesc>
+              <AirdropReward>Reward: {airdrop.reward}</AirdropReward>
+              <CountdownContainer>
+                <CountdownTimer active={false}>
+                  Starts in: {formatTime(airdrop.timeLeft)}
+                </CountdownTimer>
+                <TickingClock>⏳</TickingClock>
+              </CountdownContainer>
+            </AirdropCard>
+          ))}
+        </AirdropList>
+      )}
 
-      {loadingUpcoming && <LoadingSpinner />}
-      
       <Spacer />
     </AirdropContainer>
   );

@@ -7,7 +7,7 @@ import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
-import { FaCrown } from "react-icons/fa";
+import { FaRegGem } from "react-icons/fa";
 import styled from "styled-components";
 import SkeletonLoaderTaskPage from "./SkeletonLoaderTaskPage"; // Importing the skeleton loader
 
@@ -34,9 +34,9 @@ import {
 import coinIcon from "../assets/coin-icon.png";
 
 // Styled component for the crown icon
-export const CrownIcon = styled(FaCrown)`
-  color: #ffd700;
-  font-size: 1.5rem;
+export const GemIcon = styled(FaRegGem)`
+  color: #ffffff;
+  font-size: 1.3rem;
   margin-top: -3px;
 `;
 
@@ -300,7 +300,7 @@ const TaskList = () => {
                       <TaskTextContainer>
                         <TaskTitleRow>{task.name}</TaskTitleRow>
                         <TaskPointsContainer>
-                          <CrownIcon />
+                          <GemIcon />
                           {task.points}
                         </TaskPointsContainer>
                       </TaskTextContainer>
