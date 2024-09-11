@@ -51,7 +51,6 @@ export const HomeContainer = styled.div`
   padding: 20px 20px;
   position: relative;
 
-  /* Add the background image to the whole screen */
   background-image: url('https://i.ibb.co/wYKcvh3/bg.png');
   background-size: cover;
   background-position: center;
@@ -112,9 +111,6 @@ export const EagleImage = styled.img`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   margin-top: 10px;
-  -webkit-touch-callout: none; /* Prevent long press */
-  user-select: none; /* Prevent text selection */
-  touch-action: manipulation; /* Prevent built-in gestures */
 
   &.shift-up {
     animation: ${eagleShiftUp} 0.3s ease-in-out; /* Smooth and fast animation */
