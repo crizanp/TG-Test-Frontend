@@ -117,6 +117,7 @@ export const EagleImage = styled.img`
     animation: ${eagleShiftUp} 0.3s ease-in-out; /* Smooth and fast animation */
   }
 `;
+
 export const BottomContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -152,19 +153,22 @@ export const EarnMoreBox = styled.div`
 `;
 
 export const EnergyContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #2a2a2a00;
-  border-radius: 30px;
-  padding: 0px 17px;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100px;
-  height: 45px;
-  text-align: justify;
-  border: 2px solid #1fa3e6;
+      display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a2a2a00;
+    border-radius: 30px;
+    padding: 0px 17px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100px;
+    height: 45px;
+    text-align: justify;
+    border: 2px solid #1fa3e6;
+    text-decoration: none;
+    color: white;
+    margin-left: 10px;
 
   & svg {
     margin-right: 5px;

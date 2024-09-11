@@ -191,6 +191,12 @@ function HomePage() {
           <EnergyIcon energy={energy} />
           <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
         </EnergyContainer>
+        <Link to="/leaderboard" style={{ textDecoration: 'none' }}>
+          <EnergyContainer>
+            <FaTasks style={{ marginRight: '5px' }} />
+            Leaderboard
+          </EnergyContainer>
+        </Link>
       </BottomContainer>
 
       {flyingNumbers.map((number) => (

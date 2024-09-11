@@ -12,6 +12,7 @@ import GamesPage from './components/GamesPage';
 import SpinWheelPage from './components/SpinWheelPage';
 import LoadingPage from './components/LoadingPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import LeaderboardPage from './components/LeaderboardPage';
 
 function App() {
   return (
@@ -76,6 +77,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <SpinWheelPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute>
+                    <LeaderboardPage />
                   </ProtectedRoute>
                 }
               />
