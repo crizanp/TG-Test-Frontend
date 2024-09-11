@@ -9,6 +9,7 @@ import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
 import { FaCrown } from "react-icons/fa";
 import styled from "styled-components";
+import SkeletonLoaderTaskPage from "./SkeletonLoaderTaskPage"; // Importing the skeleton loader
 
 import {
   TaskContainer,
@@ -27,7 +28,6 @@ import {
   ProofInput,
   PointsDisplayContainer,
   PointsDisplay,
-  LoadingSpinner,
   CoinIcon,
 } from "./TaskList.styles";
 
@@ -67,13 +67,14 @@ const TaskLogo = styled.img`
   object-fit: cover;
   border-radius: 8px;
 `;
+
 const ModalTaskLogo = styled(TaskLogo)`
   width: 117px;
-    height: 99px;
-    margin: 20px auto;
-    object-fit: contain;
-    display: block;
-    border-radius: 8px;
+  height: 99px;
+  margin: 20px auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
 `;
 
 const TaskTextContainer = styled.div`
@@ -105,7 +106,7 @@ const TaskPointsContainer = styled.div`
 
 const TaskList = () => {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
-  const [tasks, setTasks] = useState({ special: [], daily: [], lists: [] ,extra:[]});
+  const [tasks, setTasks] = useState({ special: [], daily: [], lists: [], extra: [] });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
   const [isClaimable, setIsClaimable] = useState(false);
@@ -113,12 +114,12 @@ const TaskList = () => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Loading state
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
-      setLoading(true);
+      setLoading(true); // Set loading true while fetching data
 
       try {
         const userID = await getUserID(setUserID, setUsername);
@@ -157,7 +158,7 @@ const TaskList = () => {
       } catch (taskFetchError) {
         console.error("Error fetching tasks:", taskFetchError);
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
@@ -268,12 +269,12 @@ const TaskList = () => {
         </PointsDisplay>
       </PointsDisplayContainer>
 
+      <CoinText>Earn more tokens by completing tasks</CoinText>
+
       {loading ? (
-        <LoadingSpinner />
+        <SkeletonLoaderTaskPage /> // Display skeleton loader while loading
       ) : (
         <TaskContainer>
-          <CoinText>Earn more tokens by completing tasks</CoinText>
-
           {Object.keys(tasks).map((category) => (
             <TaskCategory key={category}>
               <TaskTitle>
@@ -317,7 +318,6 @@ const TaskList = () => {
             <ModalOverlay>
               <Modal>
                 <CloseButtonModel onClick={handleClose} />
-                {/* Modal Logo Centered and Bigger */}
                 <ModalTaskLogo
                   src={selectedTask.logo || "https://via.placeholder.com/50"}
                   alt={`${selectedTask.name} logo`}
