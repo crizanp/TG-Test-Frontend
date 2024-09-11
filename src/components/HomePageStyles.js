@@ -105,32 +105,16 @@ export const EagleContainer = styled.div`
   align-items: center;
   margin-bottom: 15px;
 `;
-const slideUpFromBottom = keyframes`
-  0% {
-    transform: translateY(100%); /* Start below the viewport */
-    opacity: 0;
-  }
-  50% {
-    transform: translateY(20%); /* Midway point */
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(0); /* Final position */
-    opacity: 1;
-  }
-`;
+
 export const EagleImage = styled.img`
   width: 95%;
   height: auto;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   margin-top: 10px;
-  opacity: 0;
-
-  animation: ${slideUpFromBottom} 1s ease-in-out forwards; /* Apply the slide-up animation */
 
   &.shift-up {
-    animation: ${slideUpFromBottom} 0.3s ease-in-out, ${eagleShiftUp} 0.3s ease-in-out 0.3s; /* Chain both animations */
+    animation: ${eagleShiftUp} 0.3s ease-in-out; /* Smooth and fast animation */
   }
 `;
 export const BottomContainer = styled.div`
