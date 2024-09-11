@@ -112,8 +112,9 @@ export const EagleImage = styled.img`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   margin-top: 10px;
-  -webkit-touch-callout: none; /* Disable default callout (pop-up) on long press */
-  user-select: none; /* Prevent text/image selection */
+  -webkit-touch-callout: none; /* Prevent long press */
+  user-select: none; /* Prevent text selection */
+  touch-action: manipulation; /* Prevent built-in gestures */
 
   &.shift-up {
     animation: ${eagleShiftUp} 0.3s ease-in-out; /* Smooth and fast animation */
