@@ -49,8 +49,8 @@ const TopSection = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 160px;
+  height: 130px;
   margin-bottom: 10px; /* Space between logo and text */
   margin-top: 20px;
 `;
