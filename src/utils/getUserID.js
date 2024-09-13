@@ -11,7 +11,7 @@ export const getUserID = async (setUserID, setUsername) => {
   // For localhost testing
   if (isLocalhost) {
     tgUserID = 'mockUserID123';
-    tgUsername = 'mockUsername';
+    tgUsername = 'mockUsername';  // Mock username for testing
     console.warn('Running on localhost: Mock Telegram user ID and username assigned.');
   }
 
@@ -20,6 +20,7 @@ export const getUserID = async (setUserID, setUsername) => {
     tgUserID = tgUserID.toString();
     setUserID(tgUserID);
 
+    // Only set the username if it's available
     if (tgUsername && setUsername) {
       setUsername(tgUsername);
     }
@@ -39,7 +40,7 @@ export const getUserID = async (setUserID, setUsername) => {
         try {
           await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
-            username: tgUsername || 'Null Username',
+            username: tgUsername || 'Unknown', // Pass the correct username or "Unknown"
             points: 0,
             tasksCompleted: [],
             taskHistory: [],
@@ -64,6 +65,7 @@ export const getUserID = async (setUserID, setUsername) => {
     throw new Error('User ID not available from Telegram.');
   }
 };
+
 
 // Function to check referral and update status to complete if the user is referred
 const checkAndCompleteReferral = async (tgUserID) => {

@@ -321,7 +321,7 @@ const FriendPage = () => {
             <BonusText>
               Invite Premium User
               <CrownText>
-                <GemIcon /> <PointText>13000</PointText>
+                <GemIcon /> <PointText>10000</PointText>
               </CrownText>
             </BonusText>
           </BonusContent>
@@ -339,7 +339,7 @@ const FriendPage = () => {
             <BonusText>
               Invite a Friend
               <CrownText>
-                <GemIcon /> 10000
+                <GemIcon /> 2000
               </CrownText>
             </BonusText>
           </BonusContent>
