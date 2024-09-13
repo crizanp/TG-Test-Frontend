@@ -141,7 +141,8 @@ function HomePage() {
   
           setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
   
-          decreaseEnergy(2 * (isDoubleTap ? 2 : 1));
+          // Deduct 1 energy for single tap, 2 for double tap
+          decreaseEnergy(isDoubleTap ? 2 : 1);
   
           if (navigator.onLine) {
             syncPointsWithServer(offlinePoints + pointsToAdd);
@@ -151,6 +152,7 @@ function HomePage() {
     },
     [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setFlyingNumbers((prevNumbers) =>

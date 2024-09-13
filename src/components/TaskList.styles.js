@@ -467,6 +467,8 @@ export const ClaimButton = styled.button`
   padding: 12px 24px;
   border-radius: 12px;
   cursor: pointer;
+  width:100%;
+  margin-right:10px;
   font-size: 18px;
   font-weight: bold;
   transition: background-color 0.3s, transform 0.3s;

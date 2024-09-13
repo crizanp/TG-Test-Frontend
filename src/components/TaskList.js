@@ -103,10 +103,20 @@ const TaskPointsContainer = styled.div`
   width: fit-content;
   box-sizing: border-box;
 `;
+const PerformAgainButton = styled(ClaimButton)`
+  background-color: #f39c12; // Change color to differentiate
+  margin-left: 0px;
+  width:95%;
+`;
 
 const TaskList = () => {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
-  const [tasks, setTasks] = useState({ special: [], daily: [], lists: [], extra: [] });
+  const [tasks, setTasks] = useState({
+    special: [],
+    daily: [],
+    lists: [],
+    extra: [],
+  });
   const [selectedTask, setSelectedTask] = useState(null);
   const [proof, setProof] = useState("");
   const [isClaimable, setIsClaimable] = useState(false);
@@ -192,6 +202,8 @@ const TaskList = () => {
   const handleStartTask = () => {
     window.open(selectedTask.link, "_blank");
     setTimerStarted(true);
+    setTimer(10); // Reset the timer
+    setIsClaimable(false); // Reset claimable state
   };
 
   const handleClaimReward = async () => {
@@ -325,11 +337,12 @@ const TaskList = () => {
                 <ModalHeader>{selectedTask.name}</ModalHeader>
                 <PointsDisplayModal>
                   <CoinIcon src={coinIcon} alt="Coin Icon" />+
-                  {selectedTask.points} Crowns
+                  {selectedTask.points} GEMS
                 </PointsDisplayModal>
                 <ModalContent>{selectedTask.description}</ModalContent>
 
                 {isClaimable && !underModeration ? (
+                  // Show "Claim Reward" and "Perform Again" buttons once task is claimable
                   <>
                     <ProofInput
                       type="text"
@@ -337,25 +350,35 @@ const TaskList = () => {
                       value={proof}
                       onChange={(e) => setProof(e.target.value)}
                     />
-                    <ClaimButton
-                      onClick={handleClaimReward}
-                      disabled={timer > 0 || !proof.trim() || underModeration}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
                     >
-                      {timer > 0
-                        ? `Wait ${timer}s`
-                        : underModeration
-                        ? "Claiming..."
-                        : "Claim Reward"}
-                    </ClaimButton>
-                  </>
-                ) : null}
+                      <ClaimButton
+                        onClick={handleClaimReward}
+                        disabled={!proof.trim() || underModeration}
+                      >
+                        {underModeration ? "Claiming..." : "Claim Reward"}
+                      </ClaimButton>
 
-                {!timerStarted && !isClaimable && !underModeration ? (
+                      <PerformAgainButton
+                        onClick={handleStartTask}
+                        disabled={underModeration}
+                      >
+                        Perform Again
+                      </PerformAgainButton>
+                    </div>
+                  </>
+                ) : timerStarted && !isClaimable ? (
+                  // Show "Processing, please wait..." button while the task is processing
+                  <ModalButton disabled>Processing, please wait...</ModalButton>
+                ) : !timerStarted && !isClaimable && !underModeration ? (
+                  // Show "Start Task" button before the task starts
                   <ModalButton onClick={handleStartTask}>
                     Start Task
                   </ModalButton>
-                ) : timerStarted && !isClaimable ? (
-                  <ModalButton disabled>Processing...</ModalButton>
                 ) : null}
 
                 {underModeration && (

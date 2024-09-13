@@ -325,9 +325,9 @@ const FriendPage = () => {
               </CrownText>
             </BonusText>
           </BonusContent>
-          <BonusArrow>
+          {/* <BonusArrow>
             <FaArrowRight />
-          </BonusArrow>
+          </BonusArrow> */}
         </BonusBox>
 
         <BonusBox>
@@ -343,9 +343,9 @@ const FriendPage = () => {
               </CrownText>
             </BonusText>
           </BonusContent>
-          <BonusArrow>
+          {/* <BonusArrow>
             <FaArrowRight />
-          </BonusArrow>
+          </BonusArrow> */}
         </BonusBox>
 
         {/* Buttons for Telegram and Copy Link */}

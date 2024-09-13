@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled, { css } from "styled-components";
 import {
-  FaUserCircle,
   FaGamepad,
   FaTasks,
   FaUserFriends,
@@ -13,6 +12,12 @@ import { Link } from "react-router-dom"; // Import Link for navigation
 import SkeletonLoader from "./SkeletonLoader"; // Import the SkeletonLoader component
 
 const telegramColor = "#0088cc"; // Telegram color (blue)
+
+// Dynamically import all avatar images
+const avatarImages = {};
+for (let i = 1; i <= 20; i++) {
+  avatarImages[i] = require(`../assets/avatar/${i}.png`);
+}
 
 const LeaderboardContainer = styled.div`
   background-color: #1e1e1e;
@@ -112,7 +117,7 @@ const TableCell = styled.td`
 
 const RankCell = styled.td`
   width: 20%;
-  padding: 10px;
+  padding: 8px;
   color: #e8e7e4;
   font-size: 18px;
   font-weight: bold;
@@ -167,7 +172,7 @@ const UserCell = styled.td`
   width: 100%;
   display: flex;
   align-items: center; /* Center align vertically */
-  padding: 12px;
+  padding: 8px;
   color: #ffffff;
   font-size: 18px;
   text-align: left;
@@ -210,11 +215,11 @@ const PointsCell = styled.td`
   }
 `;
 
-const UserIcon = styled(FaUserCircle)`
-  width: 30px;
-  height: 30px;
+const UserAvatar = styled.img`
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   margin-right: 8px;
-  color: #e8e7e4;
 
   @media (max-width: 320px) {
     width: 20px;
@@ -261,7 +266,6 @@ const EarnMoreContainer = styled.div`
 `;
 
 const EarnBox = styled(Link)`
-  /* Change div to Link for routing */
   background-color: #1e1e1e;
   border: 2px solid ${telegramColor}; /* Use Telegram color for border */
   border-radius: 10px;
@@ -317,7 +321,7 @@ function LeaderboardPage() {
         );
         const sortedUsers = response.data
           .sort((a, b) => b.points - a.points)
-          .slice(0, 50); // Top 20 users
+          .slice(0, 20); // Top 20 users
         setUsers(sortedUsers);
       } catch (error) {
         console.error("Error fetching top users:", error);
@@ -412,11 +416,13 @@ function LeaderboardPage() {
                       alt="Third Place"
                     />
                   )}
-                  {index + 1 > 3 && index + 1}{" "}
-                  {/* Display rank for other users */}
+                  {index + 1 > 3 && index + 1} {/* Display rank for other users */}
                 </RankCell>
                 <UserCell>
-                  <UserIcon />
+                  <UserAvatar
+                    src={avatarImages[(user.userID % 20) + 1]}
+                    alt="User Avatar"
+                  />
                   <UserID>{truncateUserID(user.username)}</UserID>
                 </UserCell>
                 <PointsCell>
