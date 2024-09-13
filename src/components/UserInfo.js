@@ -64,15 +64,14 @@ const UserInfo = () => {
   
   // Get the first name from Telegram WebApp or 'User' as fallback
   let firstName = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name || 'User';
-  let referrerID = window.Telegram?.WebApp?.initDataUnsafe?.start_param; // Get referrer ID from start_param
-
+  
   // Keep the first 10 alphanumeric characters only
   firstName = firstName.split(/[^\w]+/)[0].slice(0, 10); 
 
   return (
     <UserInfoContainer>
       <Username>
-        Hi {firstName} {referrerID}
+        Hi {firstName}
       </Username>
       <PointsContainer>
         <GemIcon /> {Math.floor(points)} GEMS
