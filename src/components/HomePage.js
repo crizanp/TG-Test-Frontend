@@ -23,11 +23,10 @@ import {
 import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
 import dollarImage from '../assets/dollar-homepage.png'; // Keeping local images where necessary
+import { getUserID } from '../utils/getUserID';
 import eagleImage from '../assets/eagle.png';
-import tapSound from '../assets/soundtap.mp3'; // Import the sound file
 import { Link } from 'react-router-dom';
 import { FaTasks } from 'react-icons/fa';
-import { getUserID } from '../utils/getUserID';
 
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
@@ -41,9 +40,6 @@ function HomePage() {
   // Create refs for the containers
   const curvedBorderRef = useRef(null);
   const bottomMenuRef = useRef(null);
-
-  // Initialize the tap sound
-  const tapAudio = useRef(new Audio(tapSound));
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -133,10 +129,6 @@ function HomePage() {
               setFlyingNumbers((prevNumbers) => prevNumbers.filter((num) => num.id !== id));
             }, 750); // Matches the animation duration
           };
-  
-          // Play tap sound when eagle is tapped
-          tapAudio.current.currentTime = 0;  // Reset sound to start for multiple taps
-          tapAudio.current.play();
   
           // Call the function to animate the flying number
           animateFlyingPoints();
