@@ -34,6 +34,7 @@ const fadeIn = keyframes`
     opacity: 1;
   }
 `;
+
 // Floating message container with responsive behavior and animations
 export const FloatingMessageContainer = styled.div`
   position: fixed;

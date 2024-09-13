@@ -1,7 +1,6 @@
-// src/components/TaskList.js
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import Confetti from "react-confetti"; // Import react-confetti
 import { usePoints } from "../context/PointsContext";
 import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
@@ -9,8 +8,7 @@ import { FaChevronRight } from "react-icons/fa";
 import FloatingMessage from "./FloatingMessage";
 import { FaRegGem } from "react-icons/fa";
 import styled from "styled-components";
-import SkeletonLoaderTaskPage from "./SkeletonLoaderTaskPage"; // Importing the skeleton loader
-
+import SkeletonLoaderTaskPage from "./SkeletonLoaderTaskPage";
 import {
   TaskContainer,
   TaskCategory,
@@ -30,8 +28,8 @@ import {
   PointsDisplay,
   CoinIcon,
 } from "./TaskList.styles";
-
 import coinIcon from "../assets/coin-icon.png";
+import celebrationSound from "../assets/celebration.mp3"; // Import sound file
 
 // Styled component for the crown icon
 export const GemIcon = styled(FaRegGem)`
@@ -104,9 +102,9 @@ const TaskPointsContainer = styled.div`
   box-sizing: border-box;
 `;
 const PerformAgainButton = styled(ClaimButton)`
-  background-color: #f39c12; // Change color to differentiate
+  background-color: #f39c12;
   margin-left: 0px;
-  width:95%;
+  width: 95%;
 `;
 
 const TaskList = () => {
@@ -124,22 +122,38 @@ const TaskList = () => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false); // Confetti state
+  const audioRef = useRef(null); // Ref for audio element
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  }); // State for window size
+
+  // Handle window resize to adjust confetti size
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const initializeUserAndFetchTasks = async () => {
-      setLoading(true); // Set loading true while fetching data
-
+      setLoading(true);
       try {
         const userID = await getUserID(setUserID, setUsername);
         console.log("UserID fetched:", userID);
-
         const userResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/user-info/${userID}`
         );
         const userData = userResponse.data;
-
         setPoints(userData.points);
 
         const completedTasksMap = {};
@@ -168,7 +182,7 @@ const TaskList = () => {
       } catch (taskFetchError) {
         console.error("Error fetching tasks:", taskFetchError);
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
 
@@ -202,8 +216,8 @@ const TaskList = () => {
   const handleStartTask = () => {
     window.open(selectedTask.link, "_blank");
     setTimerStarted(true);
-    setTimer(10); // Reset the timer
-    setIsClaimable(false); // Reset claimable state
+    setTimer(10);
+    setIsClaimable(false);
   };
 
   const handleClaimReward = async () => {
@@ -241,6 +255,13 @@ const TaskList = () => {
       }));
 
       setMessage({ text: "Points awarded!", type: "success" });
+      setShowConfetti(true); // Trigger confetti animation
+      audioRef.current.play(); // Play celebration sound
+
+      setTimeout(() => {
+        setShowConfetti(false); // Stop confetti after a few seconds
+      }, 5000);
+
       setSelectedTask(null);
     } catch (error) {
       console.error("Error claiming reward:", error);
@@ -265,6 +286,12 @@ const TaskList = () => {
         />
       )}
 
+      <audio ref={audioRef} src={celebrationSound} />
+      
+      {showConfetti && (
+        <Confetti width={windowSize.width} height={windowSize.height} />
+      )}
+
       <PointsDisplayContainer id="pointsDisplay">
         <UserInfo userID={userID} points={points} />
         <PointsDisplay>
@@ -284,7 +311,7 @@ const TaskList = () => {
       <CoinText>Earn more tokens by completing tasks</CoinText>
 
       {loading ? (
-        <SkeletonLoaderTaskPage /> // Display skeleton loader while loading
+        <SkeletonLoaderTaskPage />
       ) : (
         <TaskContainer>
           {Object.keys(tasks).map((category) => (
@@ -306,7 +333,7 @@ const TaskList = () => {
                   >
                     <TaskDetailsContainer>
                       <TaskLogo
-                        src={task.logo || "https://via.placeholder.com/50"} // Fallback URL for missing logos
+                        src={task.logo || "https://via.placeholder.com/50"}
                         alt={`${task.name} logo`}
                       />
                       <TaskTextContainer>
@@ -342,7 +369,6 @@ const TaskList = () => {
                 <ModalContent>{selectedTask.description}</ModalContent>
 
                 {isClaimable && !underModeration ? (
-                  // Show "Claim Reward" and "Perform Again" buttons once task is claimable
                   <>
                     <ProofInput
                       type="text"
@@ -372,13 +398,9 @@ const TaskList = () => {
                     </div>
                   </>
                 ) : timerStarted && !isClaimable ? (
-                  // Show "Processing, please wait..." button while the task is processing
                   <ModalButton disabled>Processing, please wait...</ModalButton>
                 ) : !timerStarted && !isClaimable && !underModeration ? (
-                  // Show "Start Task" button before the task starts
-                  <ModalButton onClick={handleStartTask}>
-                    Start Task
-                  </ModalButton>
+                  <ModalButton onClick={handleStartTask}>Start Task</ModalButton>
                 ) : null}
 
                 {underModeration && (
