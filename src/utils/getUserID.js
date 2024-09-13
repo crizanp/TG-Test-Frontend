@@ -79,6 +79,12 @@ const checkAndCompleteReferral = async (tgUserID) => {
       console.log(`Referral for user ${tgUserID} marked as complete.`);
     }
   } catch (error) {
-    console.error('Error checking or completing referral:', error);
+    // Suppress 404 errors (user not in referral system), but log other errors
+    if (error.response && error.response.status === 404) {
+      console.log(`No referral found for user ${tgUserID}.`);
+    } else {
+      console.error('Error checking or completing referral:', error);
+    }
   }
 };
+
