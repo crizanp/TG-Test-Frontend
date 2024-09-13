@@ -127,7 +127,7 @@ function HomePage() {
             // Remove the flying number after 1 second
             setTimeout(() => {
               setFlyingNumbers((prevNumbers) => prevNumbers.filter((num) => num.id !== id));
-            }, 1000);
+            }, 750); // Matches the animation duration
           };
   
           // Call the function to animate the flying number

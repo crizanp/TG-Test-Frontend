@@ -16,11 +16,18 @@ const pointFlyingAnimation = keyframes`
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+  85% {
+    opacity: 1;  /* Stay fully visible up to 85% of the animation */
+    transform: translateY(-200px) scale(2);  /* Move further up, increase -120px to -200px */
+  }
   100% {
-    opacity: 0;
-    transform: translateY(-120px) scale(2);  /* Increased height and size */
+    opacity: 0;  /* Completely vanish by the end */
+    transform: translateY(-200px) scale(2);  /* Keep the same position */
   }
 `;
+
+
+
 
 const slapEffectAnimation = keyframes`
   0% {
@@ -189,15 +196,19 @@ export const EnergyCounter = styled.div`
 
 export const FlyingNumber = styled.div`
   position: absolute;
-  font-size: 36px; /* Increased font size */
-  color: #ffffff; /* Changed color to white */
-  animation: ${pointFlyingAnimation} 1.5s ease-in-out; /* Increased duration for smoother animation */
+  font-size: 36px;
+  color: #ffffff;
+  animation: ${pointFlyingAnimation} 0.75s ease-in-out;
   top: ${({ y }) => `${y}px`};
   left: ${({ x }) => `${x}px`};
   z-index: 10;
   pointer-events: none;
   transform: translate(-50%, -100%);
 `;
+
+
+
+
 
 export const SlapEmoji = styled.div`
   position: absolute;
