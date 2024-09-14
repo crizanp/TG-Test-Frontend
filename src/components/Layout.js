@@ -21,6 +21,8 @@ const RestrictedContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
+  max-width: 460px;
+
   background-image: ${(props) => `url(${props.imageUrl})`};
   background-size: cover;
   background-position: center;
