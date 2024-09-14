@@ -5,7 +5,7 @@ import { useEnergy } from '../context/EnergyContext';
 import { debounce } from 'lodash';
 import { Link } from 'react-router-dom';
 import { FaTasks, FaRegGem } from 'react-icons/fa';  // Import FaRegGem for gem icon
-import styled from 'styled-components';
+import styled ,{  createGlobalStyle }from 'styled-components';
 
 import {
   HomeContainer,
