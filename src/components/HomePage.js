@@ -1,7 +1,12 @@
-import React, { useRef ,useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { usePoints } from '../context/PointsContext';
 import { useEnergy } from '../context/EnergyContext'; 
+import { debounce } from 'lodash';
+import { Link } from 'react-router-dom';
+import { FaTasks, FaRegGem } from 'react-icons/fa';  // Import FaRegGem for gem icon
+import styled from 'styled-components';
+
 import {
   HomeContainer,
   PointsDisplayContainer,
@@ -14,32 +19,35 @@ import {
   FlyingNumber,
   SlapEmoji,
   EnergyContainer,
-  EarnMoreBox,
   CurvedBorderContainer,
   EnergyCounter,
   EnergyIcon,
   BottomContainer,
 } from './HomePageStyles';
-import { debounce } from 'lodash';
 import UserInfo from './UserInfo';
-import dollarImage from '../assets/dollar-homepage.png'; // Keeping local images where necessary
+import dollarImage from '../assets/dollar-homepage.png';
 import { getUserID } from '../utils/getUserID';
 import eagleImage from '../assets/eagle.png';
-import { Link } from 'react-router-dom';
-import { FaTasks } from 'react-icons/fa';
-
+// Styled Gem Icon
+const GemIcon = styled(FaRegGem)`
+  color: #36a8e5;  // Similar color to UserInfo component
+  margin-left: 8px;
+  margin-right: 8px;
+  font-size: 1.9rem;
+`;
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
   const { energy, decreaseEnergy } = useEnergy();
   const [tapCount, setTapCount] = useState(0);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
-  const [lastTapTime, setLastTapTime] = useState(Date.now());
   const [offlinePoints, setOfflinePoints] = useState(0);
 
-  // Create refs for the containers
   const curvedBorderRef = useRef(null);
   const bottomMenuRef = useRef(null);
+
+  // Accumulate unsynced points to avoid sending too many server requests
+  const [unsyncedPoints, setUnsyncedPoints] = useState(0);
 
   useEffect(() => {
     const initializeUser = async () => {
@@ -72,11 +80,11 @@ function HomePage() {
         );
         setPoints(response.data.points);
         localStorage.setItem(`points_${userID}`, response.data.points);
-        setOfflinePoints(0);
+        setUnsyncedPoints(0); // Reset unsynced points after successful sync
       } catch (error) {
         console.error('Error syncing points with server:', error);
       }
-    }, 1000),
+    }, 2000), // Sync points every 2 seconds to reduce server load
     [userID, setPoints]
   );
 
@@ -85,74 +93,66 @@ function HomePage() {
       if (energy <= 0) {
         return; 
       }
-  
-      // Ensure refs are available before proceeding
+
       if (curvedBorderRef.current && bottomMenuRef.current) {
         const curvedBorderRect = curvedBorderRef.current.getBoundingClientRect();
         const bottomMenuRect = bottomMenuRef.current.getBoundingClientRect();
-  
+
         const isDoubleTap = e.touches && e.touches.length === 2;
         const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1);
-  
+
         const clickX = e.touches[0].clientX;
         const clickY = e.touches[0].clientY;
-  
-        // Check if the touch is between CurvedBorderContainer and BottomContainer
+
         if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
-          // Add the eagle shift-up class for the animation
           const eagleElement = document.querySelector('.eagle-image');
           eagleElement.classList.add('shift-up');
-  
-          // Remove the shift-up class after the animation ends
           setTimeout(() => {
             eagleElement.classList.remove('shift-up');
-          }, 300); // Match the animation duration
-  
+          }, 300);
+
           setPoints((prevPoints) => {
             const newPoints = prevPoints + pointsToAdd;
             localStorage.setItem(`points_${userID}`, newPoints);
             return newPoints;
           });
-  
+
           setTapCount((prevTapCount) => prevTapCount + 1);
-  
+
           const animateFlyingPoints = () => {
             const id = Date.now();
-  
             setFlyingNumbers((prevNumbers) => [
               ...prevNumbers,
               { id, x: clickX, y: clickY - 30, value: pointsToAdd }
             ]);
-  
-            // Remove the flying number after 1 second
+
             setTimeout(() => {
               setFlyingNumbers((prevNumbers) => prevNumbers.filter((num) => num.id !== id));
-            }, 750); // Matches the animation duration
+            }, 750);
           };
-  
-          // Call the function to animate the flying number
+
           animateFlyingPoints();
-  
-          // Add slap emoji
+
           setSlapEmojis((prevEmojis) => [
             ...prevEmojis,
             { id: Date.now(), x: clickX, y: clickY },
           ]);
-  
+
           setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
-  
-          // Deduct 1 energy for single tap, 2 for double tap
+          setUnsyncedPoints((prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd);
+
           decreaseEnergy(isDoubleTap ? 2 : 1);
-  
+
+          // Only sync points every 2 seconds to reduce server load
           if (navigator.onLine) {
-            syncPointsWithServer(offlinePoints + pointsToAdd);
+            syncPointsWithServer(unsyncedPoints + pointsToAdd);
           }
         }
       }
     },
-    [syncPointsWithServer, setPoints, offlinePoints, energy, decreaseEnergy, userID]
+    [syncPointsWithServer, setPoints, unsyncedPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setFlyingNumbers((prevNumbers) =>
@@ -166,24 +166,37 @@ function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Sync points before the user unloads the page to minimize unsynced points
+  useEffect(() => {
+    const syncBeforeUnload = (e) => {
+      if (navigator.onLine && unsyncedPoints > 0) {
+        syncPointsWithServer(unsyncedPoints);
+      }
+    };
+    window.addEventListener('beforeunload', syncBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', syncBeforeUnload);
+    };
+  }, [unsyncedPoints, syncPointsWithServer]);
+
   return (
     <HomeContainer onTouchStart={handleTap}>
       <UserInfo />
       <CurvedBorderContainer ref={curvedBorderRef} className="curved-border" />
       <PointsDisplayContainer>
-        <PointsDisplay>
-          <DollarIcon src={dollarImage} alt="Dollar Icon" />
-          {Math.floor(points)}
+      <PointsDisplay>
+          <GemIcon /> {/* Display the gem icon here */}
+          {Math.floor(points)}  {/* Display points as gems */}
         </PointsDisplay>
       </PointsDisplayContainer>
-
       <MiddleSection>
         <Message>{getMessage}</Message>
         <EagleContainer>
-        <EagleImage
-            src={eagleImage}  // Use the imported local image here
+          <EagleImage
+            src={eagleImage}
             alt="Eagle"
-            className="eagle-image" // Add this class name for easy targeting
+            className="eagle-image"
           />
         </EagleContainer>
       </MiddleSection>
