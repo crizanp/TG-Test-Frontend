@@ -21,7 +21,7 @@ const RestrictedContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('https://i.ibb.co/YhpdpCt/igh-tap-game.png');
+  background-image: ${(props) => `url(${props.imageUrl})`};
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -40,6 +40,7 @@ function Layout({ children }) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [restricted, setRestricted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [imageUrl, setImageUrl] = useState('');  // State to store the image URL
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +65,7 @@ function Layout({ children }) {
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
         setRestricted(true);
+        setImageUrl('https://i.postimg.cc/qBX0zdSb/igh-tap-game-2.jpg'); // Set image for Telegram Desktop or Web
         setLoading(false);
       }
     } else {
@@ -93,7 +95,7 @@ function Layout({ children }) {
   }
 
   if (restricted) {
-    return <RestrictedContainer />;
+    return <RestrictedContainer imageUrl={imageUrl} />;  // Pass the imageUrl as a prop
   }
 
   return (
