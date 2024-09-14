@@ -240,7 +240,7 @@ const FriendPage = () => {
         );
         const userData = response.data;
         setPoints(userData.points);
-        setReferralLink(`https://t.me/cizantest_bot?start=${userID}`);
+        setReferralLink(`https://t.me/Gemhuntersclub_bot?start=${userID}`);
       } catch (error) {
         console.error("Error fetching user info:", error);
       }
