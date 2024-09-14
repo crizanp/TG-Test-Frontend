@@ -8,6 +8,7 @@ const LayoutContainer = styled.div`
   font-family: 'Arial, sans-serif';
   background-color: #090c12;
   max-width: 460px;
+  
   height: 100vh;
   margin: 0 auto;
   display: flex;
@@ -39,9 +40,10 @@ const Content = styled.div`
 
 function Layout({ children }) {
   const [showBottomMenu, setShowBottomMenu] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [restricted, setRestricted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [imageUrl, setImageUrl] = useState('https://i.postimg.cc/qBX0zdSb/igh-tap-game-2.jpg');  // Default image for restricted access
+  const [imageUrl, setImageUrl] = useState('');  // State to store the image URL
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,33 +51,35 @@ function Layout({ children }) {
     const tg = window.Telegram?.WebApp;
 
     if (isLocalhost) {
-      // If running on localhost
       console.log('Running on localhost:3000');
       setShowBottomMenu(true);
       setLoading(false);
     } else if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-      // Running inside Telegram
       const platform = tg.platform;
+
       if (platform === 'android' || platform === 'ios') {
         console.log('Confirmed: Running inside Telegram mobile app');
-        tg.expand(); // Expand Telegram WebApp
+        tg.expand();
         setShowBottomMenu(true);
         setLoading(false);
 
-        // Disable vertical swipes to prevent the app from collapsing in mobile
+        // Disable vertical swipes to prevent app collapse
         tg.disableVerticalSwipes();
       } else {
-        // Restricted access for Telegram Web/Desktop
         console.log('Restricted: Running on Telegram Desktop or Web');
         setRestricted(true);
+        setImageUrl('https://i.postimg.cc/qBX0zdSb/igh-tap-game-2.jpg'); // Set image for Telegram Desktop or Web
         setLoading(false);
       }
     } else {
-      // Running outside Telegram
       console.log('Not confirmed: Running outside Telegram');
-      setRestricted(true); // Restricted state for outside Telegram
-      setLoading(false);
+      setLoading(true);
+      navigate('/');
     }
+
+    const menuTimer = setTimeout(() => {
+      setMenuVisible(true);
+    }, 4000);
 
     const handleContextMenu = (e) => {
       e.preventDefault();
@@ -84,6 +88,7 @@ function Layout({ children }) {
     window.addEventListener('contextmenu', handleContextMenu);
 
     return () => {
+      clearTimeout(menuTimer);
       window.removeEventListener('contextmenu', handleContextMenu);
     };
   }, [navigate]);
@@ -93,15 +98,13 @@ function Layout({ children }) {
   }
 
   if (restricted) {
-    // Show image when outside Telegram or using Telegram Desktop/Web
-    return <RestrictedContainer imageUrl={imageUrl} />;
+    return <RestrictedContainer imageUrl={imageUrl} />;  // Pass the imageUrl as a prop
   }
 
-  // Only show BottomMenu after loading is done and if in Telegram mobile app
   return (
     <LayoutContainer>
       <Content>{children}</Content>
-      {showBottomMenu && <BottomMenu />}
+      {showBottomMenu && menuVisible && <BottomMenu />}
     </LayoutContainer>
   );
 }
