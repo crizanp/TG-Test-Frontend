@@ -35,6 +35,14 @@ const GemIcon = styled(FaRegGem)`
   margin-right: 8px;
   font-size: 1.9rem;
 `;
+const GlobalStyle = createGlobalStyle`
+  * {
+    -webkit-user-select: none; 
+    -webkit-touch-callout: none; 
+    outline: none; 
+    -webkit-tap-highlight-color: transparent; 
+  }
+`;
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
   const { energy, decreaseEnergy } = useEnergy();
@@ -183,6 +191,10 @@ function HomePage() {
   }, [unsyncedPoints, syncPointsWithServer]);
 
   return (
+    <>
+            <GlobalStyle />
+
+    
     <HomeContainer onTouchStart={handleTap}>
       <UserInfo />
       <CurvedBorderContainer ref={curvedBorderRef} className="curved-border" />
@@ -228,6 +240,7 @@ function HomePage() {
         </SlapEmoji>
       ))}
     </HomeContainer>
+    </>
   );
 }
 
