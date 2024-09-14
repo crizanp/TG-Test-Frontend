@@ -121,7 +121,6 @@ const TaskList = () => {
     extra: [],
   });
   const [selectedTask, setSelectedTask] = useState(null);
-  const [proof, setProof] = useState("");
   const [isClaimable, setIsClaimable] = useState(false);
   const [underModeration, setUnderModeration] = useState(false);
   const [completedTasks, setCompletedTasks] = useState({});
@@ -129,12 +128,12 @@ const TaskList = () => {
   const [timerStarted, setTimerStarted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
-  const [showConfetti, setShowConfetti] = useState(false); // Confetti state
-  const audioRef = useRef(null); // Ref for audio element
+  const [showConfetti, setShowConfetti] = useState(false); 
+  const audioRef = useRef(null); 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
-  }); // State for window size
+  }); 
 
   // Handle window resize to adjust confetti size
   useEffect(() => {
@@ -154,7 +153,6 @@ const TaskList = () => {
       setLoading(true);
       try {
         const userID = await getUserID(setUserID, setUsername);
-        console.log("UserID fetched:", userID);
         const userResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/user-info/${userID}`
         );
@@ -210,7 +208,6 @@ const TaskList = () => {
   const handleTaskClick = (task) => {
     if (!completedTasks[task._id]) {
       setSelectedTask(task);
-      setProof("");
       setIsClaimable(false);
       setUnderModeration(false);
       setTimer(10);
@@ -260,11 +257,11 @@ const TaskList = () => {
       }));
 
       setMessage({ text: "Points awarded!", type: "success" });
-      setShowConfetti(true); // Trigger confetti animation
-      audioRef.current.play(); // Play celebration sound
+      setShowConfetti(true);
+      audioRef.current.play();
 
       setTimeout(() => {
-        setShowConfetti(false); // Stop confetti after a few seconds
+        setShowConfetti(false);
       }, 5000);
 
       setSelectedTask(null);
@@ -368,40 +365,31 @@ const TaskList = () => {
                 />
                 <ModalHeader>{selectedTask.name}</ModalHeader>
                 <PointsDisplayModal>
-                <GemIconModal />+
-                  {selectedTask.points} GEMS
+                <GemIconModal />+{selectedTask.points} GEMS
                 </PointsDisplayModal>
                 <ModalContent>{selectedTask.description}</ModalContent>
 
                 {isClaimable && !underModeration ? (
-                  <>
-                    <ProofInput
-                      type="text"
-                      placeholder={selectedTask.proofPlaceholder}
-                      value={proof}
-                      onChange={(e) => setProof(e.target.value)}
-                    />
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <ClaimButton
+                      onClick={handleClaimReward}
+                      disabled={underModeration}
                     >
-                      <ClaimButton
-                        onClick={handleClaimReward}
-                        disabled={!proof.trim() || underModeration}
-                      >
-                        {underModeration ? "Claiming..." : "Claim Reward"}
-                      </ClaimButton>
+                      {underModeration ? "Claiming..." : "Claim Reward"}
+                    </ClaimButton>
 
-                      <PerformAgainButton
-                        onClick={handleStartTask}
-                        disabled={underModeration}
-                      >
-                        Perform Again
-                      </PerformAgainButton>
-                    </div>
-                  </>
+                    <PerformAgainButton
+                      onClick={handleStartTask}
+                      disabled={underModeration}
+                    >
+                      Perform Again
+                    </PerformAgainButton>
+                  </div>
                 ) : timerStarted && !isClaimable ? (
                   <ModalButton disabled>Processing, please wait...</ModalButton>
                 ) : !timerStarted && !isClaimable && !underModeration ? (
