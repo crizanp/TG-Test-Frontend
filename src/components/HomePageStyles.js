@@ -118,7 +118,8 @@ export const EagleImage = styled.img`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   margin-top: 10px;
-
+  user-select: none; /* Disable text selection */
+  
   &.shift-up {
     animation: ${eagleShiftUp} 0.3s ease-in-out; /* Smooth and fast animation */
   }
