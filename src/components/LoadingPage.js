@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import styled from 'styled-components';
 
 const LoadingContainer = styled.div`
@@ -14,28 +13,6 @@ const LoadingContainer = styled.div`
 `;
 
 function LoadingPage() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkEnvironment = () => {
-      const isLocalhost = window.location.hostname === 'localhost';
-      const tg = window.Telegram.WebApp;
-
-      if (isLocalhost) {
-        // If running on localhost, navigate to home directly after 4 seconds
-        setTimeout(() => navigate('/home'), 4000);
-      } else if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        // If running in Telegram, wait 4 seconds and then navigate to home
-        setTimeout(() => navigate('/home'), 4000);
-      } else {
-        // If not in Telegram and not on localhost, stay on loading page
-        // Additional logic could be added here if needed
-      }
-    };
-
-    checkEnvironment();
-  }, [navigate]);
-
   return <LoadingContainer />;
 }
 
