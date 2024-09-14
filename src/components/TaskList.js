@@ -37,7 +37,12 @@ export const GemIcon = styled(FaRegGem)`
   font-size: 1.3rem;
   margin-top: -3px;
 `;
-
+const GemIconModal = styled(FaRegGem)`
+  color: #36a8e5;  // Similar color to UserInfo component
+  margin-left: 8px;
+  margin-right: 8px;
+  font-size: 1.9rem;
+`;
 const TaskItemContainer = styled.div`
   display: flex;
   align-items: center;
@@ -363,7 +368,7 @@ const TaskList = () => {
                 />
                 <ModalHeader>{selectedTask.name}</ModalHeader>
                 <PointsDisplayModal>
-                  <CoinIcon src={coinIcon} alt="Coin Icon" />+
+                <GemIconModal />+
                   {selectedTask.points} GEMS
                 </PointsDisplayModal>
                 <ModalContent>{selectedTask.description}</ModalContent>

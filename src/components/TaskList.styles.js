@@ -375,7 +375,7 @@ export const PointsDisplayModal = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: #f0a500; // Yellow for points
+  color: #36a8e5; // Yellow for points
   font-weight: bold;
   margin-bottom: 10px;
 
