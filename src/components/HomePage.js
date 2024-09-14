@@ -5,7 +5,7 @@ import { useEnergy } from '../context/EnergyContext';
 import { debounce } from 'lodash';
 import { Link } from 'react-router-dom';
 import { FaTasks, FaRegGem } from 'react-icons/fa';  // Import FaRegGem for gem icon
-import styled ,{  createGlobalStyle }from 'styled-components';
+import styled from 'styled-components';
 
 import {
   HomeContainer,
@@ -35,14 +35,6 @@ const GemIcon = styled(FaRegGem)`
   margin-right: 8px;
   font-size: 1.9rem;
 `;
-const GlobalStyle = createGlobalStyle`
-  * {
-    -webkit-user-select: none; 
-    -webkit-touch-callout: none; 
-    outline: none; 
-    -webkit-tap-highlight-color: transparent; 
-  }
-`;
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
   const { energy, decreaseEnergy } = useEnergy();
@@ -56,9 +48,7 @@ function HomePage() {
 
   // Accumulate unsynced points to avoid sending too many server requests
   const [unsyncedPoints, setUnsyncedPoints] = useState(0);
-  const handlePreventContextMenu = (event) => {
-    event.preventDefault(); // Prevent context menu from appearing
-  };
+
   useEffect(() => {
     const initializeUser = async () => {
       const userID = await getUserID(setUserID);
@@ -191,10 +181,6 @@ function HomePage() {
   }, [unsyncedPoints, syncPointsWithServer]);
 
   return (
-    <>
-            <GlobalStyle />
-
-    
     <HomeContainer onTouchStart={handleTap}>
       <UserInfo />
       <CurvedBorderContainer ref={curvedBorderRef} className="curved-border" />
@@ -207,12 +193,11 @@ function HomePage() {
       <MiddleSection>
         <Message>{getMessage}</Message>
         <EagleContainer>
-        <EagleImage
-          src={eagleImage}
-          alt="Eagle"
-          className="eagle-image"
-          onContextMenu={handlePreventContextMenu} // Disable right-click or long-press menu
-        />
+          <EagleImage
+            src={eagleImage}
+            alt="Eagle"
+            className="eagle-image"
+          />
         </EagleContainer>
       </MiddleSection>
 
@@ -240,7 +225,6 @@ function HomePage() {
         </SlapEmoji>
       ))}
     </HomeContainer>
-    </>
   );
 }
 
