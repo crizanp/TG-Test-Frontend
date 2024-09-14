@@ -288,7 +288,7 @@ const FriendPage = () => {
   const handleForwardLink = () => {
     const inviteLink = `https://t.me/share/url?url=${encodeURIComponent(
       referralLink
-    )}&text=🚀 **Tap, Play, and Earn!**%0A%0A🚀 **Join the Gem Hunters Club** and start your journey to becoming crypto-rich!%0A🌟 **I'm already a proud club member**, and trust me, it's an absolute game-changer!%0A💎 **Come and be part of the Gem Hunters Club today!**`;
+    )}&text=🚀 Tap, Play, and Earn!%0A%0A🚀 Join the Gem Hunters Club and start your journey to becoming crypto-rich!%0A🌟 I'm already a proud club member, and trust me, it's an absolute game-changer!%0A💎 Come and be part of the Gem Hunters Club today!`;
     window.Telegram.WebApp?.openTelegramLink(inviteLink);
   };
   
