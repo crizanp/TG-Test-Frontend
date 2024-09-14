@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const getUserID = async (setUserID, setUsername) => {
-  
+
   const isLocalhost = window.location.hostname === 'localhost';
 
   // Get the Telegram user ID and username from the Telegram Web App
@@ -29,8 +29,12 @@ export const getUserID = async (setUserID, setUsername) => {
       // Check if the user already exists in the database
       await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
 
-      // Now check if the user is in the referral list as a referredID
-      await checkAndCompleteReferral(tgUserID);
+      // Check referral status only if needed (for example, store a flag or check based on user profile)
+      const referralStatusChecked = localStorage.getItem(`referralChecked_${tgUserID}`);
+      if (!referralStatusChecked) {
+        await checkAndCompleteReferral(tgUserID);
+        localStorage.setItem(`referralChecked_${tgUserID}`, 'true'); // Mark as checked
+      }
 
       return tgUserID;
 
@@ -66,7 +70,6 @@ export const getUserID = async (setUserID, setUsername) => {
   }
 };
 
-
 // Function to check referral and update status to complete if the user is referred
 const checkAndCompleteReferral = async (tgUserID) => {
   try {
@@ -87,4 +90,3 @@ const checkAndCompleteReferral = async (tgUserID) => {
     }
   }
 };
-
