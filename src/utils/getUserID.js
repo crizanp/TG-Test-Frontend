@@ -1,46 +1,73 @@
-import axios from 'axios';
+import axios from "axios";
 
 export const getUserID = async (setUserID, setUsername) => {
-  
-  const isLocalhost = window.location.hostname === 'localhost';
+  const isLocalhost = window.location.hostname === "localhost";
 
-  // Get the Telegram user ID and username from the Telegram Web App
-  let tgUserID = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-  let tgUsername = window.Telegram?.WebApp?.initDataUnsafe?.user?.username;
+  // Check if the app is running inside Telegram
+  const isTelegramAvailable = window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+  // If Telegram Web App is available, get the user ID, username, and first name
+  let tgUserID = isTelegramAvailable
+    ? window.Telegram.WebApp.initDataUnsafe.user.id
+    : null;
+  let tgUsername = isTelegramAvailable
+    ? window.Telegram.WebApp.initDataUnsafe.user.username
+    : null;
+  let tgFirstName = isTelegramAvailable
+    ? window.Telegram.WebApp.initDataUnsafe.user.first_name
+    : null;
 
   // For localhost testing
   if (isLocalhost) {
-    tgUserID = 'mockUserID123';
-    tgUsername = 'mockUsername';  // Mock username for testing
-    console.warn('Running on localhost: Mock Telegram user ID and username assigned.');
+    tgUserID = "mockUserID123";
+    tgUsername = "mockUsername"; // Mock username for testing
+    tgFirstName = "MockFirstName"; // Mock first name for testing
+    console.warn(
+      "Running on localhost: Mock Telegram user ID, username, and first name assigned."
+    );
   }
 
-  // Ensure tgUserID exists
+  // Function to clean the first name and limit it to 8 characters
+  const cleanFirstName = (firstName) => {
+    if (!firstName) return "Unknown"; // Fallback if no first name is available
+    // Remove special characters and emojis, keep only letters and numbers, limit to 8 characters
+    return firstName.replace(/[^a-zA-Z0-9]/g, "").substring(0, 8) || "Unknown";
+  };
+
+  // If Telegram user ID is available
   if (tgUserID) {
     tgUserID = tgUserID.toString();
     setUserID(tgUserID);
 
-    // Only set the username if it's available
+    // If username is available, set it; otherwise, fallback to a clean first name
     if (tgUsername && setUsername) {
       setUsername(tgUsername);
+    } else if (setUsername) {
+      const cleanedFirstName = cleanFirstName(tgFirstName);
+      setUsername(cleanedFirstName); // Use the cleaned first name
     }
 
     try {
       // Check if the user already exists in the database
       await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
 
-      // Now check if the user is in the referral list as a referredID
-      await checkAndCompleteReferral(tgUserID);
+      // Check referral status only if needed (for example, store a flag or check based on user profile)
+      const referralStatusChecked = localStorage.getItem(
+        `referralChecked_${tgUserID}`
+      );
+      if (!referralStatusChecked) {
+        await checkAndCompleteReferral(tgUserID);
+        localStorage.setItem(`referralChecked_${tgUserID}`, "true"); // Mark as checked
+      }
 
       return tgUserID;
-
     } catch (error) {
       if (error.response && error.response.status === 404) {
         // If the user does not exist, create the user
         try {
           await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
-            username: tgUsername || 'Unknown', // Pass the correct username or "Unknown"
+            username: tgUsername || cleanFirstName(tgFirstName), // Pass the correct username or cleaned first name
             points: 0,
             tasksCompleted: [],
             taskHistory: [],
@@ -50,53 +77,47 @@ export const getUserID = async (setUserID, setUsername) => {
           await checkAndCompleteReferral(tgUserID);
 
           return tgUserID;
-
         } catch (postError) {
-          console.error('Error creating new user:', postError);
+          console.error("Error creating new user:", postError);
           throw postError;
         }
       } else {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
         throw error;
       }
     }
   } else {
-    console.error('User ID not available from Telegram.');
-    throw new Error('User ID not available from Telegram.');
+    console.error(
+      "User ID not available from Telegram. Make sure to access the app from Telegram."
+    );
+    throw new Error("User ID not available from Telegram.");
   }
 };
 
 // Function to check referral and update status to complete if the user is referred
 const checkAndCompleteReferral = async (tgUserID) => {
   try {
-    // Check localStorage for a completed referral status
-    const referralStatus = localStorage.getItem(`referralStatus_${tgUserID}`);
-
-    // If referralStatus is 'complete', skip the API call
-    if (referralStatus === 'complete') {
-      console.log(`Referral for user ${tgUserID} has already been completed.`);
-      return;
-    }
-
-    // If referralStatus is not in localStorage or incomplete, proceed with the API check
-    const referralResponse = await axios.get(`${process.env.REACT_APP_API_URL}/referrals/check/${tgUserID}`);
+    // Make a request to check if this user is in the referral system
+    const referralResponse = await axios.get(
+      `${process.env.REACT_APP_API_URL}/referrals/check/${tgUserID}`
+    );
 
     // If referral exists and is incomplete, update it to complete
-    if (referralResponse.data && referralResponse.data.status === 'incomplete') {
-      await axios.put(`${process.env.REACT_APP_API_URL}/referrals/complete/${tgUserID}`);
+    if (
+      referralResponse.data &&
+      referralResponse.data.status === "incomplete"
+    ) {
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/referrals/complete/${tgUserID}`
+      );
       console.log(`Referral for user ${tgUserID} marked as complete.`);
-
-      // Save the referral completion status in localStorage
-      localStorage.setItem(`referralStatus_${tgUserID}`, 'complete');
     }
   } catch (error) {
     // Suppress 404 errors (user not in referral system), but log other errors
     if (error.response && error.response.status === 404) {
       console.log(`No referral found for user ${tgUserID}.`);
-      // Optionally, you can save a 'not found' status to avoid future checks
-      localStorage.setItem(`referralStatus_${tgUserID}`, 'not_found');
     } else {
-      console.error('Error checking or completing referral:', error);
+      console.error("Error checking or completing referral:", error);
     }
   }
 };
