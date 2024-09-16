@@ -334,7 +334,7 @@ function LeaderboardPage() {
   }, []);
 
   const truncateUserID = (userID) => {
-    return `${userID.slice(0, 3)}...${userID.slice(-2)}`;
+    return `${userID.slice(0, 2)}...${userID.slice(-2)}`;
   };
 
   return (
@@ -423,7 +423,7 @@ function LeaderboardPage() {
                     src={avatarImages[(user.userID % 20) + 1]}
                     alt="User Avatar"
                   />
-                  <UserID>{truncateUserID(user.username)}</UserID>
+                  <UserID>{truncateUserID(user.userID)}</UserID>
                 </UserCell>
                 <PointsCell>
                   <FaRegGem style={{ marginRight: "8px", color: "#36a8e5" }} />
