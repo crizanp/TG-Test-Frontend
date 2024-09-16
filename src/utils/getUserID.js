@@ -34,6 +34,11 @@ export const getUserID = async (setUserID, setUsername) => {
     return firstName.replace(/[^a-zA-Z0-9]/g, "").substring(0, 8) || "Unknown";
   };
 
+  // Function to check if referral status should be updated for the current session
+  const shouldCheckReferralStatus = () => {
+    return !sessionStorage.getItem(`referralChecked_${tgUserID}`);
+  };
+
   // If Telegram user ID is available
   if (tgUserID) {
     tgUserID = tgUserID.toString();
@@ -51,13 +56,10 @@ export const getUserID = async (setUserID, setUsername) => {
       // Check if the user already exists in the database
       await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
 
-      // Check referral status only if needed (for example, store a flag or check based on user profile)
-      const referralStatusChecked = localStorage.getItem(
-        `referralChecked_${tgUserID}`
-      );
-      if (!referralStatusChecked) {
+      // Only check the referral status once per session
+      if (shouldCheckReferralStatus()) {
         await checkAndCompleteReferral(tgUserID);
-        localStorage.setItem(`referralChecked_${tgUserID}`, "true"); // Mark as checked
+        sessionStorage.setItem(`referralChecked_${tgUserID}`, "true"); // Mark referral check as done for the session
       }
 
       return tgUserID;
@@ -75,6 +77,7 @@ export const getUserID = async (setUserID, setUsername) => {
 
           // After registering the user, check if they are a referred user
           await checkAndCompleteReferral(tgUserID);
+          sessionStorage.setItem(`referralChecked_${tgUserID}`, "true"); // Mark referral check as done for the session
 
           return tgUserID;
         } catch (postError) {
