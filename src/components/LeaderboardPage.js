@@ -334,7 +334,7 @@ function LeaderboardPage() {
   }, []);
 
   const truncateUserID = (userID) => {
-    return `${userID.slice(0, 2)}...${userID.slice(-2)}`;
+    return `${userID.slice(0, 3)}...${userID.slice(-4)}`;
   };
 
   return (
@@ -390,7 +390,7 @@ function LeaderboardPage() {
           <thead>
             <tr>
               <TableHeader style={{ textAlign: "center" }}>#</TableHeader>
-              <TableHeader>User</TableHeader>
+              <TableHeader>User ID</TableHeader>
               <TableHeader style={{ textAlign: "center" }}>Total</TableHeader>
             </tr>
           </thead>
