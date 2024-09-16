@@ -344,7 +344,7 @@ function HomePage() {
       console.error("Error claiming daily reward:", error);
     }
   };
-
+ 
   const openModal = () => setShowModal(true);
 
   const closeModal = () => {
