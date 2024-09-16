@@ -10,7 +10,7 @@ import { usePoints } from "../context/PointsContext";
 import { useEnergy } from "../context/EnergyContext";
 import { debounce } from "lodash";
 import { Link } from "react-router-dom";
-import { FaTasks, FaRegGem } from "react-icons/fa";
+import { FaTasks, FaRegGem, FaFire } from "react-icons/fa";
 import Confetti from "react-confetti";
 import celebrationSound from "../assets/celebration.mp3";
 import styled from "styled-components";
@@ -55,6 +55,11 @@ const ModalOverlay = styled.div`
   justify-content: center;
   align-items: flex-end;
   z-index: 1000;
+`;
+const FireIcon = styled(FaFire)`
+  font-size: 1rem;
+  margin-right: 0px;
+  color: ${(props) => (props.$available ? "#f39c12" : "#a0a0a0")}; // Yellow if available, grey if not
 `;
 
 const RewardModalContainer = styled.div`
@@ -382,34 +387,35 @@ function HomePage() {
       </MiddleSection>
 
       <BottomContainer ref={bottomMenuRef} className="bottom-menu">
-        <EnergyContainer>
-          <EnergyIcon energy={energy} />
-          <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
-        </EnergyContainer>
+  <EnergyContainer>
+    <EnergyIcon energy={energy} />
+    <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
+  </EnergyContainer>
 
-        <Link to="/leaderboard" style={{ textDecoration: "none" }}>
-          <EnergyContainer>
-            <FaTasks style={{ marginRight: "5px" }} />
-            Leaderboard
-          </EnergyContainer>
-        </Link>
+  <Link to="/leaderboard" style={{ textDecoration: "none" }}>
+    <EnergyContainer>
+      <FaTasks style={{ marginRight: "5px" }} />
+      Leaderboard
+    </EnergyContainer>
+  </Link>
 
-        {/* Reward Button with no frontend message */}
-        <Link
-          to="#"
-          onClick={isRewardAvailable ? openModal : null}
-          style={{
-            textDecoration: "none",
-            pointerEvents: isRewardAvailable ? "auto" : "none",
-            opacity: isRewardAvailable ? 1 : 0.5,
-          }}
-        >
-          <EnergyContainer>
-            <FaTasks style={{ marginRight: "5px" }} />
-            Daily Reward
-          </EnergyContainer>
-        </Link>
-      </BottomContainer>
+  {/* Reward Button with Fire Icon */}
+  <Link
+    to="#"
+    onClick={isRewardAvailable ? openModal : null}
+    style={{
+      textDecoration: "none",
+      pointerEvents: isRewardAvailable ? "auto" : "none",
+      opacity: isRewardAvailable ? 1 : 0.5,
+    }}
+  >
+    <EnergyContainer>
+      <FireIcon $available={isRewardAvailable} />
+      Daily Reward
+    </EnergyContainer>
+  </Link>
+</BottomContainer>
+
 
       {showModal && (
         <ModalOverlay onClick={closeModal}>

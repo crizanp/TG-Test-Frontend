@@ -166,7 +166,7 @@ export const EnergyContainer = styled.div`
     background-color: #2a2a2a00;
     border-radius: 30px;
     padding: 0px 9px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
     width: 100px;
