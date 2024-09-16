@@ -10,9 +10,9 @@ import { usePoints } from "../context/PointsContext";
 import { useEnergy } from "../context/EnergyContext";
 import { debounce } from "lodash";
 import { Link } from "react-router-dom";
-import { FaTasks, FaRegGem } from "react-icons/fa"; 
+import { FaTasks, FaRegGem } from "react-icons/fa";
 import Confetti from "react-confetti";
-import celebrationSound from "../assets/celebration.mp3"; 
+import celebrationSound from "../assets/celebration.mp3";
 import styled from "styled-components";
 
 import {
@@ -64,7 +64,8 @@ const RewardModalContainer = styled.div`
   padding: 20px;
   border-radius: 20px 20px 0 0;
   position: relative;
-  animation: slideUp 0.5s ease-in-out;
+  animation: ${(props) => (props.isClosing ? "slideDown" : "slideUp")} 0.5s
+    ease-in-out;
 
   @keyframes slideUp {
     0% {
@@ -72,6 +73,15 @@ const RewardModalContainer = styled.div`
     }
     100% {
       transform: translateY(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
     }
   }
 `;
@@ -132,7 +142,7 @@ function HomePage() {
   const [showConfetti, setShowConfetti] = useState(false); // Confetti state
   const [rewardClaimed, setRewardClaimed] = useState(false); // Reward claimed state
   const audioRef = useRef(null); // Ref for playing sound
-
+  const [isClosing, setIsClosing] = useState(false);
   const curvedBorderRef = useRef(null);
   const bottomMenuRef = useRef(null);
 
@@ -309,30 +319,36 @@ function HomePage() {
 
   const claimDailyReward = async () => {
     try {
+      setShowModal(false); // Close the modal immediately after the claim button is clicked
+
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/claim-daily-reward/${userID}`
       );
       const newPoints = response.data.points;
-      
+
       setPoints(newPoints);
       localStorage.setItem(`points_${userID}`, newPoints); // Update points in local storage
       setIsRewardAvailable(false);
       setShowConfetti(true);
       audioRef.current.play(); // Play celebration sound
-  
+
       setTimeout(() => {
-        setShowConfetti(false);
-        setShowModal(false); // Close modal after confetti
+        setShowConfetti(false); // Hide confetti after 5 seconds
       }, 5000);
     } catch (error) {
       console.error("Error claiming daily reward:", error);
     }
   };
-  
 
   const openModal = () => setShowModal(true);
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setIsClosing(true); // Trigger the closing animation
+    setTimeout(() => {
+      setShowModal(false); // Hide the modal after the slide-down animation completes
+      setIsClosing(false); // Reset the closing state
+    }, 500); // Ensure this timeout matches the animation duration (500ms)
+  };
 
   useEffect(() => {
     const syncBeforeUnload = (e) => {
@@ -397,11 +413,13 @@ function HomePage() {
 
       {showModal && (
         <ModalOverlay onClick={closeModal}>
-          <RewardModalContainer onClick={(e) => e.stopPropagation()}>
+          <RewardModalContainer
+            onClick={(e) => e.stopPropagation()}
+            isClosing={isClosing} // Pass the closing state as a prop
+          >
             <CloseButton onClick={closeModal}>×</CloseButton>
             <ModalHeader>Claim Your Daily Reward!</ModalHeader>
 
-            {/* Show the reward inside the modal */}
             <PointsDisplayModal>
               <GemIcon /> +1000 GEMS
             </PointsDisplayModal>
