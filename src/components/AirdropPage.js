@@ -45,13 +45,13 @@ const TopSection = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 20px; /* Space between top section and content */
+  margin-bottom: 20px;
 `;
 
 const Logo = styled.img`
   width: 160px;
   height: 130px;
-  margin-bottom: 10px; /* Space between logo and text */
+  margin-bottom: 10px;
   margin-top: 20px;
 `;
 
@@ -66,6 +66,12 @@ const AirdropList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
+`;
+
+const NoAirdropMessage = styled.p`
+  color: #aaaaaa;
+  text-align: center;
+  margin: 20px 0;
 `;
 
 const AirdropCard = styled.div`
@@ -178,6 +184,7 @@ function AirdropPage() {
   const [airdrops, setAirdrops] = useState([]);
   const [loadingActive, setLoadingActive] = useState(true);
   const [loadingUpcoming, setLoadingUpcoming] = useState(true);
+  const [loadingCompleted, setLoadingCompleted] = useState(true);
 
   useEffect(() => {
     const fetchAirdrops = async () => {
@@ -189,6 +196,7 @@ function AirdropPage() {
       } finally {
         setLoadingActive(false);
         setLoadingUpcoming(false);
+        setLoadingCompleted(false);
       }
     };
 
@@ -206,6 +214,9 @@ function AirdropPage() {
           if (now >= new Date(airdrop.startDate) && now <= new Date(airdrop.endDate)) {
             status = 'active';
             timeLeft = new Date(airdrop.endDate) - now;
+          } else if (now > new Date(airdrop.endDate)) {
+            status = 'completed';
+            timeLeft = 0;
           }
 
           return { ...airdrop, status, timeLeft };
@@ -218,6 +229,7 @@ function AirdropPage() {
 
   const activeAirdrops = airdrops.filter(airdrop => airdrop.status === 'active');
   const upcomingAirdrops = airdrops.filter(airdrop => airdrop.status === 'upcoming');
+  const completedAirdrops = airdrops.filter(airdrop => airdrop.status === 'completed');
 
   return (
     <AirdropContainer>
@@ -233,16 +245,17 @@ function AirdropPage() {
         Note: These are the campaigns run within the IGH ecosystem, distributed according to the allocated amount. Please note that these campaigns are not managed within this mini app.
       </AirdropDescription>
 
+      {/* Active Airdrops */}
       <AirdropTitle>Active Airdrops Lists</AirdropTitle>
       {loadingActive ? (
         <AirdropSkeletonLoadingPage /> // Show skeleton loader if loading
-      ) : (
+      ) : activeAirdrops.length > 0 ? (
         <AirdropList>
           {activeAirdrops.map((airdrop) => (
             <AirdropCard
               key={airdrop._id}
               clickable={true}
-              onClick={() => window.open('https://icogemhunters.com/hemeraai', '_blank')}
+              onClick={() => window.open(airdrop.airdropLink, '_blank')} // Use specific link from airdrop data
             >
               <NameLogoContainer>
                 <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
@@ -259,12 +272,15 @@ function AirdropPage() {
             </AirdropCard>
           ))}
         </AirdropList>
+      ) : (
+        <NoAirdropMessage>No airdrops available for this category.</NoAirdropMessage>
       )}
 
+      {/* Upcoming Airdrops */}
       <AirdropTitle>Upcoming Airdrops Lists</AirdropTitle>
       {loadingUpcoming ? (
         <AirdropSkeletonLoadingPage /> // Show skeleton loader if loading
-      ) : (
+      ) : upcomingAirdrops.length > 0 ? (
         <AirdropList>
           {upcomingAirdrops.map((airdrop) => (
             <AirdropCard
@@ -286,6 +302,32 @@ function AirdropPage() {
             </AirdropCard>
           ))}
         </AirdropList>
+      ) : (
+        <NoAirdropMessage>No upcoming airdrops available.</NoAirdropMessage>
+      )}
+
+      {/* Completed Airdrops */}
+      <AirdropTitle>Completed Airdrops Lists</AirdropTitle>
+      {loadingCompleted ? (
+        <AirdropSkeletonLoadingPage /> // Show skeleton loader if loading
+      ) : completedAirdrops.length > 0 ? (
+        <AirdropList>
+          {completedAirdrops.map((airdrop) => (
+            <AirdropCard key={airdrop._id} clickable={false}>
+              <NameLogoContainer>
+                <AirdropLogo src={airdrop.logo} alt={`${airdrop.name} logo`} />
+                <AirdropName>{airdrop.name}</AirdropName>
+              </NameLogoContainer>
+              <AirdropDesc>{airdrop.description}</AirdropDesc>
+              <AirdropReward>Reward: {airdrop.reward}</AirdropReward>
+              <CountdownContainer>
+                <CountdownTimer active={false}>Completed</CountdownTimer>
+              </CountdownContainer>
+            </AirdropCard>
+          ))}
+        </AirdropList>
+      ) : (
+        <NoAirdropMessage>No completed airdrops available.</NoAirdropMessage>
       )}
 
       <Spacer />
