@@ -10,9 +10,9 @@ import { usePoints } from "../context/PointsContext";
 import { useEnergy } from "../context/EnergyContext";
 import { debounce } from "lodash";
 import { Link } from "react-router-dom";
-import { FaTasks, FaRegGem } from "react-icons/fa"; // Import FaRegGem for gem icon
+import { FaTasks, FaRegGem } from "react-icons/fa"; 
 import Confetti from "react-confetti";
-import celebrationSound from "../assets/celebration.mp3"; // Import celebration sound
+import celebrationSound from "../assets/celebration.mp3"; 
 import styled from "styled-components";
 
 import {
@@ -312,11 +312,14 @@ function HomePage() {
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/claim-daily-reward/${userID}`
       );
-      setPoints(response.data.points);
+      const newPoints = response.data.points;
+      
+      setPoints(newPoints);
+      localStorage.setItem(`points_${userID}`, newPoints); // Update points in local storage
       setIsRewardAvailable(false);
       setShowConfetti(true);
       audioRef.current.play(); // Play celebration sound
-
+  
       setTimeout(() => {
         setShowConfetti(false);
         setShowModal(false); // Close modal after confetti
@@ -325,6 +328,7 @@ function HomePage() {
       console.error("Error claiming daily reward:", error);
     }
   };
+  
 
   const openModal = () => setShowModal(true);
 

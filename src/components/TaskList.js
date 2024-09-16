@@ -224,8 +224,9 @@ const TaskList = () => {
 
   const handleClaimReward = async () => {
     setUnderModeration(true);
-
+  
     try {
+      // Update points on the server
       await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/update-points/${userID}`,
         {
@@ -233,12 +234,20 @@ const TaskList = () => {
           username: window.Telegram.WebApp?.initDataUnsafe?.user?.username,
         }
       );
-
+  
+      // Fetch the updated points from the server
       const userResponse = await axios.get(
         `${process.env.REACT_APP_API_URL}/user-info/${userID}`
       );
-      setPoints(userResponse.data.points);
-
+      const newPoints = userResponse.data.points;
+  
+      // Update points in state
+      setPoints(newPoints);
+  
+      // Update points in local storage
+      localStorage.setItem(`points_${userID}`, newPoints);
+  
+      // Update task history and completion status
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
         userID,
         tasksCompleted: [selectedTask._id],
@@ -250,20 +259,23 @@ const TaskList = () => {
           },
         ],
       });
-
+  
+      // Mark the task as completed
       setCompletedTasks((prevTasks) => ({
         ...prevTasks,
         [selectedTask._id]: true,
       }));
-
+  
+      // Show success message and confetti
       setMessage({ text: "Points awarded!", type: "success" });
       setShowConfetti(true);
       audioRef.current.play();
-
+  
       setTimeout(() => {
         setShowConfetti(false);
       }, 5000);
-
+  
+      // Clear the selected task after claiming
       setSelectedTask(null);
     } catch (error) {
       console.error("Error claiming reward:", error);
@@ -272,6 +284,7 @@ const TaskList = () => {
       setUnderModeration(false);
     }
   };
+  
 
   const handleClose = () => {
     setSelectedTask(null);
