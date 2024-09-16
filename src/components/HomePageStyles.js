@@ -160,17 +160,17 @@ export const EarnMoreBox = styled.div`
 `;
 
 export const EnergyContainer = styled.div`
-      display: flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     background-color: #2a2a2a00;
     border-radius: 30px;
-    padding: 0px 17px;
+    padding: 0px 9px;
     font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     width: 100px;
-    height: 45px;
+    height: 35px;
     text-align: justify;
     border: 2px solid #1fa3e6;
     text-decoration: none;
