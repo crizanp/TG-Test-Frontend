@@ -118,7 +118,9 @@ export const EagleImage = styled.img`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   margin-top: 10px;
-  user-select: none; /* Disable text selection */
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
   
   &.shift-up {
     animation: ${eagleShiftUp} 0.3s ease-in-out; /* Smooth and fast animation */
