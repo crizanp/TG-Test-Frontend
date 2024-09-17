@@ -44,17 +44,25 @@ export const getUserID = async (setUserID, setUsername) => {
     tgUserID = tgUserID.toString();
     setUserID(tgUserID);
 
-    // If username is available, set it; otherwise, fallback to a clean first name
-    if (tgUsername && setUsername) {
-      setUsername(tgUsername);
-    } else if (setUsername) {
-      const cleanedFirstName = cleanFirstName(tgFirstName);
-      setUsername(cleanedFirstName); // Use the cleaned first name
-    }
+    // Determine the username to send or fallback to first name
+    let finalUsername = tgUsername || cleanFirstName(tgFirstName);
+    setUsername(finalUsername); // Set the username or cleaned first name in the UI
 
     try {
       // Check if the user already exists in the database
-      await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`);
+      const userResponse = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`
+      );
+
+      const existingUsername = userResponse.data.username;
+
+      // If the existing username is 'Unknown', update it with the latest username or cleaned first name
+      if (existingUsername === "Unknown" && finalUsername !== "Unknown") {
+        await axios.put(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`, {
+          username: finalUsername, // Update the username with the latest username or first name
+        });
+        console.log(`Updated username to: ${finalUsername}`);
+      }
 
       // Only check the referral status once per session
       if (shouldCheckReferralStatus()) {
@@ -69,7 +77,7 @@ export const getUserID = async (setUserID, setUsername) => {
         try {
           await axios.post(`${process.env.REACT_APP_API_URL}/user-info/`, {
             userID: tgUserID,
-            username: tgUsername || cleanFirstName(tgFirstName), // Pass the correct username or cleaned first name
+            username: finalUsername, // Pass the correct username or cleaned first name
             points: 0,
             tasksCompleted: [],
             taskHistory: [],
