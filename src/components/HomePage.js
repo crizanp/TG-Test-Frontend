@@ -59,7 +59,10 @@ const ModalOverlay = styled.div`
 const FireIcon = styled(FaFire)`
   font-size: 1rem;
   margin-right: 0px;
-  color: ${(props) => (props.$available ? "#f39c12" : "#a0a0a0")}; // Yellow if available, grey if not
+  color: ${(props) =>
+    props.$available
+      ? "#f39c12"
+      : "#a0a0a0"}; // Yellow if available, grey if not
 `;
 
 const RewardModalContainer = styled.div`
@@ -208,7 +211,9 @@ function HomePage() {
 
     checkDailyRewardAvailability();
   }, [userID, setUserID, setPoints, checkDailyRewardAvailability]);
-
+  const handleContextMenu = (e) => {
+    e.preventDefault(); // This will prevent the default long-press behavior
+  };
   useEffect(() => {
     if (userID) {
       initializeUser();
@@ -344,7 +349,7 @@ function HomePage() {
       console.error("Error claiming daily reward:", error);
     }
   };
- 
+
   const openModal = () => setShowModal(true);
 
   const closeModal = () => {
@@ -382,40 +387,44 @@ function HomePage() {
         <Message>{getMessage}</Message>{" "}
         {/* Use getMessage directly as a value, not a function */}
         <EagleContainer>
-          <EagleImage src={eagleImage} alt="Eagle" className="eagle-image" />
+          <EagleImage
+            src={eagleImage}
+            alt="Eagle"
+            className="eagle-image"
+            onContextMenu={(e) => e.preventDefault()} // Prevent default context menu
+          />
         </EagleContainer>
       </MiddleSection>
 
       <BottomContainer ref={bottomMenuRef} className="bottom-menu">
-  <EnergyContainer>
-    <EnergyIcon energy={energy} />
-    <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
-  </EnergyContainer>
+        <EnergyContainer>
+          <EnergyIcon energy={energy} />
+          <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
+        </EnergyContainer>
 
-  {/* <Link to="/leaderboard" style={{ textDecoration: "none" }}>
+        {/* <Link to="/leaderboard" style={{ textDecoration: "none" }}>
     <EnergyContainer>
       <FaTasks style={{ marginRight: "5px" }} />
       Leaderboard
     </EnergyContainer>
   </Link> */}
 
-  {/* Reward Button with Fire Icon */}
-  <Link
-    to="#"
-    onClick={isRewardAvailable ? openModal : null}
-    style={{
-      textDecoration: "none",
-      pointerEvents: isRewardAvailable ? "auto" : "none",
-      opacity: isRewardAvailable ? 1 : 0.5,
-    }}
-  >
-    <EnergyContainer>
-      <FireIcon $available={isRewardAvailable} />
-      Daily Reward
-    </EnergyContainer>
-  </Link>
-</BottomContainer>
-
+        {/* Reward Button with Fire Icon */}
+        <Link
+          to="#"
+          onClick={isRewardAvailable ? openModal : null}
+          style={{
+            textDecoration: "none",
+            pointerEvents: isRewardAvailable ? "auto" : "none",
+            opacity: isRewardAvailable ? 1 : 0.5,
+          }}
+        >
+          <EnergyContainer>
+            <FireIcon $available={isRewardAvailable} />
+            Daily Reward
+          </EnergyContainer>
+        </Link>
+      </BottomContainer>
 
       {showModal && (
         <ModalOverlay onClick={closeModal}>
