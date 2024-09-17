@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled, { keyframes } from "styled-components";
 import AirdropSkeletonLoadingPage from "./AirdropSkeletonLoadingPage"; // Import SkeletonLoadingPage
+import { Link } from "react-router-dom";
 
 const AirdropContainer = styled.div`
   color: white;
@@ -242,7 +243,7 @@ function AirdropPage() {
       </TopSection>
 
       <AirdropDescription>
-        Note: These are the campaigns run within the IGH ecosystem, distributed according to the allocated amount. Please note that these campaigns are not managed within this mini app.
+        Note: These are the campaigns run within the IGH ecosystem, distributed according to the allocated amount. Please note that these campaigns are not managed within this <Link to="/leaderboard" style={{ textDecoration: "none", color:"#aaaaaa" }}>mini app</Link>.
       </AirdropDescription>
 
       {/* Active Airdrops */}
