@@ -392,12 +392,12 @@ function HomePage() {
     <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
   </EnergyContainer>
 
-  <Link to="/leaderboard" style={{ textDecoration: "none" }}>
+  {/* <Link to="/leaderboard" style={{ textDecoration: "none" }}>
     <EnergyContainer>
       <FaTasks style={{ marginRight: "5px" }} />
       Leaderboard
     </EnergyContainer>
-  </Link>
+  </Link> */}
 
   {/* Reward Button with Fire Icon */}
   <Link

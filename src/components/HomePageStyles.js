@@ -139,12 +139,12 @@ export const EarnMoreBox = styled.div`
   align-items: center;
   justify-content: flex-end;
   background-color: #2a2a2a00;
-  border-radius: 12px;
+  border-radius: 13px;
   padding: 10px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
   cursor: pointer;
-  width: 100px;
+  width: 110px;
   height: 45px;
   text-align: right;
   border: 2px solid #1fa3e6;
@@ -166,7 +166,7 @@ export const EnergyContainer = styled.div`
     background-color: #2a2a2a00;
     border-radius: 30px;
     padding: 0px 9px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     width: 100px;
