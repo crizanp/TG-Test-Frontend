@@ -117,7 +117,7 @@ const TaskList = () => {
   const [tasks, setTasks] = useState({
     special: [],
     daily: [],
-    ourEcosystems: [],
+    "our Ecosystem": [],
     extra: [],
   });
   const [selectedTask, setSelectedTask] = useState(null);
@@ -177,7 +177,7 @@ const TaskList = () => {
         const categorizedTasks = {
           special: data.filter((task) => task.category === "Special"),
           daily: data.filter((task) => task.category === "Daily"),
-          ourEcosystems: data.filter((task) => task.category === "Our Ecosystem"),
+          "our Ecosystem": data.filter((task) => task.category === "Our Ecosystem"),
           extra: data.filter((task) => task.category === "Extra"),
         };
 
@@ -331,9 +331,12 @@ const TaskList = () => {
         <TaskContainer>
           {Object.keys(tasks).map((category) => (
             <TaskCategory key={category}>
-              <TaskTitle>
-                {category.charAt(0).toUpperCase() + category.slice(1)} Tasks
-              </TaskTitle>
+            <TaskTitle>
+        {/* Special handling for 'our Ecosystem' to display differently */}
+        {category === "our Ecosystem"
+          ? "OUR ECOSYSTEM" // Show without 'Tasks'
+          : `${category.charAt(0).toUpperCase() + category.slice(1)} Tasks`} {/* Other categories with 'Tasks' */}
+      </TaskTitle>
               {tasks[category]
                 .sort((a, b) => {
                   const isACompleted = completedTasks[a._id] ? 1 : 0;
