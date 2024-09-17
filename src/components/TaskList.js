@@ -117,7 +117,7 @@ const TaskList = () => {
   const [tasks, setTasks] = useState({
     special: [],
     daily: [],
-    lists: [],
+    ourEcosystems: [],
     extra: [],
   });
   const [selectedTask, setSelectedTask] = useState(null);
@@ -177,7 +177,7 @@ const TaskList = () => {
         const categorizedTasks = {
           special: data.filter((task) => task.category === "Special"),
           daily: data.filter((task) => task.category === "Daily"),
-          lists: data.filter((task) => task.category === "Lists"),
+          ourEcosystems: data.filter((task) => task.category === "Our Ecosystem"),
           extra: data.filter((task) => task.category === "Extra"),
         };
 
