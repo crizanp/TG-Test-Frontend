@@ -38,7 +38,7 @@ export const GemIcon = styled(FaRegGem)`
   margin-top: -3px;
 `;
 const GemIconModal = styled(FaRegGem)`
-  color: #36a8e5;  // Similar color to UserInfo component
+  color: #36a8e5; // Similar color to UserInfo component
   margin-left: 8px;
   margin-right: 8px;
   font-size: 1.9rem;
@@ -128,12 +128,12 @@ const TaskList = () => {
   const [timerStarted, setTimerStarted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
-  const [showConfetti, setShowConfetti] = useState(false); 
-  const audioRef = useRef(null); 
+  const [showConfetti, setShowConfetti] = useState(false);
+  const audioRef = useRef(null);
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
-  }); 
+  });
 
   // Handle window resize to adjust confetti size
   useEffect(() => {
@@ -224,7 +224,7 @@ const TaskList = () => {
 
   const handleClaimReward = async () => {
     setUnderModeration(true);
-  
+
     try {
       // Update points on the server
       await axios.put(
@@ -234,19 +234,19 @@ const TaskList = () => {
           username: window.Telegram.WebApp?.initDataUnsafe?.user?.username,
         }
       );
-  
+
       // Fetch the updated points from the server
       const userResponse = await axios.get(
         `${process.env.REACT_APP_API_URL}/user-info/${userID}`
       );
       const newPoints = userResponse.data.points;
-  
+
       // Update points in state
       setPoints(newPoints);
-  
+
       // Update points in local storage
       localStorage.setItem(`points_${userID}`, newPoints);
-  
+
       // Update task history and completion status
       await axios.post(`${process.env.REACT_APP_API_URL}/user-info`, {
         userID,
@@ -259,22 +259,22 @@ const TaskList = () => {
           },
         ],
       });
-  
+
       // Mark the task as completed
       setCompletedTasks((prevTasks) => ({
         ...prevTasks,
         [selectedTask._id]: true,
       }));
-  
+
       // Show success message and confetti
       setMessage({ text: "Points awarded!", type: "success" });
       setShowConfetti(true);
       audioRef.current.play();
-  
+
       setTimeout(() => {
         setShowConfetti(false);
       }, 5000);
-  
+
       // Clear the selected task after claiming
       setSelectedTask(null);
     } catch (error) {
@@ -284,7 +284,6 @@ const TaskList = () => {
       setUnderModeration(false);
     }
   };
-  
 
   const handleClose = () => {
     setSelectedTask(null);
@@ -302,7 +301,7 @@ const TaskList = () => {
       )}
 
       <audio ref={audioRef} src={celebrationSound} />
-      
+
       {showConfetti && (
         <Confetti width={windowSize.width} height={windowSize.height} />
       )}
@@ -329,44 +328,54 @@ const TaskList = () => {
         <SkeletonLoaderTaskPage />
       ) : (
         <TaskContainer>
-          {Object.keys(tasks).map((category) => (
-            <TaskCategory key={category}>
-              <TaskTitle>
-                {category.charAt(0).toUpperCase() + category.slice(1)} Tasks
-              </TaskTitle>
-              {tasks[category]
-                .sort((a, b) => {
-                  const isACompleted = completedTasks[a._id] ? 1 : 0;
-                  const isBCompleted = completedTasks[b._id] ? 1 : 0;
-                  return isACompleted - isBCompleted;
-                })
-                .map((task) => (
-                  <TaskItemContainer
-                    key={task._id}
-                    $completed={completedTasks[task._id]}
-                    onClick={() => handleTaskClick(task)}
-                  >
-                    <TaskDetailsContainer>
-                      <TaskLogo
-                        src={task.logo || "https://via.placeholder.com/50"}
-                        alt={`${task.name} logo`}
-                      />
-                      <TaskTextContainer>
-                        <TaskTitleRow>{task.name}</TaskTitleRow>
-                        <TaskPointsContainer>
-                          <GemIcon />
-                          {task.points}
-                        </TaskPointsContainer>
-                      </TaskTextContainer>
-                    </TaskDetailsContainer>
+          {Object.keys(tasks).map((category) => {
+            // Replace 'lists' with 'Our Ecosystem' for display purposes
+            const displayCategory =
+              category === "lists"
+                ? "Our Ecosystem"
+                : category.charAt(0).toUpperCase() + category.slice(1);
 
-                    <TaskIcon $completed={completedTasks[task._id]}>
-                      {completedTasks[task._id] ? "Done" : <FaChevronRight />}
-                    </TaskIcon>
-                  </TaskItemContainer>
-                ))}
-            </TaskCategory>
-          ))}
+            return (
+              <TaskCategory key={category}>
+                <TaskTitle>{displayCategory} {
+                  category === "lists"
+                ? ""
+                : "Tasks"
+                }</TaskTitle>
+                {tasks[category]
+                  .sort((a, b) => {
+                    const isACompleted = completedTasks[a._id] ? 1 : 0;
+                    const isBCompleted = completedTasks[b._id] ? 1 : 0;
+                    return isACompleted - isBCompleted;
+                  })
+                  .map((task) => (
+                    <TaskItemContainer
+                      key={task._id}
+                      $completed={completedTasks[task._id]}
+                      onClick={() => handleTaskClick(task)}
+                    >
+                      <TaskDetailsContainer>
+                        <TaskLogo
+                          src={task.logo || "https://via.placeholder.com/50"}
+                          alt={`${task.name} logo`}
+                        />
+                        <TaskTextContainer>
+                          <TaskTitleRow>{task.name}</TaskTitleRow>
+                          <TaskPointsContainer>
+                            <GemIcon />
+                            {task.points}
+                          </TaskPointsContainer>
+                        </TaskTextContainer>
+                      </TaskDetailsContainer>
+
+                      <TaskIcon $completed={completedTasks[task._id]}>
+                        {completedTasks[task._id] ? "Done" : <FaChevronRight />}
+                      </TaskIcon>
+                    </TaskItemContainer>
+                  ))}
+              </TaskCategory>
+            );
+          })}
 
           {selectedTask && (
             <ModalOverlay>
@@ -378,7 +387,7 @@ const TaskList = () => {
                 />
                 <ModalHeader>{selectedTask.name}</ModalHeader>
                 <PointsDisplayModal>
-                <GemIconModal />+{selectedTask.points} GEMS
+                  <GemIconModal />+{selectedTask.points} GEMS
                 </PointsDisplayModal>
                 <ModalContent>{selectedTask.description}</ModalContent>
 
@@ -406,7 +415,9 @@ const TaskList = () => {
                 ) : timerStarted && !isClaimable ? (
                   <ModalButton disabled>Processing, please wait...</ModalButton>
                 ) : !timerStarted && !isClaimable && !underModeration ? (
-                  <ModalButton onClick={handleStartTask}>Start Task</ModalButton>
+                  <ModalButton onClick={handleStartTask}>
+                    Start Task
+                  </ModalButton>
                 ) : null}
 
                 {underModeration && (
