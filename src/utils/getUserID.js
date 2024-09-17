@@ -58,7 +58,7 @@ export const getUserID = async (setUserID, setUsername) => {
 
       // If the existing username is 'Unknown', update it with the latest username or cleaned first name
       if (existingUsername === "Unknown" && finalUsername !== "Unknown") {
-        await axios.put(`${process.env.REACT_APP_API_URL}/user-info/${tgUserID}`, {
+        await axios.put(`${process.env.REACT_APP_API_URL}/user-info/update-general/${tgUserID}`, {
           username: finalUsername, // Update the username with the latest username or first name
         });
         console.log(`Updated username to: ${finalUsername}`);
