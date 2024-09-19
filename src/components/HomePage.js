@@ -8,7 +8,7 @@ import React, {
 import axios from "axios";
 import { usePoints } from "../context/PointsContext";
 import { useEnergy } from "../context/EnergyContext";
-import { debounce,throttle  } from "lodash";
+import { debounce } from "lodash";
 import { Link } from "react-router-dom";
 import { FaTasks, FaRegGem, FaFire } from "react-icons/fa";
 import Confetti from "react-confetti";
@@ -274,9 +274,7 @@ function HomePage() {
   );
 
   const handleTap = useCallback(
-    throttle((e) => {
-      const validTouches = Array.from(e.touches).slice(0, 2); // Handle up to 2 touches only
-  
+    (e) => {
       if (energy <= 0) {
         return;
       }
@@ -285,67 +283,68 @@ function HomePage() {
         const curvedBorderRect = curvedBorderRef.current.getBoundingClientRect();
         const bottomMenuRect = bottomMenuRef.current.getBoundingClientRect();
   
-        validTouches.forEach((touch) => {
-          const pointsToAdd = calculatePoints(); // Always 1 per tap
-          const clickX = touch.clientX;
-          const clickY = touch.clientY;
+        const isDoubleTap = e.touches && e.touches.length === 2;
+        const isValidTap = e.touches.length <= 2; // Allow only up to 2 fingers
   
-          if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
-            const eagleElement = document.querySelector(".eagle-image");
-            eagleElement.classList.add("shift-up");
-            setTimeout(() => {
-              eagleElement.classList.remove("shift-up");
-            }, 300);
+        if (!isValidTap) {
+          return; // Ignore if more than 2 fingers are used
+        }
   
-            // Batch points updates
-            setPoints((prevPoints) => {
-              const newPoints = prevPoints + pointsToAdd;
-              localStorage.setItem(`points_${userID}`, newPoints);
-              return newPoints;
-            });
+        const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1); // Always add a maximum of 2 points
+        const clickX = e.touches[0].clientX;
+        const clickY = e.touches[0].clientY;
   
-            setTapCount((prevTapCount) => prevTapCount + 1);
+        if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
+          const eagleElement = document.querySelector(".eagle-image");
+          eagleElement.classList.add("shift-up");
+          setTimeout(() => {
+            eagleElement.classList.remove("shift-up");
+          }, 300);
   
-            // Animate flying points
-            const animateFlyingPoints = () => {
-              const id = Date.now();
-              setFlyingNumbers((prevNumbers) => [
-                ...prevNumbers,
-                { id, x: clickX, y: clickY - 30, value: pointsToAdd },
-              ]);
+          setPoints((prevPoints) => {
+            const newPoints = prevPoints + pointsToAdd;
+            localStorage.setItem(`points_${userID}`, newPoints);
+            return newPoints;
+          });
   
-              setTimeout(() => {
-                setFlyingNumbers((prevNumbers) =>
-                  prevNumbers.filter((num) => num.id !== id)
-                );
-              }, 750);
-            };
+          setTapCount((prevTapCount) => prevTapCount + 1);
   
-            animateFlyingPoints();
-  
-            // Display slap emoji
-            setSlapEmojis((prevEmojis) => [
-              ...prevEmojis,
-              { id: Date.now(), x: clickX, y: clickY },
+          const animateFlyingPoints = () => {
+            const id = Date.now();
+            setFlyingNumbers((prevNumbers) => [
+              ...prevNumbers,
+              { id, x: clickX, y: clickY - 30, value: pointsToAdd },
             ]);
   
-            // Update offline and unsynced points
-            setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
-            setUnsyncedPoints((prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd);
+            setTimeout(() => {
+              setFlyingNumbers((prevNumbers) =>
+                prevNumbers.filter((num) => num.id !== id)
+              );
+            }, 750);
+          };
   
-            decreaseEnergy(1); // Decrease energy for each tap
+          animateFlyingPoints();
   
-            // Sync points if online
-            if (navigator.onLine) {
-              syncPointsWithServer(unsyncedPoints + pointsToAdd);
-            }
+          setSlapEmojis((prevEmojis) => [
+            ...prevEmojis,
+            { id: Date.now(), x: clickX, y: clickY },
+          ]);
+  
+          setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
+          setUnsyncedPoints((prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd);
+  
+          decreaseEnergy(isDoubleTap ? 2 : 1);
+  
+          if (navigator.onLine) {
+            syncPointsWithServer(unsyncedPoints + pointsToAdd);
           }
-        });
+        }
       }
-    }, 200), // Throttle event handler, allowing it to trigger at most once every 200ms
+    },
     [syncPointsWithServer, setPoints, unsyncedPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
   
+
   const claimDailyReward = async () => {
     try {
       setShowModal(false); // Close the modal immediately after the claim button is clicked
@@ -423,7 +422,7 @@ function HomePage() {
 
   <EnergyContainer>
     <EnergyIcon energy={energy} />
-    <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
+    <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
   </EnergyContainer>
 
   {/* Daily Reward Button with Fire Icon */}
