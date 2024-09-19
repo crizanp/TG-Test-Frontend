@@ -319,7 +319,7 @@ function HomePage() {
                 setFlyingNumbers((prevNumbers) =>
                   prevNumbers.filter((num) => num.id !== id)
                 );
-              }, 750);  // Adjust the timeout duration to match your animation timing
+              }, 750); // Adjust the timeout duration to match your animation timing
             };
   
             animateFlyingPoints();
@@ -346,6 +346,7 @@ function HomePage() {
     },
     [syncPointsWithServer, setPoints, unsyncedPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
+  
   
   
 

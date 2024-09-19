@@ -208,7 +208,12 @@ export const FlyingNumber = styled.div`
   z-index: 10;
   pointer-events: none;
   transform: translate(-50%, -100%);
+  
+  /* Add this to ensure it disappears completely */
+  opacity: 0;
+  transition: opacity 0.75s ease-in-out;
 `;
+
 
 
 
