@@ -283,8 +283,6 @@ function HomePage() {
         const curvedBorderRect = curvedBorderRef.current.getBoundingClientRect();
         const bottomMenuRect = bottomMenuRef.current.getBoundingClientRect();
   
-        const isDoubleTap = e.touches && e.touches.length === 2;
-  
         Array.from(e.touches).forEach((touch) => {
           const pointsToAdd = calculatePoints(); // Always 1 per tap
   
@@ -316,11 +314,12 @@ function HomePage() {
                 { id, x: clickX, y: clickY - 30, value: pointsToAdd },
               ]);
   
+              // Ensure the points vanish after 750ms
               setTimeout(() => {
                 setFlyingNumbers((prevNumbers) =>
                   prevNumbers.filter((num) => num.id !== id)
                 );
-              }, 750);
+              }, 750);  // Adjust the timeout duration to match your animation timing
             };
   
             animateFlyingPoints();
@@ -347,6 +346,7 @@ function HomePage() {
     },
     [syncPointsWithServer, setPoints, unsyncedPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
+  
   
 
   const claimDailyReward = async () => {
