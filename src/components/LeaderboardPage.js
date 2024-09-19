@@ -176,9 +176,8 @@ const EarnMoreContainer = styled.div`
   padding: 10px;
   padding-top: 40px;
   background-color: #292929;
-  user-select: none;      /* Disable text/image selection */
-  pointer-events: none;   /* Disable all pointer events */
-  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
+  -webkit-user-select: none; 
+  -webkit-touch-callout: none; 
 `;
 
 const EarnBox = styled(Link)`

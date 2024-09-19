@@ -7,7 +7,7 @@ import reportWebVitals from './reportWebVitals';
 // Check if Telegram WebApp is available
 if (window.Telegram && window.Telegram.WebApp) {
   const TELEGRAM = window.Telegram.WebApp;
-  TELEGRAM.setHeaderColor('#252F43'); // Set the header color
+  TELEGRAM.setHeaderColor('#000000'); // Set the header color
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

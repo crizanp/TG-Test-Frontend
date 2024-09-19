@@ -69,6 +69,9 @@ const TaskLogo = styled.img`
   height: 50px;
   object-fit: cover;
   border-radius: 8px;
+  user-select: none; /* Disable text/image selection */
+  pointer-events: none; /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 `;
 
 const ModalTaskLogo = styled(TaskLogo)`
@@ -78,6 +81,9 @@ const ModalTaskLogo = styled(TaskLogo)`
   object-fit: contain;
   display: block;
   border-radius: 8px;
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 `;
 
 const TaskTextContainer = styled.div`
@@ -317,6 +323,10 @@ const TaskList = () => {
               height: "100px",
               marginBottom: "19px",
               marginTop: "20px",
+              userSelect: "none" /* Disable text/image selection */,
+              pointerEvents: "none" /* Disable all pointer events */,
+              WebkitUserDrag:
+                "none" /* Disable drag on image in WebKit-based browsers */,
             }}
           />
         </PointsDisplay>
@@ -337,11 +347,9 @@ const TaskList = () => {
 
             return (
               <TaskCategory key={category}>
-                <TaskTitle>{displayCategory} {
-                  category === "lists"
-                ? ""
-                : "Tasks"
-                }</TaskTitle>
+                <TaskTitle>
+                  {displayCategory} {category === "lists" ? "" : "Tasks"}
+                </TaskTitle>
                 {tasks[category]
                   .sort((a, b) => {
                     const isACompleted = completedTasks[a._id] ? 1 : 0;

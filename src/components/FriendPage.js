@@ -46,6 +46,9 @@ const InviteIcon3D = styled.img`
   height: 80px;
   margin-bottom: 15px;
   filter: drop-shadow(0px 0px 8px ${telegramLightBlue});
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 `;
 
 const InviteText = styled.p`
@@ -84,6 +87,9 @@ const BonusContent = styled.div`
 const BonusIcon = styled.img`
   width: 50px;
   height: 50px;
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 `;
 
 const BonusText = styled.div`

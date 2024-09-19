@@ -47,6 +47,9 @@ const TopSection = styled.div`
   align-items: center;
   text-align: center;
   margin-bottom: 20px;
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 `;
 
 const Logo = styled.img`
@@ -111,6 +114,9 @@ const AirdropLogo = styled.img`
   border-radius: 50%;
   object-fit: cover;
   flex: 0 0 18%;
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 `;
 
 const AirdropName = styled.h3`
