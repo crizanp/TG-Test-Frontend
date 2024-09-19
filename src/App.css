@@ -1,6 +1,8 @@
 .App {
   text-align: center;
-  user-select:none;
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 }
 
 .App-logo {
