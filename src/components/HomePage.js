@@ -14,6 +14,7 @@ import { FaTasks, FaRegGem, FaFire } from "react-icons/fa";
 import Confetti from "react-confetti";
 import celebrationSound from "../assets/celebration.mp3";
 import styled from "styled-components";
+import leaderboardImage from "../assets/leaderboard.png";
 
 import {
   HomeContainer,
@@ -136,6 +137,30 @@ const CloseButton = styled.button`
   border: none;
   cursor: pointer;
 `;
+const LeaderboardImage = styled.img`
+  width: 50px; // Adjust the size as needed
+  height: auto;
+  animation: tiltEffect 5s ease-in-out infinite; // Slower and smoother tilting animation
+
+  @keyframes tiltEffect {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(10deg); // Tilts 5 degrees to the right
+    }
+    50% {
+      transform: rotate(-10deg); // Tilts 5 degrees to the left
+    }
+    75% {
+      transform: rotate(7deg); // Tilts back slightly to the right
+    }
+    100% {
+      transform: rotate(0deg); // Returns to original position
+    }
+  }
+`;
+
 
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
@@ -397,34 +422,33 @@ function HomePage() {
       </MiddleSection>
 
       <BottomContainer ref={bottomMenuRef} className="bottom-menu">
-        <EnergyContainer>
-          <EnergyIcon energy={energy} />
-          <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
-        </EnergyContainer>
+  {/* Leaderboard section with animated image */}
+  <Link to="/leaderboard" style={{ textDecoration: "none" }}>
+      <LeaderboardImage src={leaderboardImage} alt="Leaderboard" />
+  </Link>
 
-        {/* <Link to="/leaderboard" style={{ textDecoration: "none" }}>
+  <EnergyContainer>
+    <EnergyIcon energy={energy} />
+    <EnergyCounter>{Math.floor(energy)}/3000</EnergyCounter>
+  </EnergyContainer>
+
+  {/* Daily Reward Button with Fire Icon */}
+  <Link
+    to="#"
+    onClick={isRewardAvailable ? openModal : null}
+    style={{
+      textDecoration: "none",
+      pointerEvents: isRewardAvailable ? "auto" : "none",
+      opacity: isRewardAvailable ? 1 : 0.5,
+    }}
+  >
     <EnergyContainer>
-      <FaTasks style={{ marginRight: "5px" }} />
-      Leaderboard
+      <FireIcon $available={isRewardAvailable} />
+      Daily Reward
     </EnergyContainer>
-  </Link> */}
+  </Link>
+</BottomContainer>
 
-        {/* Reward Button with Fire Icon */}
-        <Link
-          to="#"
-          onClick={isRewardAvailable ? openModal : null}
-          style={{
-            textDecoration: "none",
-            pointerEvents: isRewardAvailable ? "auto" : "none",
-            opacity: isRewardAvailable ? 1 : 0.5,
-          }}
-        >
-          <EnergyContainer>
-            <FireIcon $available={isRewardAvailable} />
-            Daily Reward
-          </EnergyContainer>
-        </Link>
-      </BottomContainer>
 
       {showModal && (
         <ModalOverlay onClick={closeModal}>
@@ -436,7 +460,7 @@ function HomePage() {
             <ModalHeader>Claim Your Daily Reward!</ModalHeader>
 
             <PointsDisplayModal>
-              <GemIcon /> +1000 GEMS
+              <GemIcon /> +10000 GEMS
             </PointsDisplayModal>
 
             <ClaimButton onClick={claimDailyReward} disabled={rewardClaimed}>

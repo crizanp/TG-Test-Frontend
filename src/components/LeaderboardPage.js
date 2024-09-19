@@ -39,23 +39,6 @@ const PointsDisplayContainer = styled.div`
 
 const PointsDisplay = styled.div``;
 
-const Title = styled.h1`
-  color: #e8e7e4;
-  margin-bottom: 20px;
-  font-size: 36px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-align: center;
-
-  @media (max-width: 768px) {
-    font-size: 28px;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 22px;
-  }
-`;
-
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -77,15 +60,6 @@ const TableHeader = styled.th`
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-align: left;
-
-  @media (max-width: 768px) {
-    padding: 8px;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 14px;
-    padding: 6px;
-  }
 `;
 
 const TableRow = styled.tr`
@@ -95,23 +69,6 @@ const TableRow = styled.tr`
   &:hover {
     background-color: #333333;
     transition: background-color 0.3s ease-in-out;
-  }
-`;
-
-const TableCell = styled.td`
-  padding: 12px;
-  color: #ffffff;
-  font-size: 18px;
-  text-align: left;
-
-  @media (max-width: 768px) {
-    padding: 8px;
-    font-size: 16px;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 14px;
-    padding: 6px;
   }
 `;
 
@@ -161,32 +118,18 @@ const RankCell = styled.td`
       font-size: 18px;
       text-align: center;
     `}
-
-  @media (max-width: 320px) {
-    font-size: 14px;
-    height: 30px;
-  }
 `;
 
 const UserCell = styled.td`
   width: 100%;
   display: flex;
-  align-items: center; /* Center align vertically */
+  align-items: center;
   padding: 8px;
   color: #ffffff;
   font-size: 18px;
   text-align: left;
   flex-direction: row;
   justify-content: left;
-
-  @media (max-width: 768px) {
-    font-size: 16px;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 14px;
-    padding: 6px;
-  }
 `;
 
 const PointsCell = styled.td`
@@ -195,19 +138,8 @@ const PointsCell = styled.td`
   color: #d5dbd7;
   font-weight: bold;
   font-size: 18px;
-  text-align: center;
-  vertical-align: middle; /* Align content vertically */
+  text-align: left;
 
-  @media (max-width: 768px) {
-    font-size: 16px;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 14px;
-    padding: 6px;
-  }
-
-  /* Crown icon and points alignment */
   span {
     display: inline-block;
     vertical-align: middle; /* Align crown and points text to the middle */
@@ -220,30 +152,12 @@ const UserAvatar = styled.img`
   height: 42px;
   border-radius: 50%;
   margin-right: 8px;
-
-  @media (max-width: 320px) {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
-const UserID = styled.span`
-  color: #cccccc;
-  font-size: 18px;
-
-  @media (max-width: 320px) {
-    font-size: 14px;
-  }
 `;
 
 const NoUsersMessage = styled.div`
   color: #e8e7e4;
   margin-top: 20px;
   font-size: 18px;
-
-  @media (max-width: 320px) {
-    font-size: 14px;
-  }
 `;
 
 const EarnMoreContainer = styled.div`
@@ -253,16 +167,6 @@ const EarnMoreContainer = styled.div`
   padding: 10px;
   padding-top: 40px;
   background-color: #292929;
-
-  @media (max-width: 768px) {
-    flex-direction: row;
-    justify-content: space-around;
-  }
-
-  @media (max-width: 320px) {
-    flex-direction: column;
-    justify-content: center;
-  }
 `;
 
 const EarnBox = styled(Link)`
@@ -279,22 +183,10 @@ const EarnBox = styled(Link)`
   margin: 0 10px;
   height: 85px; /* Set a fixed height to ensure all boxes are the same */
   flex-grow: 1;
-  text-decoration: none; /* Remove underline from Link */
+  text-decoration: none;
 
   &:hover {
-    background-color: #333333; /* Add a hover effect */
-  }
-
-  @media (max-width: 768px) {
-    width: 30%;
-    margin-bottom: 10px;
-    height: 85px; /* Maintain same height across screen sizes */
-  }
-
-  @media (max-width: 320px) {
-    width: 80%;
-    margin-bottom: 10px;
-    height: 85px; /* Maintain same height on small screens */
+    background-color: #333333;
   }
 `;
 
@@ -332,10 +224,23 @@ function LeaderboardPage() {
 
     fetchTopUsers();
   }, []);
-
-  const truncateUserID = (userID) => {
-    return `${userID.slice(0, 3)}...${userID.slice(-4)}`;
-  };
+// Function to truncate the username
+const truncateUsername = (username) => {
+  if (username.length <= 5) {
+    return username; // No need to truncate if username is too short
+  }
+  return `${username.slice(0, 3)}...${username.slice(-2)}`;
+};
+// Utility function to format points with K and M
+const formatPoints = (points) => {
+  if (points >= 1000000) {
+    return (points / 1000000).toFixed(2) + "M";
+  } else if (points >= 1000) {
+    return (points / 1000).toFixed(2) + "K";
+  } else {
+    return points.toFixed(0); // Return the full number for points below 1000
+  }
+};
 
   return (
     <LeaderboardContainer>
@@ -364,23 +269,18 @@ function LeaderboardPage() {
 
       <PointsDisplayContainer id="pointsDisplay">
         <PointsDisplay>
-          <PointsDisplay>
-            <img
-              src="https://i.ibb.co/pxGzrY8/leaderboard-1.png"
-              alt="Leaderboard Logo"
-              style={{
-                width: "150px",
-                height: "150px",
-                marginTop: "20px",
-              }}
-            />
-          </PointsDisplay>
+          <img
+            src="https://i.ibb.co/pxGzrY8/leaderboard-1.png"
+            alt="Leaderboard Logo"
+            style={{
+              width: "150px",
+              height: "150px",
+              marginTop: "20px",
+            }}
+          />
         </PointsDisplay>
       </PointsDisplayContainer>
 
-      <Title>Top Leaderboard</Title>
-
-      {/* Conditionally show the SkeletonLoader if data is still loading */}
       {isLoading ? (
         <SkeletonLoader /> // Show skeleton loader
       ) : users.length === 0 ? (
@@ -390,7 +290,7 @@ function LeaderboardPage() {
           <thead>
             <tr>
               <TableHeader style={{ textAlign: "center" }}>#</TableHeader>
-              <TableHeader>User ID</TableHeader>
+              <TableHeader>Username</TableHeader> {/* Changed from User ID to Username */}
               <TableHeader style={{ textAlign: "center" }}>Total</TableHeader>
             </tr>
           </thead>
@@ -420,14 +320,14 @@ function LeaderboardPage() {
                 </RankCell>
                 <UserCell>
                   <UserAvatar
-                    src={avatarImages[(user.userID % 20) + 1]}
+                    src={avatarImages[(user.userID % 20) + 1]} // This can still use userID for avatar, or switch to username logic if needed
                     alt="User Avatar"
                   />
-                  <UserID>{truncateUserID(user.userID)}</UserID>
-                </UserCell>
+                  <span>{truncateUsername(user.username)}</span>
+                  </UserCell>
                 <PointsCell>
                   <FaRegGem style={{ marginRight: "8px", color: "#36a8e5" }} />
-                  {user.points.toFixed(0)}
+                  {formatPoints(user.points)}
                 </PointsCell>
               </TableRow>
             ))}

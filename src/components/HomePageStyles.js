@@ -129,12 +129,13 @@ export const EagleImage = styled.img`
 
 export const BottomContainer = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: center; // Centers horizontally
+  align-items: center;     // Centers vertically
   width: 100%;
-
   padding: 0 20px;
   box-sizing: border-box;
 `;
+
 
 export const EarnMoreBox = styled.div`
   display: flex;

@@ -11,7 +11,7 @@ export const EnergyProvider = ({ children }) => {
 
   const MAX_ENERGY = 3000; // Updated max energy to 3000
   const ENERGY_REGEN_RATE = 1; // 1 energy point
-  const ENERGY_REGEN_INTERVAL = 3000; // Energy increases by 1 point every 3 seconds (3000ms)
+  const ENERGY_REGEN_INTERVAL = 1000; // Energy increases by 1 point every 3 seconds (3000ms)
   const USER_ID = 'some_user_id'; // Replace with actual user ID logic
 
   useEffect(() => {
