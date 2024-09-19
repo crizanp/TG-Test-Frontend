@@ -278,79 +278,76 @@ function HomePage() {
       if (energy <= 0) {
         return;
       }
-
+  
       if (curvedBorderRef.current && bottomMenuRef.current) {
-        const curvedBorderRect =
-          curvedBorderRef.current.getBoundingClientRect();
+        const curvedBorderRect = curvedBorderRef.current.getBoundingClientRect();
         const bottomMenuRect = bottomMenuRef.current.getBoundingClientRect();
-
+  
         const isDoubleTap = e.touches && e.touches.length === 2;
-        const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1);
-
-        const clickX = e.touches[0].clientX;
-        const clickY = e.touches[0].clientY;
-
-        if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
-          const eagleElement = document.querySelector(".eagle-image");
-          eagleElement.classList.add("shift-up");
-          setTimeout(() => {
-            eagleElement.classList.remove("shift-up");
-          }, 300);
-
-          setPoints((prevPoints) => {
-            const newPoints = prevPoints + pointsToAdd;
-            localStorage.setItem(`points_${userID}`, newPoints);
-            return newPoints;
-          });
-
-          setTapCount((prevTapCount) => prevTapCount + 1);
-
-          const animateFlyingPoints = () => {
-            const id = Date.now();
-            setFlyingNumbers((prevNumbers) => [
-              ...prevNumbers,
-              { id, x: clickX, y: clickY - 30, value: pointsToAdd },
-            ]);
-
+  
+        Array.from(e.touches).forEach((touch) => {
+          const pointsToAdd = calculatePoints(); // Always 1 per tap
+  
+          const clickX = touch.clientX;
+          const clickY = touch.clientY;
+  
+          // Make sure the tap is within the valid area
+          if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
+            const eagleElement = document.querySelector(".eagle-image");
+            eagleElement.classList.add("shift-up");
             setTimeout(() => {
-              setFlyingNumbers((prevNumbers) =>
-                prevNumbers.filter((num) => num.id !== id)
-              );
-            }, 750);
-          };
-
-          animateFlyingPoints();
-
-          setSlapEmojis((prevEmojis) => [
-            ...prevEmojis,
-            { id: Date.now(), x: clickX, y: clickY },
-          ]);
-
-          setOfflinePoints(
-            (prevOfflinePoints) => prevOfflinePoints + pointsToAdd
-          );
-          setUnsyncedPoints(
-            (prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd
-          );
-
-          decreaseEnergy(isDoubleTap ? 2 : 1);
-
-          if (navigator.onLine) {
-            syncPointsWithServer(unsyncedPoints + pointsToAdd);
+              eagleElement.classList.remove("shift-up");
+            }, 300);
+  
+            // Increase points and save them to localStorage
+            setPoints((prevPoints) => {
+              const newPoints = prevPoints + pointsToAdd;
+              localStorage.setItem(`points_${userID}`, newPoints);
+              return newPoints;
+            });
+  
+            setTapCount((prevTapCount) => prevTapCount + 1);
+  
+            // Animate flying points for each touch
+            const animateFlyingPoints = () => {
+              const id = Date.now();
+              setFlyingNumbers((prevNumbers) => [
+                ...prevNumbers,
+                { id, x: clickX, y: clickY - 30, value: pointsToAdd },
+              ]);
+  
+              setTimeout(() => {
+                setFlyingNumbers((prevNumbers) =>
+                  prevNumbers.filter((num) => num.id !== id)
+                );
+              }, 750);
+            };
+  
+            animateFlyingPoints();
+  
+            // Display slap emoji for each tap
+            setSlapEmojis((prevEmojis) => [
+              ...prevEmojis,
+              { id: Date.now(), x: clickX, y: clickY },
+            ]);
+  
+            // Update offline and unsynced points
+            setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
+            setUnsyncedPoints((prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd);
+  
+            decreaseEnergy(1); // Decrease energy for each tap
+  
+            // Sync points if online
+            if (navigator.onLine) {
+              syncPointsWithServer(unsyncedPoints + pointsToAdd);
+            }
           }
-        }
+        });
       }
     },
-    [
-      syncPointsWithServer,
-      setPoints,
-      unsyncedPoints,
-      offlinePoints,
-      energy,
-      decreaseEnergy,
-      userID,
-    ]
+    [syncPointsWithServer, setPoints, unsyncedPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
+  
 
   const claimDailyReward = async () => {
     try {
