@@ -37,7 +37,10 @@ const PointsDisplayContainer = styled.div`
   flex-direction: column;
 `;
 
-const PointsDisplay = styled.div``;
+const PointsDisplay = styled.div`
+user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */`;
 
 const Table = styled.table`
   width: 100%;
@@ -80,6 +83,9 @@ const RankCell = styled.td`
   font-weight: bold;
   text-align: center;
   position: relative;
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 
   ${({ rank }) =>
     rank === 1 &&
@@ -152,6 +158,9 @@ const UserAvatar = styled.img`
   height: 42px;
   border-radius: 50%;
   margin-right: 8px;
+  user-select: none;      /* Disable text/image selection */
+  pointer-events: none;   /* Disable all pointer events */
+  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
 `;
 
 const NoUsersMessage = styled.div`
