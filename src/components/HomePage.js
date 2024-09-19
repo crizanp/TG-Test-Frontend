@@ -8,7 +8,7 @@ import React, {
 import axios from "axios";
 import { usePoints } from "../context/PointsContext";
 import { useEnergy } from "../context/EnergyContext";
-import { debounce } from "lodash";
+import { debounce,throttle  } from "lodash";
 import { Link } from "react-router-dom";
 import { FaTasks, FaRegGem, FaFire } from "react-icons/fa";
 import Confetti from "react-confetti";
@@ -274,7 +274,9 @@ function HomePage() {
   );
 
   const handleTap = useCallback(
-    (e) => {
+    throttle((e) => {
+      const validTouches = Array.from(e.touches).slice(0, 2); // Handle up to 2 touches only
+  
       if (energy <= 0) {
         return;
       }
@@ -283,13 +285,11 @@ function HomePage() {
         const curvedBorderRect = curvedBorderRef.current.getBoundingClientRect();
         const bottomMenuRect = bottomMenuRef.current.getBoundingClientRect();
   
-        Array.from(e.touches).forEach((touch) => {
+        validTouches.forEach((touch) => {
           const pointsToAdd = calculatePoints(); // Always 1 per tap
-  
           const clickX = touch.clientX;
           const clickY = touch.clientY;
   
-          // Make sure the tap is within the valid area
           if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
             const eagleElement = document.querySelector(".eagle-image");
             eagleElement.classList.add("shift-up");
@@ -297,7 +297,7 @@ function HomePage() {
               eagleElement.classList.remove("shift-up");
             }, 300);
   
-            // Increase points and save them to localStorage
+            // Batch points updates
             setPoints((prevPoints) => {
               const newPoints = prevPoints + pointsToAdd;
               localStorage.setItem(`points_${userID}`, newPoints);
@@ -306,7 +306,7 @@ function HomePage() {
   
             setTapCount((prevTapCount) => prevTapCount + 1);
   
-            // Animate flying points for each touch
+            // Animate flying points
             const animateFlyingPoints = () => {
               const id = Date.now();
               setFlyingNumbers((prevNumbers) => [
@@ -314,17 +314,16 @@ function HomePage() {
                 { id, x: clickX, y: clickY - 30, value: pointsToAdd },
               ]);
   
-              // Ensure the points vanish after 750ms
               setTimeout(() => {
                 setFlyingNumbers((prevNumbers) =>
                   prevNumbers.filter((num) => num.id !== id)
                 );
-              }, 750); // Adjust the timeout duration to match your animation timing
+              }, 750);
             };
   
             animateFlyingPoints();
   
-            // Display slap emoji for each tap
+            // Display slap emoji
             setSlapEmojis((prevEmojis) => [
               ...prevEmojis,
               { id: Date.now(), x: clickX, y: clickY },
@@ -343,13 +342,10 @@ function HomePage() {
           }
         });
       }
-    },
+    }, 200), // Throttle event handler, allowing it to trigger at most once every 200ms
     [syncPointsWithServer, setPoints, unsyncedPoints, offlinePoints, energy, decreaseEnergy, userID]
   );
   
-  
-  
-
   const claimDailyReward = async () => {
     try {
       setShowModal(false); // Close the modal immediately after the claim button is clicked
