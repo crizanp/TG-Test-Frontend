@@ -24,7 +24,7 @@ const BottomMenuContainer = styled.div`
   bottom: 0;
   width: 100%;
   max-width: 460px;
-  padding: 0px 0px 10px 0px; 
+  ${'' /* padding: 0px 0px 10px 0px;  */}
   margin: 0 auto;
   z-index: 10;
   ${'' /* border-top: 2px solid #c5b8b8;  */}
@@ -75,9 +75,8 @@ const PoweredBy = styled.div`
 
 const MenuItems = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between; /* Ensures equal spacing between items */
   width: 100%;
-  padding-top: 5px;
 `;
 
 const MenuItem = styled.div`
@@ -87,22 +86,29 @@ const MenuItem = styled.div`
   color: #dfcec0;
   font-size: 12px;
   text-decoration: none;
-  padding: 10px; 
-  transition: transform 0.2s ease;
+  padding: 10px;
+  transition: background-color 0.2s ease;
   cursor: pointer;
+  background-color: ${({ isActive }) => (isActive ? 'rgba(255, 255, 255, 0.1)' : 'transparent')}; /* Dimmed background */
+  border-top: ${({ isActive }) => (isActive ? '4px solid #fff' : 'none')}; /* Thick top border */
+
+  flex-grow: 1; /* Ensures each item occupies equal space */
+  flex-basis: 0; /* Distributes items evenly */
 
   @media (max-width: 480px) {
-    font-size: 10px;
+    font-size: 11px;
   }
+`;
 
+
+const BouncingIcon = styled.div`
   ${({ isActive }) =>
     isActive &&
     css`
       animation: ${pulseAnimation} 1.5s infinite;
-      transform: scale(1.5);
-      color: #fff;
     `}
 `;
+
 
 const MenuLabel = styled.div`
   font-family: 'Poppins', sans-serif;
@@ -114,7 +120,6 @@ const MenuLabel = styled.div`
     font-size: 8px;
   }
 `;
-
 const VibrationMenuItem = (props) => {
   const handleClick = () => {
     if ('vibrate' in navigator) {
@@ -128,11 +133,12 @@ const VibrationMenuItem = (props) => {
 
   return (
     <MenuItem onClick={handleClick} isActive={props.isActive}>
-      {props.children}
+      <BouncingIcon isActive={props.isActive}>{props.children}</BouncingIcon>
       <MenuLabel>{props.label}</MenuLabel>
     </MenuItem>
   );
 };
+
 
 function BottomMenu() {
   const navigate = useNavigate(); 
@@ -149,14 +155,14 @@ function BottomMenu() {
       <GlobalStyle /> {/* Apply global styles */}
       <BottomMenuContainer>
         {/* Conditionally render the PoweredBy section based on location */}
-        {location.pathname !== '/home' && (
+        {/* {location.pathname !== '/home' && (
           <PoweredBy>
             Powered by{' '}
             <a href="https://icogemhunters.com" target="_blank" rel="noopener noreferrer">
               IGH Group [ ICOGEMHUNTERS ]
             </a>
           </PoweredBy>
-        )}
+        )} */}
         <MenuItems>
           <VibrationMenuItem
             label="Friend"
