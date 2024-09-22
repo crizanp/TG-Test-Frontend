@@ -224,7 +224,7 @@ function LeaderboardPage() {
         );
         const sortedUsers = response.data
           .sort((a, b) => b.points - a.points)
-          .slice(0, 20); // Top 20 users
+          .slice(0, 30); // Top 20 users
         setUsers(sortedUsers);
       } catch (error) {
         console.error("Error fetching top users:", error);

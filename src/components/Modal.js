@@ -1,152 +1,126 @@
 import React from "react";
 import styled from "styled-components";
-import { FaTimes } from "react-icons/fa"; // Importing the close button icon
+import { FaTimes } from "react-icons/fa"; // Close button icon
 
-// Modal background that covers the bottom half of the screen with blur and slide-up animation
-const ModalBackground = styled.div`
+// Overlay for the modal background
+const ModalOverlay = styled.div`
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
-  width: 100%;
-  height: 50%;
-  background-color: rgba(0, 0, 0, 0.85); // Dark background
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 100;
-  animation: slideUp 0.5s ease-in-out forwards; // Smooth slide-up animation
+  align-items: flex-end;
+  z-index: 1000;
+`;
+
+// Modal container with slide-up animation
+const RewardModalContainer = styled.div`
+  width: 100%;
+  max-width: 400px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  position: relative;
+  animation: ${(props) => (props.isClosing ? "slideDown" : "slideUp")} 0.5s ease-in-out;
 
   @keyframes slideUp {
-    from {
+    0% {
       transform: translateY(100%);
     }
-    to {
+    100% {
       transform: translateY(0);
     }
   }
 
-  @media (max-width: 768px) {
-    height: 60%; // Increased height on smaller screens
+  @keyframes slideDown {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
+    }
   }
 `;
 
-// Modal content area for displaying crowns, description, and buttons
-const ModalContent = styled.div`
-  background-color: #1a1a1a;  // Dark background for modal
-  padding: 25px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 400px;
+// Header for the modal
+const ModalHeader = styled.h2`
   text-align: center;
-  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.8); // Shadow for depth
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-
-  @media (max-width: 480px) {
-    padding: 15px;
-    height: auto;
-  }
+  color: #333;
 `;
 
-// Close button in the top-right corner of the modal
-const CloseIcon = styled(FaTimes)`
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 24px;
-  color: #f7f7f7;
+// Button to claim or confirm an action
+const ClaimButton = styled.button`
+  background-color: #36a8e5;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 20px;
+  font-size: 16px;
   cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    opacity: 0.8;
+    background-color: #298dc8;
   }
 `;
 
-// Crown container for image and text
-const CrownContainer = styled.div`
+// Display points or confirmation message
+const PointsDisplayModal = styled.div`
+  font-size: 1.5rem;
+  text-align: center;
+  color: #36a8e5;
+  margin: 20px 0;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
 `;
 
-// Crown image replacing the icon
-const CrownImage = styled.img`
-  width: 85px;
-  height: 75px;
-  margin-bottom: 10px;
-`;
-
-// Text showing crown points
-const CrownText = styled.p`
-  font-size: 26px;
-  color: #ffbf00;
-  font-weight: bold;
-`;
-
-// Description about the point deduction
-const DescriptionText = styled.p`
-  font-size: 16px;
-  color: #f7f7f7;
-  margin-bottom: 20px;
-
-  @media (max-width: 480px) {
-    font-size: 20px;
-  }
-`;
-
-// Go ahead button for points deduction with hover effect
-const GoAheadButton = styled.button`
-  background-color: #3e9ed1;
-  color: white;
-  padding: 15px 25px;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: bold;
+// Close button
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 30px;
+  color: #333;
+  background: none;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-
-  &:hover {
-    background-color: #a64ca6; 
-    transform: scale(1.05); // Slight scaling effect on hover
-  }
-
-  &:disabled {
-    background-color: grey;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 23px;
-    padding: 13px 20px;
-    margin-bottom: 10px;
-  }
 `;
 
-// Modal component that displays crown image, points deduction description, and buttons
-const Modal = ({ onGoAhead, onClose }) => {
+// Styled image component
+const StyledImage = styled.img`
+  width: 105px;
+  height: 120px;
+  display: block;
+  margin: 0 auto 20px;
+`;
+
+const Modal = ({ onGoAhead, onClose, isClosing }) => {
   return (
-    <ModalBackground>
-      <ModalContent>
-        {/* Close button */}
-        <CloseIcon onClick={onClose} />
+    <ModalOverlay onClick={onClose}>
+      <RewardModalContainer onClick={(e) => e.stopPropagation()} isClosing={isClosing}>
+        <CloseButton onClick={onClose}>×</CloseButton>
+        <ModalHeader>View Correct Answer</ModalHeader>
 
-        <CrownContainer>
-          {/* Crown image instead of icon */}
-          <CrownImage src="https://cdn-icons-png.flaticon.com/512/2244/2244513.png" alt="Crown" />
-          <CrownText>50 Crowns</CrownText>
-        </CrownContainer>
+        {/* Image placed below the header */}
+        <StyledImage src="https://i.ibb.co/z2c4kfZ/3d.png" alt="Crown" />
 
-        {/* Short description about points deduction */}
-        <DescriptionText>
-          Viewing the correct answer will deduct 50 points from your total.
-        </DescriptionText>
+        <PointsDisplayModal>
+          <span>50 GEMS</span>
+        </PointsDisplayModal>
 
-        <GoAheadButton onClick={onGoAhead}>Go Ahead </GoAheadButton>
-      </ModalContent>
-    </ModalBackground>
+        <p style={{ textAlign: "center", color: "#333" }}>
+          Viewing the correct answer will deduct 50 GEMS from your total.
+        </p>
+
+        <ClaimButton onClick={onGoAhead}>Go Ahead</ClaimButton>
+      </RewardModalContainer>
+    </ModalOverlay>
   );
 };
 

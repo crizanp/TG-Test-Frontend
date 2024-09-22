@@ -161,10 +161,40 @@ function EcosystemPage() {
     setShowCorrectAnswerModal(true);
   };
 
-  const handleGoAhead = () => {
-    setPoints((prevPoints) => prevPoints - 50);
-    setShowCorrectAnswer(true);
-    setShowCorrectAnswerModal(false); // Close the modal after deduction
+  const handleGoAhead = async () => {
+    if (points < 50) {
+      setFloatingMessage("Not enough points to show the correct answer!");
+      setFloatingMessageType("error");
+      return; // Stop the function if not enough points
+    }
+
+    try {
+      // Deduct 50 points from the backend
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/user-info/deduct-points`,
+        {
+          userID: userID,
+          pointsToDeduct: 50,
+        }
+      );
+
+      // Fetch the updated points from the response
+      const updatedPoints = response.data.points;
+
+      // Update points in state
+      setPoints(updatedPoints);
+
+      // Store the updated points in local storage
+      localStorage.setItem(`points_${userID}`, updatedPoints);
+
+      // Show the correct answer after deduction
+      setShowCorrectAnswer(true);
+      setShowCorrectAnswerModal(false); // Close the modal after deduction
+    } catch (error) {
+      console.error("Error deducting points:", error);
+      setFloatingMessage("Error deducting points!");
+      setFloatingMessageType("error");
+    }
   };
 
   const handleNextQuiz = async () => {
@@ -277,7 +307,8 @@ function EcosystemPage() {
               {/* Only show the button if the answer is wrong and submitted */}
               {showFeedback &&
                 selectedOption !== correctOption &&
-                !showCorrectAnswer && (
+                !showCorrectAnswer &&
+                points >= 50 && ( // Only show the button if the user has at least 50 points
                   <CorrectAnswerButton onClick={handleShowCorrectAnswer}>
                     Show Correct Answer
                   </CorrectAnswerButton>
@@ -291,7 +322,9 @@ function EcosystemPage() {
               )}
             </QuizBox>
           ) : (
-            <NoQuestionsMessage>No quiz available at the moment.</NoQuestionsMessage>
+            <NoQuestionsMessage>
+              No quiz available at the moment.
+            </NoQuestionsMessage>
           )}
         </ScrollableContent>
 
