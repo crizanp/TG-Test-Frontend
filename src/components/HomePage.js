@@ -178,6 +178,7 @@ function HomePage() {
   const [isClosing, setIsClosing] = useState(false);
   const curvedBorderRef = useRef(null);
   const bottomMenuRef = useRef(null);
+  const [backgroundImage, setBackgroundImage] = useState(""); // Holds the active background URL
 
   // Accumulate unsynced points to avoid sending too many server requests
   const [unsyncedPoints, setUnsyncedPoints] = useState(0);
@@ -187,6 +188,24 @@ function HomePage() {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const fetchActiveBackground = useCallback(async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/background/active`);
+      console.log("Background response:", response.data); // Add this line to log the response
+  
+      if (response.data && response.data.url) {
+        setBackgroundImage(response.data.url); // Set the active background
+      } else {
+        console.warn("No background URL found in the response.");
+      }
+    } catch (error) {
+      console.error("Error fetching active background:", error);
+    }
+  }, []);
+  useEffect(() => {
+    // Fetch the active background when the component mounts
+    fetchActiveBackground();
+  }, [fetchActiveBackground]); // Add fetchActiveBackground as a dependency
 
   useEffect(() => {
     const handleResize = () => {
@@ -392,7 +411,12 @@ function HomePage() {
   }, [unsyncedPoints, syncPointsWithServer]);
 
   return (
-    <HomeContainer onTouchStart={handleTap}>
+    <HomeContainer 
+  style={{
+    backgroundImage: `url(${backgroundImage})`,
+  }} 
+  onTouchStart={handleTap}
+>
       <UserInfo />
       <CurvedBorderContainer ref={curvedBorderRef} className="curved-border" />
       <PointsDisplayContainer>
