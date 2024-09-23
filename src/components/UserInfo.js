@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaRegGem } from 'react-icons/fa';  
+import { FaRegGem, FaBell } from 'react-icons/fa';  // Import the Bell icon
 import { usePoints } from '../context/PointsContext';
 
+// Ensure font-family "Orbitron" is applied globally or here
 const UserInfoContainer = styled.div`
   color: white;
   background-color: black;
@@ -23,6 +24,7 @@ const UserInfoContainer = styled.div`
   transform: translateX(-50%);
   z-index: 10;
   border: 2px solid #0088cc; 
+  font-family: 'Orbitron', sans-serif; /* Ensure the font is consistent */
 
   @media (max-width: 480px) {
     padding: 8px 15px;
@@ -48,7 +50,7 @@ const PointsContainer = styled.div`
   padding: 8px 15px;
   font-size: 17px;
   display: flex;
-  align-items: center;
+  align-items: center; /* Ensures vertical alignment */
   justify-content: center;
   color: white;
   text-align: center;
@@ -57,6 +59,15 @@ const PointsContainer = styled.div`
     font-size: 17px;
     padding: 4px 9px;
   }
+`;
+
+// Styled component for the bell icon
+const BellIcon = styled(FaBell)`
+  color: #ffac00;
+  font-size: 1.4rem;
+  margin-left: 8px; 
+  display: flex; 
+  align-items: center; /* Ensure vertical centering for icon */
 `;
 
 const UserInfo = () => {
@@ -74,7 +85,11 @@ const UserInfo = () => {
         Hi {firstName}
       </Username>
       <PointsContainer>
-        <GemIcon /> {Math.floor(points)} GEMS
+        <GemIcon /> {Math.floor(points)} $GEMS
+        {/* Link wrapping the bell icon */}
+        <a href="https://t.me/gemhuntersclub" target="_blank" rel="noopener noreferrer">
+          <BellIcon />
+        </a>
       </PointsContainer>
     </UserInfoContainer>
   );
