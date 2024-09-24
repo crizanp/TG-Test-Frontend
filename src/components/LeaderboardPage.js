@@ -25,7 +25,7 @@ const LeaderboardContainer = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: "Orbitron", sans-serif;
+  font-family: 'Orbitron',sans-serif;
   overflow-x: hidden;
   padding-bottom: 60px;
 `;
@@ -73,6 +73,15 @@ const TableRow = styled.tr`
     background-color: #333333;
     transition: background-color 0.3s ease-in-out;
   }
+`;
+
+// New styled component for "Top 30 Leader" text
+const Top30LeaderText = styled.h1`
+  font-size: 36px;
+  color:#e1ecf2;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
 `;
 
 const RankCell = styled.td`
@@ -290,6 +299,8 @@ const formatPoints = (points) => {
             }}
           />
         </PointsDisplay>
+         {/* Top 30 Leader text */}
+         <Top30LeaderText>Top 30 Leader</Top30LeaderText>
       </PointsDisplayContainer>
 
       {isLoading ? (

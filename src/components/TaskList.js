@@ -5,7 +5,8 @@ import { usePoints } from "../context/PointsContext";
 import { getUserID } from "../utils/getUserID";
 import UserInfo from "./UserInfo";
 import { FaChevronRight } from "react-icons/fa";
-import FloatingMessage from "./FloatingMessage";
+import { showToast } from './ToastNotification'; // Import the showToast function
+import ToastNotification from './ToastNotification'; // Import the ToastNotification component
 import { FaRegGem } from "react-icons/fa";
 import styled from "styled-components";
 import SkeletonLoaderTaskPage from "./SkeletonLoaderTaskPage";
@@ -117,7 +118,16 @@ const PerformAgainButton = styled(ClaimButton)`
   margin-left: 0px;
   width: 95%;
 `;
-
+const AirdropDescription = styled.p`
+  color: #aaaaaa;
+  margin-bottom: 20px;
+  margin-left: 18px;
+    margin-right: 18px;
+  
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+`;
 const TaskList = () => {
   const { points, setPoints, userID, setUserID, setUsername } = usePoints();
   const [tasks, setTasks] = useState({
@@ -133,7 +143,6 @@ const TaskList = () => {
   const [timer, setTimer] = useState(10);
   const [timerStarted, setTimerStarted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const audioRef = useRef(null);
   const [windowSize, setWindowSize] = useState({
@@ -171,7 +180,7 @@ const TaskList = () => {
         });
         setCompletedTasks(completedTasksMap);
       } catch (error) {
-        console.error("Unexpected error fetching user data:", error);
+        showToast('Unexpected error fetching user data', 'error');
       }
 
       try {
@@ -189,7 +198,7 @@ const TaskList = () => {
 
         setTasks(categorizedTasks);
       } catch (taskFetchError) {
-        console.error("Error fetching tasks:", taskFetchError);
+        showToast('Error fetching tasks', 'error');
       } finally {
         setLoading(false);
       }
@@ -273,7 +282,7 @@ const TaskList = () => {
       }));
 
       // Show success message and confetti
-      setMessage({ text: "Points awarded!", type: "success" });
+      showToast('Points awarded!', 'success');
       setShowConfetti(true);
       audioRef.current.play();
 
@@ -285,7 +294,7 @@ const TaskList = () => {
       setSelectedTask(null);
     } catch (error) {
       console.error("Error claiming reward:", error);
-      setMessage({ text: "Error claiming the reward.", type: "error" });
+      showToast('Error claiming the reward.', 'error');
     } finally {
       setUnderModeration(false);
     }
@@ -297,17 +306,8 @@ const TaskList = () => {
 
   return (
     <>
-      {message && (
-        <FloatingMessage
-          message={message.text}
-          type={message.type}
-          duration={3000}
-          onClose={() => setMessage(null)}
-        />
-      )}
-
+      {/* Confetti and Points Display */}
       <audio ref={audioRef} src={celebrationSound} />
-
       {showConfetti && (
         <Confetti width={windowSize.width} height={windowSize.height} />
       )}
@@ -333,7 +333,9 @@ const TaskList = () => {
       </PointsDisplayContainer>
 
       <CoinText>Earn more tokens by completing tasks</CoinText>
-
+      <AirdropDescription>
+      <b>Note:</b> In the final phase, we will review all tasks. If any task is completed but not properly recorded from a specific user, the user will be disqualified. Do not attempt to mislead the system. Please be respectful and ensure all tasks are completed correctly.
+      </AirdropDescription>
       {loading ? (
         <SkeletonLoaderTaskPage />
       ) : (
@@ -436,6 +438,9 @@ const TaskList = () => {
           )}
         </TaskContainer>
       )}
+
+      {/* Render the ToastContainer globally */}
+      <ToastNotification />
     </>
   );
 };

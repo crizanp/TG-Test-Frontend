@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { FaTimes } from "react-icons/fa"; // Close button icon
 
-// Overlay for the modal background
+// Modal Overlay
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -16,7 +16,7 @@ const ModalOverlay = styled.div`
   z-index: 1000;
 `;
 
-// Modal container with slide-up animation
+// Modal Container with slide-up animation
 // Modal Container with slide-up animation
 const RewardModalContainer = styled.div`
   width: 100%;
@@ -50,21 +50,21 @@ const RewardModalContainer = styled.div`
 `;
 
 
-// Header for the modal
+// Modal Header
 const ModalHeader = styled.h2`
   text-align: center;
-  font-size: 34px;
+  font-size: 40px;
     color: #d3cece;
 `;
 
-// Button to claim or confirm an action
+// Claim Button
 const ClaimButton = styled.button`
   background-color: #36a8e5;
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 15px 20px;
-  font-size: 22px;
+  padding: 12px 20px;
+  font-size: 23px;
   cursor: pointer;
   width: 100%;
   margin-top: 20px;
@@ -74,7 +74,6 @@ const ClaimButton = styled.button`
     background-color: #298dc8;
   }
 `;
-
 // Display points or confirmation message
 const PointsDisplayModal = styled.div`
   font-size: 1.5rem;
@@ -85,8 +84,7 @@ const PointsDisplayModal = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
-// Close button
+// Close Button
 const CloseButton = styled.button`
   position: absolute;
   top: 10px;
@@ -98,36 +96,35 @@ const CloseButton = styled.button`
   cursor: pointer;
 `;
 
-// Styled image component
+// Icon Image in the Modal
 const StyledImage = styled.img`
- width: 135px;
- height: 150px;
+  width: 135px;
+  height: 150px;
   display: block;
   margin: 0 auto 20px;
 `;
 
-const Modal = ({ onGoAhead, onClose, isClosing }) => {
+// Modal Component
+const GameUnlockModal = ({ message, onConfirm, onCancel, loading, iconUrl, title, pointsCost }) => {
   return (
-    <ModalOverlay onClick={onClose}>
-      <RewardModalContainer onClick={(e) => e.stopPropagation()} isClosing={isClosing}>
-        <CloseButton onClick={onClose}>×</CloseButton>
-        <ModalHeader>View Correct Answer</ModalHeader>
+    <ModalOverlay onClick={onCancel}>
+      <RewardModalContainer onClick={(e) => e.stopPropagation()}>
+        <CloseButton onClick={onCancel}>×</CloseButton>
+        <ModalHeader>{title}</ModalHeader>
 
-        {/* Image placed below the header */}
-        <StyledImage src="https://i.ibb.co/z2c4kfZ/3d.png" alt="Crown" />
-
+        {/* Icon Image */}
+        <StyledImage src={iconUrl} alt="Modal Icon" />
         <PointsDisplayModal>
-          <span style={{ fontSize:"32px" }}>50 $GEMS</span>
+          <span style={{ fontSize:"32px" }}>- 25,000 $GEMS</span>
         </PointsDisplayModal>
+        <p style={{ textAlign: "center", color: "rgb(202 190 190)", marginBottom: "20px",fontSize:"20px" }}>{message}</p>
 
-        <p style={{ textAlign: "center", color: "rgb(221 204 204)",fontSize:"20px" }}>
-          Viewing the correct answer will deduct 50 $GEMS from your total.
-        </p>
-
-        <ClaimButton onClick={onGoAhead}>Go Ahead</ClaimButton>
+        <ClaimButton onClick={onConfirm} disabled={loading}>
+          {loading ? "Unlocking..." : `Go Ahead`}
+        </ClaimButton>
       </RewardModalContainer>
     </ModalOverlay>
   );
 };
 
-export default Modal;
+export default GameUnlockModal;

@@ -1,156 +1,86 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaLock } from "react-icons/fa"; // Importing the lock icon from react-icons
+import axios from "axios";
 import UserInfo from './UserInfo';
+import GameUnlockModal from "./GameUnlockModal";
+import { usePoints } from "../context/PointsContext";
+import { showToast } from './ToastNotification'; // Import showToast function
+import { ToastContainer } from 'react-toastify'; // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import toastify styles
 
-// Animations
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+// Import styles from external file
+import {
+  GamesContainer,
+  GameList,
+  GameItem,
+  LockIcon,
+  DimmedIconWrapper,
+  IconWrapper,
+  GameTitle,
+  GameDescription,
+  GameIcon,
+  GameItemTitle
+} from './GamesPageStyles'; // Import styled components
 
-// Styled Components
-const GamesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 73px 20px;
-  background-color: #121212;
-  color: white;
-  min-height: 87vh;
-  text-align: center;
-  background-image: url("/path-to-your-background-image.jpg");
-  background-size: cover;
-  background-position: center;
-`;
-
-const GameList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 30px;
-  margin-top: 30px;
-  animation: ${fadeIn} 1s ease;
-  width: 100%;
-  max-width: 1200px;
-  justify-content: center;
-`;
-
-const GameItem = styled(Link)`
-  background-color: rgba(31, 31, 31, 0.85); // Transparent dark background for a glassy effect
-  padding: 30px 20px;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;  // Centering content vertically
-  align-items: center;  // Centering content horizontally
-  color: white;
-  text-decoration: none;
-  font-size: 22px;  // Increased text size
-  text-align: center;
-  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-  backdrop-filter: blur(10px);
-  position: relative;  // Relative positioning to align the lock icon
-
-  &:hover {
-    transform: translateY(-8px);
-    background-color: #282828;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
-  }
-
-  ${({ comingSoon }) =>
-    comingSoon &&
-    `
-    background-color: #333;
-    color: grey;
-    cursor: default;
-    &:hover {
-      transform: none;
-      background-color: #333;
-      box-shadow: none;
-    }
-  `}
-
-  ${({ locked }) =>
-    locked &&
-    `
-    position: relative;
-    pointer-events: none; // Prevents clickability
-    &:hover {
-      transform: none;
-      background-color: rgba(31, 31, 31, 0.85); // No hover effect when locked
-      box-shadow: none;
-    }
-  `}
-`;
-
-// Lock icon styling on the left with silver color
-const LockIcon = styled(FaLock)`
-  position: absolute;
-  top: 10px;      // Position at the top
-  left: 10px;     // Position at the left
-  font-size: 18px; // Smaller size for the lock icon
-  color: #c0c0c0; // Silver color for lock
-`;
-
-// Dimmed styling for locked items
-const DimmedIconWrapper = styled.div`
-  font-size: 80px;  // Icon size
-  margin-bottom: 10px;
-  color: rgba(255, 255, 255, 0.2);  // More dimmed icon color
-  display: flex;
-  justify-content: center;  // Horizontal centering
-  align-items: center;  // Vertical centering
-  height: 100px;  // Set a fixed height for proper vertical alignment
-`;
-
-const DimmedText = styled.div`
-  color: rgba(255, 255, 255, 0.3); // More dimmed text color
-`;
-
-const IconWrapper = styled.div`
-  font-size: 80px;  // Icon size
-  margin-bottom: 10px;
-  color: #00bfff;
-  display: flex;
-  justify-content: center;  // Horizontal centering
-  align-items: center;  // Vertical centering
-  height: 100px;  // Set a fixed height for proper vertical alignment
-`;
-
-const GameTitle = styled.h2`
-  font-size: 40px;  // Made title quite big
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #cad2d5;
-`;
-
-const GameDescription = styled.p`
-  font-size: 16px;  // Made description smaller
-  color: #cfcfcf;
-  max-width: 600px;
-`;
-
-const ComingSoonText = styled.small`
-  font-style: italic;
-  color: grey;
-`;
-
-const GameIcon = styled.img`
-  width: 100px;  // Increased logo size
-  height: 100px;  // Increased logo size
-  margin-bottom: 20px;  // Added some space below the icon
-`;
-
-// GamesPage Component
 function GamesPage() {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
+  const [quizUnlocked, setQuizUnlocked] = useState(false);
+  const { userID, points: userPoints, setPoints } = usePoints();
+
+  useEffect(() => {
+    if (!userID) return;
+
+    const localUnlocked = localStorage.getItem(`quizUnlocked_${userID}`);
+    if (localUnlocked) {
+      setQuizUnlocked(true);
+    } else {
+      const fetchUserInfo = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+          setQuizUnlocked(response.data.quizUnlocked);
+        } catch (error) {
+          showToast('Error fetching user info.', 'error');
+        }
+      };
+      fetchUserInfo();
+    }
+  }, [userID]);
+
+  const handleUnlockQuiz = async () => {
+    setUnlocking(true);
+    const newPoints = userPoints - 25000;
+    setPoints(newPoints);
+    localStorage.setItem(`points_${userID}`, newPoints);
+
+    setQuizUnlocked(true); 
+    localStorage.setItem(`quizUnlocked_${userID}`, true);
+
+    try {
+      await axios.put(`${process.env.REACT_APP_API_URL}/user-info/unlock-quiz/${userID}`, {
+        points: newPoints,
+      });
+      showToast('Success! You have unlocked the quiz!', 'success');
+    } catch (error) {
+      showToast('Error unlocking quiz. Please try again!', 'error');
+      setPoints(userPoints);
+      localStorage.setItem(`points_${userID}`, userPoints);
+      setQuizUnlocked(false);
+      localStorage.removeItem(`quizUnlocked_${userID}`);
+    } finally {
+      setUnlocking(false);
+      setModalOpen(false);
+    }
+  };
+
+  const confirmUnlockQuiz = () => {
+    if (userPoints >= 25000 && !quizUnlocked) {
+      setModalOpen(true);
+    } else if (userPoints < 25000) {
+      showToast('Oops! You do not have sufficient balance to unlock this game.', 'warn');
+    }
+  };
+
   return (
     <GamesContainer>
       <UserInfo />
@@ -159,44 +89,75 @@ function GamesPage() {
         Play and earn points by completing exciting challenges!
       </GameDescription>
       <GameList>
-        {/* Quiz Game - Locked */}
-        <GameItem locked>
-          <LockIcon /> {/* Displaying the lock icon at the left */}
-          <DimmedIconWrapper>
-            <GameIcon src="https://i.ibb.co/rMcfScz/3d-1.png" alt="Quiz Icon" />
-          </DimmedIconWrapper>
-          <div>Quiz</div>
-          <small>Test your knowledge!</small>
-        </GameItem>
+        {!quizUnlocked ? (
+          <GameItem onClick={confirmUnlockQuiz} locked={userPoints < 25000}>
+            <LockIcon />
+            <DimmedIconWrapper>
+              <GameIcon src="https://i.ibb.co/rMcfScz/3d-1.png" alt="Quiz Icon" />
+            </DimmedIconWrapper>
+            <GameItemTitle>Quiz</GameItemTitle>
+          </GameItem>
+        ) : (
+          <GameItem as={Link} to="/ecosystem">
+            <IconWrapper>
+              <GameIcon src="https://i.ibb.co/rMcfScz/3d-1.png" alt="Quiz Icon" />
+            </IconWrapper>
+            <GameItemTitle>Quiz</GameItemTitle>
+          </GameItem>
+        )}
 
-        {/* Spin the Wheel */}
-        <GameItem to="/spin-wheel">
+        <GameItem as={Link} to="/spin-wheel">
           <IconWrapper>
             <GameIcon src="https://i.ibb.co/W3tQ6hf/3d-2.png" alt="Spin the Wheel Icon" />
           </IconWrapper>
-          <div>Spin the Wheel</div>
-          <small>Spin and win points!</small>
+          <GameItemTitle>Spin Wheel</GameItemTitle>
         </GameItem>
 
-        {/* Treasure Hunt - Locked */}
-        <GameItem locked>
-          <LockIcon /> {/* Displaying the lock icon at the left */}
+        <GameItem onClick={() => showToast('Oops! You do not have sufficient balance to unlock this game.', 'warn')} locked>
+          <LockIcon />
           <DimmedIconWrapper>
             <GameIcon src="https://i.ibb.co/20zNsDw/3d-3.png" alt="Treasure Hunt Icon" />
           </DimmedIconWrapper>
-          <div>Treasure Hunt</div>
-          <small>Uncover hidden treasures and win big reward!</small>
+          <GameItemTitle>Treasure Hunt</GameItemTitle>
         </GameItem>
 
-        {/* Coming Soon Game */}
+        <GameItem onClick={() => showToast('This game is on the way, stay tuned.', 'warn')} locked>
+          <LockIcon />
+          <DimmedIconWrapper>
+            <GameIcon src="https://cdn-icons-png.freepik.com/512/8853/8853822.png" alt="Predict & Win Icon" />
+          </DimmedIconWrapper>
+          <GameItemTitle>Predict & Win</GameItemTitle>
+        </GameItem>
+
+        <GameItem onClick={() => showToast('This game is on the way, stay tuned', 'warn')} locked>
+          <LockIcon />
+          <DimmedIconWrapper>
+            <GameIcon src="https://www.freeiconspng.com/thumbs/eagle-icon-png/eagle-icon-png-9.png" alt="Catch the Eagle Icon" />
+          </DimmedIconWrapper>
+          <GameItemTitle>Catch the Eagle</GameItemTitle>
+        </GameItem>
+
         <GameItem comingSoon>
           <IconWrapper>
             <GameIcon src="https://i.ibb.co/887LhN5/3d-4.png" alt="Coming Soon Icon" />
           </IconWrapper>
-          <div>Coming Soon</div>
-          <ComingSoonText>More games on the way!</ComingSoonText>
+          <GameItemTitle>Coming Soon</GameItemTitle>
         </GameItem>
       </GameList>
+
+      {isModalOpen && (
+        <GameUnlockModal
+          message={`Are you sure you want to spend 25,000 $GEMS to unlock the quiz?`}
+          onConfirm={handleUnlockQuiz}
+          onCancel={() => setModalOpen(false)}
+          loading={unlocking}
+          iconUrl="https://i.ibb.co/z2c4kfZ/3d.png"
+          title="Unlock Quiz"
+          pointsCost={25000}
+        />
+      )}
+
+      <ToastContainer />
     </GamesContainer>
   );
 }
