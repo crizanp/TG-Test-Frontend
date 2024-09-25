@@ -46,6 +46,7 @@ function Layout({ children }) {
   const [imageUrl, setImageUrl] = useState('');
   const [showPromoModal, setShowPromoModal] = useState(false); // State for promo modal
   const [userID, setUserID] = useState(null);  // State for user ID
+  const [modalAlreadyShown, setModalAlreadyShown] = useState(false); // Track if modal was shown
   const navigate = useNavigate();
 
   // Call the getUserID function and pass setUserID
@@ -59,14 +60,14 @@ function Layout({ children }) {
 
     if (userID) {
       // Promo Modal logic: Create a key with the user ID to track if the modal has been shown
-      const promoKey = `promoModalShown_September2024_${userID}`; // Unique key for this user
-
+      const promoKey = `promoModalShown_September2024_25_${userID}`; // Unique key for this user
       const isPromoModalShown = localStorage.getItem(promoKey);
 
-      if (!isPromoModalShown) {
-        // Delay the modal by 3 seconds
+      // Only show the modal if it hasn't been shown and not already shown in this session
+      if (!isPromoModalShown && !modalAlreadyShown) {
         setTimeout(() => {
           setShowPromoModal(true); // Show promo modal after 3 seconds
+          setModalAlreadyShown(true); // Mark the modal as shown in this session
         }, 3000);
       }
     }
@@ -112,12 +113,12 @@ function Layout({ children }) {
       clearTimeout(menuTimer);
       window.removeEventListener('contextmenu', handleContextMenu);
     };
-  }, [navigate, userID]);
+  }, [navigate, userID, modalAlreadyShown]);
 
   const handleClosePromoModal = () => {
-    const promoKey = `promoModalShown_September2024_${userID}`; // Unique key for this user
-    setShowPromoModal(false); // Hide the promo modal
+    const promoKey = `promoModalShown_September2024_25_${userID}`; // Unique key for this user
     localStorage.setItem(promoKey, 'true'); // Set flag for this specific promo and user
+    setShowPromoModal(false); // Hide the promo modal
   };
 
   if (loading) {
