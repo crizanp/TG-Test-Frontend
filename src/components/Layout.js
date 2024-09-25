@@ -144,7 +144,7 @@ function Layout({ children }) {
           onCancel={handleClosePromoModal}
           loading={false}
           iconUrl="https://i.ibb.co/rMcfScz/3d-1.png" // Updated image for the promo
-          title="Unlock Quiz Game"
+          title="Unlock Quiz"
           pointsCost={25000} // 25,000 $GEMS to unlock the game
           buttonText="Unlock Now" // Custom button text
         />

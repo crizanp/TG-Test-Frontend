@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// Modal Overlay with a slight blur effect
+// Modal Overlay with a subtle blur effect
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -9,7 +9,7 @@ const ModalOverlay = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.7); /* Darker backdrop */
-  backdrop-filter: blur(6px); /* Adds a slight blur effect */
+  backdrop-filter: blur(0px); /* Reduced blur effect */
   display: flex;
   justify-content: center;
   align-items: flex-end;
