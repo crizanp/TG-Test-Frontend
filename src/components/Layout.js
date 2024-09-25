@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import BottomMenu from './BottomMenu';  // Make sure the path is correct
-import LoadingPage from './LoadingPage';  // Make sure the path is correct
+import BottomMenu from './BottomMenu';
+import LoadingPage from './LoadingPage';
+import PromoModal from './PromoModal';  // Import the PromoModal component
+import { getUserID } from "../utils/getUserID";  // Importing the function correctly
 
 const LayoutContainer = styled.div`
-  font-family: 'Orbitron',sans-serif;
+  font-family: 'Orbitron', sans-serif;
   background-color: #090c12;
   max-width: 460px;
-  
   height: 100vh;
   margin: 0 auto;
   display: flex;
@@ -23,7 +24,6 @@ const RestrictedContainer = styled.div`
   align-items: center;
   height: 100vh;
   max-width: 460px;
-
   background-image: ${(props) => `url(${props.imageUrl})`};
   background-size: cover;
   background-position: center;
@@ -43,12 +43,33 @@ function Layout({ children }) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [restricted, setRestricted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [imageUrl, setImageUrl] = useState('');  // State to store the image URL
+  const [imageUrl, setImageUrl] = useState('');
+  const [showPromoModal, setShowPromoModal] = useState(false); // State for promo modal
+  const [userID, setUserID] = useState(null);  // State for user ID
   const navigate = useNavigate();
+
+  // Call the getUserID function and pass setUserID
+  useEffect(() => {
+    getUserID(setUserID);  // Fetch user ID and set it in state
+  }, []);
 
   useEffect(() => {
     const isLocalhost = window.location.hostname === 'localhost';
     const tg = window.Telegram?.WebApp;
+
+    if (userID) {
+      // Promo Modal logic: Create a key with the user ID to track if the modal has been shown
+      const promoKey = `promoModalShown_September2024_${userID}`; // Unique key for this user
+
+      const isPromoModalShown = localStorage.getItem(promoKey);
+
+      if (!isPromoModalShown) {
+        // Delay the modal by 3 seconds
+        setTimeout(() => {
+          setShowPromoModal(true); // Show promo modal after 3 seconds
+        }, 3000);
+      }
+    }
 
     if (isLocalhost) {
       console.log('Running on localhost:3000');
@@ -91,19 +112,43 @@ function Layout({ children }) {
       clearTimeout(menuTimer);
       window.removeEventListener('contextmenu', handleContextMenu);
     };
-  }, [navigate]);
+  }, [navigate, userID]);
+
+  const handleClosePromoModal = () => {
+    const promoKey = `promoModalShown_September2024_${userID}`; // Unique key for this user
+    setShowPromoModal(false); // Hide the promo modal
+    localStorage.setItem(promoKey, 'true'); // Set flag for this specific promo and user
+  };
 
   if (loading) {
     return <LoadingPage />;
   }
 
   if (restricted) {
-    return <RestrictedContainer imageUrl={imageUrl} />;  // Pass the imageUrl as a prop
+    return <RestrictedContainer imageUrl={imageUrl} />;
   }
 
   return (
     <LayoutContainer>
       <Content>{children}</Content>
+
+      {/* Display the promo modal */}
+      {showPromoModal && (
+        <PromoModal
+          message="The Quiz Game is now available! Spend 25,000 $GEMS to unlock the game and play for a chance to win exciting rewards!"
+          onConfirm={() => {
+            handleClosePromoModal();
+            navigate('/games'); // Navigate to the games page when they confirm
+          }}
+          onCancel={handleClosePromoModal}
+          loading={false}
+          iconUrl="https://i.ibb.co/rMcfScz/3d-1.png" // Updated image for the promo
+          title="Unlock Quiz Game"
+          pointsCost={25000} // 25,000 $GEMS to unlock the game
+          buttonText="Unlock Now" // Custom button text
+        />
+      )}
+
       {showBottomMenu && menuVisible && <BottomMenu />}
     </LayoutContainer>
   );
