@@ -25,7 +25,7 @@ import {
   EagleContainer,
   EagleImage,
   FlyingNumber,
-  SlapEmoji,
+  SlapEmojiImage,
   EnergyContainer,
   CurvedBorderContainer,
   EnergyCounter,
@@ -161,12 +161,11 @@ const LeaderboardImage = styled.img`
   }
 `;
 
-
-// ** NEW Timer Component **
 const SmallTimerText = styled.span`
-  font-size: 10px;
-    color: #ccc;
-    text-align: center;
+  font-size: 12px;
+  color: #ccc;
+  text-align: center;
+  margin-bottom: 5px; /* Add space between timer and claim button */
 `;
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
@@ -197,9 +196,11 @@ function HomePage() {
   });
   const fetchActiveBackground = useCallback(async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/background/active`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/background/active`
+      );
       console.log("Background response:", response.data); // Add this line to log the response
-  
+
       if (response.data && response.data.url) {
         setBackgroundImage(response.data.url); // Set the active background
       } else {
@@ -226,55 +227,56 @@ function HomePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
- // ** Timer calculation logic **
- const checkDailyRewardAvailability = useCallback(async () => {
-  try {
-    setIsLoading(true); // Set loading state while checking
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-    );
-    const lastDailyReward = response.data.lastDailyReward || new Date(0);
-    const now = new Date();
-    const hoursSinceLastClaim = Math.floor(
-      (now - new Date(lastDailyReward)) / (1000 * 60 * 60)
-    ); // Calculate hours since the last claim
+  // ** Timer calculation logic **
+  const checkDailyRewardAvailability = useCallback(async () => {
+    try {
+      setIsLoading(true); // Set loading state while checking
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+      );
+      const lastDailyReward = response.data.lastDailyReward || new Date(0);
+      const now = new Date();
+      const hoursSinceLastClaim = Math.floor(
+        (now - new Date(lastDailyReward)) / (1000 * 60 * 60)
+      ); // Calculate hours since the last claim
 
-    if (hoursSinceLastClaim >= 24) {
-      setIsRewardAvailable(true); // Reward is available, button becomes clickable
-    } else {
-      setIsRewardAvailable(false); // Reward is not available, button stays disabled
+      if (hoursSinceLastClaim >= 24) {
+        setIsRewardAvailable(true); // Reward is available, button becomes clickable
+      } else {
+        setIsRewardAvailable(false); // Reward is not available, button stays disabled
 
-      // Calculate remaining time and update the state
-      const timeUntilNextClaim = 24 * 60 * 60 * 1000 - (now - new Date(lastDailyReward));
-      setRemainingTime(timeUntilNextClaim);
+        // Calculate remaining time and update the state
+        const timeUntilNextClaim =
+          24 * 60 * 60 * 1000 - (now - new Date(lastDailyReward));
+        setRemainingTime(timeUntilNextClaim);
+      }
+    } finally {
+      setIsLoading(false); // End loading state
     }
-  } finally {
-    setIsLoading(false); // End loading state
-  }
-}, [userID]);
+  }, [userID]);
 
-// Update the remaining time every second if reward is not available
-useEffect(() => {
-  let interval;
-  if (!isRewardAvailable && remainingTime > 0) {
-    interval = setInterval(() => {
-      setRemainingTime((prevTime) => prevTime - 1000); // Decrease the remaining time by 1 second
-    }, 1000);
-  }
-  return () => clearInterval(interval);
-}, [isRewardAvailable, remainingTime]);
+  // Update the remaining time every second if reward is not available
+  useEffect(() => {
+    let interval;
+    if (!isRewardAvailable && remainingTime > 0) {
+      interval = setInterval(() => {
+        setRemainingTime((prevTime) => prevTime - 1000); // Decrease the remaining time by 1 second
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRewardAvailable, remainingTime]);
 
-const formatRemainingTime = (milliseconds) => {
-  const totalSeconds = Math.floor(milliseconds / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
+  const formatRemainingTime = (milliseconds) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-  if (hours > 1) {
-    return `${hours} hr left`; // Show only hours left if more than 1 hour
-  }
-  return `${hours}h ${minutes}m ${seconds}s left`; // Show full timer for less than 1 hour
-};
+    if (hours > 1) {
+      return `${hours} hr left`; // Show only hours left if more than 1 hour
+    }
+    return `${hours}h ${minutes}m ${seconds}s left`; // Show full timer for less than 1 hour
+  };
 
   const initializeUser = useCallback(async () => {
     if (!userID) {
@@ -331,92 +333,104 @@ const formatRemainingTime = (milliseconds) => {
       if (energy <= 0) {
         return;
       }
-  
+
       if (curvedBorderRef.current && bottomMenuRef.current) {
-        const curvedBorderRect = curvedBorderRef.current.getBoundingClientRect();
-        const bottomMenuRect = bottomMenuRef.current.getBoundingClientRect();
-  
+        const eagleElement = document.querySelector(".eagle-image");
+        const eagleRect = eagleElement.getBoundingClientRect();
+
+        const eagleCenterX = eagleRect.left + eagleRect.width / 2;
+        const eagleCenterY = eagleRect.top + eagleRect.height / 2;
+
+        // Add the 'shift-up' class to trigger the motion
+        eagleElement.classList.add("shift-up");
+
+        // Remove the class after the animation is completed (0.2s)
+        setTimeout(() => {
+          eagleElement.classList.remove("shift-up");
+        }, 200); // Match the duration of the animation
+
         const isDoubleTap = e.touches && e.touches.length === 2;
         const isValidTap = e.touches.length <= 2; // Allow only up to 2 fingers
-  
+
         if (!isValidTap) {
           return; // Ignore if more than 2 fingers are used
         }
-  
-        const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1); // Always add a maximum of 2 points
-        const clickX = e.touches[0].clientX;
-        const clickY = e.touches[0].clientY;
-  
-        if (clickY > curvedBorderRect.bottom && clickY < bottomMenuRect.top) {
-          const eagleElement = document.querySelector(".eagle-image");
-          eagleElement.classList.add("shift-up");
-          setTimeout(() => {
-            eagleElement.classList.remove("shift-up");
-          }, 300);
-  
-          setPoints((prevPoints) => {
-            const newPoints = prevPoints + pointsToAdd;
-            localStorage.setItem(`points_${userID}`, newPoints);
-            return newPoints;
-          });
-  
-          setTapCount((prevTapCount) => prevTapCount + 1);
-  
-          const animateFlyingPoints = () => {
-            const id = Date.now();
-            setFlyingNumbers((prevNumbers) => [
-              ...prevNumbers,
-              { id, x: clickX, y: clickY - 30, value: pointsToAdd },
-            ]);
-  
-            setTimeout(() => {
-              setFlyingNumbers((prevNumbers) =>
-                prevNumbers.filter((num) => num.id !== id)
-              );
-            }, 750);
-          };
-  
-          animateFlyingPoints();
-  
-          setSlapEmojis((prevEmojis) => [
-            ...prevEmojis,
-            { id: Date.now(), x: clickX, y: clickY },
+
+        const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1);
+
+        setPoints((prevPoints) => {
+          const newPoints = prevPoints + pointsToAdd;
+          localStorage.setItem(`points_${userID}`, newPoints);
+          return newPoints;
+        });
+
+        setTapCount((prevTapCount) => prevTapCount + 1);
+
+        const animateFlyingPoints = () => {
+          const id = Date.now();
+          setFlyingNumbers((prevNumbers) => [
+            ...prevNumbers,
+            { id, x: eagleCenterX, y: eagleCenterY - 30, value: pointsToAdd },
           ]);
-  
-          setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
-          setUnsyncedPoints((prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd);
-  
-          decreaseEnergy(isDoubleTap ? 2 : 1);
-  
-          if (navigator.onLine) {
-            syncPointsWithServer(unsyncedPoints + pointsToAdd);
-          }
+
+          setTimeout(() => {
+            setFlyingNumbers((prevNumbers) =>
+              prevNumbers.filter((num) => num.id !== id)
+            );
+          }, 750);
+        };
+
+        animateFlyingPoints();
+
+        setSlapEmojis((prevEmojis) => [
+          ...prevEmojis,
+          { id: Date.now(), x: eagleCenterX, y: eagleCenterY },
+        ]);
+
+        setOfflinePoints(
+          (prevOfflinePoints) => prevOfflinePoints + pointsToAdd
+        );
+        setUnsyncedPoints(
+          (prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd
+        );
+
+        decreaseEnergy(isDoubleTap ? 2 : 1);
+
+        if (navigator.onLine) {
+          syncPointsWithServer(unsyncedPoints + pointsToAdd);
         }
       }
     },
-    [syncPointsWithServer, setPoints, unsyncedPoints, offlinePoints, energy, decreaseEnergy, userID]
+    [
+      syncPointsWithServer,
+      setPoints,
+      unsyncedPoints,
+      offlinePoints,
+      energy,
+      decreaseEnergy,
+      userID,
+    ]
   );
-  
 
   const claimDailyReward = async () => {
     try {
       setShowModal(false); // Close the modal immediately after the claim button is clicked
-  
+
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/claim-daily-reward/${userID}`
       );
       const newPoints = response.data.points;
-  
+
       setPoints(newPoints);
       localStorage.setItem(`points_${userID}`, newPoints); // Update points in local storage
       setIsRewardAvailable(false); // Reward just claimed, so it's no longer available
-  
+
       // Reset the remaining time to 24 hours (86400000 milliseconds)
-      setRemainingTime(24 * 60 * 60 * 1000); 
-  
+      setRemainingTime(24 * 60 * 60 * 1000);
+
       setShowConfetti(true);
       audioRef.current.play(); // Play celebration sound
-  
+
       setTimeout(() => {
         setShowConfetti(false); // Hide confetti after 5 seconds
       }, 5000);
@@ -424,7 +438,6 @@ const formatRemainingTime = (milliseconds) => {
       console.error("Error claiming daily reward:", error);
     }
   };
-  
 
   const openModal = () => setShowModal(true);
 
@@ -450,12 +463,12 @@ const formatRemainingTime = (milliseconds) => {
   }, [unsyncedPoints, syncPointsWithServer]);
 
   return (
-    <HomeContainer 
-  style={{
-    backgroundImage: `url(${backgroundImage})`,
-  }} 
-  onTouchStart={handleTap}
->
+    <HomeContainer
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+      }}
+      onTouchStart={handleTap}
+    >
       <UserInfo />
       <CurvedBorderContainer ref={curvedBorderRef} className="curved-border" />
       <PointsDisplayContainer>
@@ -478,38 +491,36 @@ const formatRemainingTime = (milliseconds) => {
       </MiddleSection>
 
       <BottomContainer ref={bottomMenuRef} className="bottom-menu">
-  {/* Leaderboard section with animated image */}
-  <Link to="/leaderboard" style={{ textDecoration: "none" }}>
-      <LeaderboardImage src={leaderboardImage} alt="Leaderboard" />
-  </Link>
+        <Link to="/leaderboard" style={{ textDecoration: "none" }}>
+          <LeaderboardImage src={leaderboardImage} alt="Leaderboard" />
+        </Link>
 
-  <EnergyContainer>
-    <EnergyIcon energy={energy} />
-    <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
-  </EnergyContainer>
+        <EnergyContainer>
+          <EnergyIcon energy={energy} />
+          <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
+        </EnergyContainer>
 
-  {/* Daily Reward Button with Fire Icon */}
-  <Link
-  to="#"
-  onClick={isRewardAvailable ? openModal : null}
-  style={{
-    textDecoration: "none",
-    pointerEvents: isRewardAvailable ? "auto" : "none",
-    opacity: isRewardAvailable ? 1 : 0.5,
-  }}
->
-  <EnergyContainer>
-    <FireIcon $available={isRewardAvailable} />
-    Daily Reward
-    {/* Show timer immediately after claim */}
-    {!isRewardAvailable && remainingTime > 0 && (
-      <SmallTimerText>{formatRemainingTime(remainingTime)}</SmallTimerText>
-    )}
-  </EnergyContainer>
-</Link>
-
-</BottomContainer>
-
+        <Link
+          to="#"
+          onClick={isRewardAvailable ? openModal : null}
+          style={{
+            textDecoration: "none",
+            pointerEvents: isRewardAvailable ? "auto" : "none",
+            opacity: isRewardAvailable ? 1 : 0.5,
+          }}
+        >
+          {/* Show timer immediately above the claim button */}
+          {!isRewardAvailable && remainingTime > 0 && (
+            <SmallTimerText>
+              {formatRemainingTime(remainingTime)}
+            </SmallTimerText>
+          )}
+          <EnergyContainer>
+            <FireIcon $available={isRewardAvailable} />
+            Daily Reward
+          </EnergyContainer>
+        </Link>
+      </BottomContainer>
 
       {showModal && (
         <ModalOverlay onClick={closeModal}>
@@ -544,9 +555,13 @@ const formatRemainingTime = (milliseconds) => {
         </FlyingNumber>
       ))}
       {slapEmojis.map((emoji) => (
-        <SlapEmoji key={emoji.id} x={emoji.x} y={emoji.y}>
-          👋
-        </SlapEmoji>
+        <SlapEmojiImage
+          key={emoji.id}
+          x={emoji.x}
+          y={emoji.y}
+          src="https://clipart.info/images/ccovers/1516938336sparkle-png-transparent.png"
+          alt="Slap"
+        />
       ))}
     </HomeContainer>
   );
