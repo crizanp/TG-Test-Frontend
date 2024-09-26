@@ -60,8 +60,6 @@ const CorrectAnswerText = styled.p`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   height: 89px;
   flex-direction: row;
-  /* flex-wrap: nowrap; */
-  align-content: center;
   justify-content: space-between;
 `;
 
@@ -83,7 +81,8 @@ function EcosystemPage() {
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("random");
   const [loading, setLoading] = useState(true);
-  const [disableSubmit, setDisableSubmit] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(false); // Flag to disable button
+  const [submitting, setSubmitting] = useState(false); // Flag to track submission status
   const [correctOption, setCorrectOption] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [noMoreQuizzes, setNoMoreQuizzes] = useState(false);
@@ -108,11 +107,13 @@ function EcosystemPage() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   const handleOptionSelect = (index) => {
     if (!disableSubmit) {
       setSelectedOption(index);
     }
   };
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -169,9 +170,10 @@ function EcosystemPage() {
   }, [userID, selectedCategory]);
 
   // Handle submitting the selected answer
-  // Handle submitting the selected answer
   const handleSubmit = async () => {
-    if (selectedOption === null) return;
+    if (selectedOption === null || submitting) return; // Prevent further clicks if already submitting
+
+    setSubmitting(true); // Set submitting flag to true
 
     const isCorrect = currentQuiz.options[selectedOption].isCorrect;
     const pointsEarned = isCorrect ? currentQuiz.points : 0;
@@ -243,6 +245,8 @@ function EcosystemPage() {
       }
     } catch (error) {
       showToast("Error submitting answer", "error");
+    } finally {
+      setSubmitting(false); // Reset submitting flag once done
     }
   };
 
@@ -253,10 +257,12 @@ function EcosystemPage() {
 
   // Handle deduction of points to show correct answer
   const handleGoAhead = async () => {
-    if (points < 50) {
+    if (points < 50 || submitting) {
       showToast("Not enough points to show the correct answer!", "error");
       return;
     }
+
+    setSubmitting(true); // Set submitting flag
 
     try {
       // Deduct 50 points from the backend
@@ -281,6 +287,8 @@ function EcosystemPage() {
     } catch (error) {
       console.error("Error deducting points:", error);
       showToast("Error deducting points!", "error");
+    } finally {
+      setSubmitting(false); // Reset submitting flag
     }
   };
 
@@ -392,9 +400,9 @@ function EcosystemPage() {
                 ))}
                 <SubmitButton
                   onClick={handleSubmit}
-                  disabled={selectedOption === null || disableSubmit}
+                  disabled={submitting || selectedOption === null || disableSubmit} // Disable button during submission
                 >
-                  Submit
+                  {submitting ? "Submitting..." : "Submit"} {/* Show submitting text */}
                 </SubmitButton>
               </QuizBox>
             </>
@@ -403,6 +411,7 @@ function EcosystemPage() {
               No quiz available at the moment.
             </NoQuestionsMessage>
           )}
+
           {/* Show the correct answer button if the answer is wrong and enough points */}
           {showFeedback &&
             selectedOption !== correctOption &&
