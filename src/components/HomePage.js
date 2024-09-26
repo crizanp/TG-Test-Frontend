@@ -333,69 +333,72 @@ function HomePage() {
       if (energy <= 0) {
         return;
       }
-
+  
       if (curvedBorderRef.current && bottomMenuRef.current) {
         const eagleElement = document.querySelector(".eagle-image");
         const eagleRect = eagleElement.getBoundingClientRect();
-
+  
         const eagleCenterX = eagleRect.left + eagleRect.width / 2;
         const eagleCenterY = eagleRect.top + eagleRect.height / 2;
-
+  
         // Add the 'shift-up' class to trigger the motion
         eagleElement.classList.add("shift-up");
-
-        // Remove the class after the animation is completed (0.2s)
-        setTimeout(() => {
-          eagleElement.classList.remove("shift-up");
-        }, 200); // Match the duration of the animation
-
+  
+        // Use requestAnimationFrame to ensure the animation runs smoothly on rapid taps
+        requestAnimationFrame(() => {
+          // Remove the class after the animation is completed (0.2s)
+          setTimeout(() => {
+            eagleElement.classList.remove("shift-up");
+          }, 200); // Match the duration of the animation
+        });
+  
         const isDoubleTap = e.touches && e.touches.length === 2;
         const isValidTap = e.touches.length <= 2; // Allow only up to 2 fingers
-
+  
         if (!isValidTap) {
           return; // Ignore if more than 2 fingers are used
         }
-
+  
         const pointsToAdd = calculatePoints() * (isDoubleTap ? 2 : 1);
-
+  
         setPoints((prevPoints) => {
           const newPoints = prevPoints + pointsToAdd;
           localStorage.setItem(`points_${userID}`, newPoints);
           return newPoints;
         });
-
+  
         setTapCount((prevTapCount) => prevTapCount + 1);
-
+  
         const animateFlyingPoints = () => {
           const id = Date.now();
           setFlyingNumbers((prevNumbers) => [
             ...prevNumbers,
             { id, x: eagleCenterX, y: eagleCenterY - 30, value: pointsToAdd },
           ]);
-
+  
           setTimeout(() => {
             setFlyingNumbers((prevNumbers) =>
               prevNumbers.filter((num) => num.id !== id)
             );
           }, 750);
         };
-
+  
         animateFlyingPoints();
-
+  
         setSlapEmojis((prevEmojis) => [
           ...prevEmojis,
           { id: Date.now(), x: eagleCenterX, y: eagleCenterY },
         ]);
-
+  
         setOfflinePoints(
           (prevOfflinePoints) => prevOfflinePoints + pointsToAdd
         );
         setUnsyncedPoints(
           (prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd
         );
-
+  
         decreaseEnergy(isDoubleTap ? 2 : 1);
-
+  
         if (navigator.onLine) {
           syncPointsWithServer(unsyncedPoints + pointsToAdd);
         }
@@ -411,6 +414,7 @@ function HomePage() {
       userID,
     ]
   );
+  
 
   const claimDailyReward = async () => {
     try {

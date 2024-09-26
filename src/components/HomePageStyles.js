@@ -5,7 +5,7 @@ const eagleShiftUp = keyframes`
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px); /* Slight upward movement */
+    transform: translateY(-10px); /* Slight upward movement */
   }
   100% {
     transform: translateY(0); /* Return to original position */
@@ -235,7 +235,7 @@ export const SlapEmojiImage = styled.img`
 
   @keyframes fadeOut {
     0% {
-      opacity: 0.75; /* Reduced opacity for more transparency */
+      opacity: 0.5; /* Reduced opacity for more transparency */
     }
     100% {
       opacity: 0;
