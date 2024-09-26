@@ -211,12 +211,13 @@ export const FlyingNumber = styled.div`
   left: ${({ x }) => `${x}px`};
   z-index: 1001;
   pointer-events: none;
-  transform: translate(-50%, -100%);
+  transform: translate(-50%, -100%); /* Adjust for proper centering */
   
-  /* Add this to ensure it disappears completely */
+  /* Ensure the points fade away completely */
   opacity: 0;
   transition: opacity 0.75s ease-in-out;
 `;
+
 
 
 

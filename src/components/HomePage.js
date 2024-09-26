@@ -334,10 +334,15 @@ function HomePage() {
         return;
       }
   
+      // Get the touch or click coordinates from the event
+      const tapX = e.touches ? e.touches[0].clientX : e.clientX;
+      const tapY = e.touches ? e.touches[0].clientY : e.clientY;
+  
       if (curvedBorderRef.current && bottomMenuRef.current) {
         const eagleElement = document.querySelector(".eagle-image");
         const eagleRect = eagleElement.getBoundingClientRect();
   
+        // Calculate the center of the eagle image for the sparkle slap effect
         const eagleCenterX = eagleRect.left + eagleRect.width / 2;
         const eagleCenterY = eagleRect.top + eagleRect.height / 2;
   
@@ -369,11 +374,12 @@ function HomePage() {
   
         setTapCount((prevTapCount) => prevTapCount + 1);
   
+        // Create flying points at the exact touch location
         const animateFlyingPoints = () => {
           const id = Date.now();
           setFlyingNumbers((prevNumbers) => [
             ...prevNumbers,
-            { id, x: eagleCenterX, y: eagleCenterY - 30, value: pointsToAdd },
+            { id, x: tapX, y: tapY - 30, value: pointsToAdd }, // Use tapX and tapY
           ]);
   
           setTimeout(() => {
@@ -385,17 +391,14 @@ function HomePage() {
   
         animateFlyingPoints();
   
+        // Add slap emoji effect centered at the eagle image
         setSlapEmojis((prevEmojis) => [
           ...prevEmojis,
           { id: Date.now(), x: eagleCenterX, y: eagleCenterY },
         ]);
   
-        setOfflinePoints(
-          (prevOfflinePoints) => prevOfflinePoints + pointsToAdd
-        );
-        setUnsyncedPoints(
-          (prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd
-        );
+        setOfflinePoints((prevOfflinePoints) => prevOfflinePoints + pointsToAdd);
+        setUnsyncedPoints((prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd);
   
         decreaseEnergy(isDoubleTap ? 2 : 1);
   
@@ -415,7 +418,6 @@ function HomePage() {
     ]
   );
   
-
   const claimDailyReward = async () => {
     try {
       setShowModal(false); // Close the modal immediately after the claim button is clicked

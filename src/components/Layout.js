@@ -90,7 +90,7 @@ function Layout({ children }) {
       } else {
         console.log('Restricted: Running on Telegram Desktop or Web');
         setRestricted(true);
-        setImageUrl('https://i.postimg.cc/qBX0zdSb/igh-tap-game-2.jpg'); // Set image for Telegram Desktop or Web
+        setImageUrl('https://i.postimg.cc/pLW4vhTm/igh-tap-game-1.jpg'); // Set image for Telegram Desktop or Web
         setLoading(false);
       }
     } else {
