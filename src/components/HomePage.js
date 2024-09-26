@@ -138,8 +138,8 @@ const CloseButton = styled.button`
   cursor: pointer;
 `;
 const LeaderboardImage = styled.img`
-  width: 50px; // Adjust the size as needed
-  height: auto;
+  width: 40px;
+  height: 36px;
   animation: tiltEffect 5s ease-in-out infinite; // Slower and smoother tilting animation
 
   @keyframes tiltEffect {
@@ -162,6 +162,12 @@ const LeaderboardImage = styled.img`
 `;
 
 
+// ** NEW Timer Component **
+const SmallTimerText = styled.span`
+  font-size: 10px;
+    color: #ccc;
+    text-align: center;
+`;
 function HomePage() {
   const { points, setPoints, userID, setUserID } = usePoints();
   const { energy, decreaseEnergy } = useEnergy();
@@ -179,6 +185,7 @@ function HomePage() {
   const curvedBorderRef = useRef(null);
   const bottomMenuRef = useRef(null);
   const [backgroundImage, setBackgroundImage] = useState(""); // Holds the active background URL
+  const [remainingTime, setRemainingTime] = useState(null); // For showing remaining time
 
   // Accumulate unsynced points to avoid sending too many server requests
   const [unsyncedPoints, setUnsyncedPoints] = useState(0);
@@ -219,28 +226,55 @@ function HomePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const checkDailyRewardAvailability = useCallback(async () => {
-    try {
-      setIsLoading(true); // Set loading state while checking
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/user-info/${userID}`
-      );
+ // ** Timer calculation logic **
+ const checkDailyRewardAvailability = useCallback(async () => {
+  try {
+    setIsLoading(true); // Set loading state while checking
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+    );
+    const lastDailyReward = response.data.lastDailyReward || new Date(0);
+    const now = new Date();
+    const hoursSinceLastClaim = Math.floor(
+      (now - new Date(lastDailyReward)) / (1000 * 60 * 60)
+    ); // Calculate hours since the last claim
 
-      const lastDailyReward = response.data.lastDailyReward || new Date(0);
-      const now = new Date();
-      const hoursSinceLastClaim = Math.floor(
-        (now - new Date(lastDailyReward)) / (1000 * 60 * 60)
-      ); // Calculate hours since the last claim
+    if (hoursSinceLastClaim >= 24) {
+      setIsRewardAvailable(true); // Reward is available, button becomes clickable
+    } else {
+      setIsRewardAvailable(false); // Reward is not available, button stays disabled
 
-      if (hoursSinceLastClaim >= 24) {
-        setIsRewardAvailable(true); // Reward is available, button becomes clickable
-      } else {
-        setIsRewardAvailable(false); // Reward is not available, button stays disabled
-      }
-    } finally {
-      setIsLoading(false); // End loading state
+      // Calculate remaining time and update the state
+      const timeUntilNextClaim = 24 * 60 * 60 * 1000 - (now - new Date(lastDailyReward));
+      setRemainingTime(timeUntilNextClaim);
     }
-  }, [userID]);
+  } finally {
+    setIsLoading(false); // End loading state
+  }
+}, [userID]);
+
+// Update the remaining time every second if reward is not available
+useEffect(() => {
+  let interval;
+  if (!isRewardAvailable && remainingTime > 0) {
+    interval = setInterval(() => {
+      setRemainingTime((prevTime) => prevTime - 1000); // Decrease the remaining time by 1 second
+    }, 1000);
+  }
+  return () => clearInterval(interval);
+}, [isRewardAvailable, remainingTime]);
+
+const formatRemainingTime = (milliseconds) => {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 1) {
+    return `${hours} hr left`; // Show only hours left if more than 1 hour
+  }
+  return `${hours}h ${minutes}m ${seconds}s left`; // Show full timer for less than 1 hour
+};
 
   const initializeUser = useCallback(async () => {
     if (!userID) {
@@ -367,18 +401,22 @@ function HomePage() {
   const claimDailyReward = async () => {
     try {
       setShowModal(false); // Close the modal immediately after the claim button is clicked
-
+  
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/claim-daily-reward/${userID}`
       );
       const newPoints = response.data.points;
-
+  
       setPoints(newPoints);
       localStorage.setItem(`points_${userID}`, newPoints); // Update points in local storage
-      setIsRewardAvailable(false);
+      setIsRewardAvailable(false); // Reward just claimed, so it's no longer available
+  
+      // Reset the remaining time to 24 hours (86400000 milliseconds)
+      setRemainingTime(24 * 60 * 60 * 1000); 
+  
       setShowConfetti(true);
       audioRef.current.play(); // Play celebration sound
-
+  
       setTimeout(() => {
         setShowConfetti(false); // Hide confetti after 5 seconds
       }, 5000);
@@ -386,6 +424,7 @@ function HomePage() {
       console.error("Error claiming daily reward:", error);
     }
   };
+  
 
   const openModal = () => setShowModal(true);
 
@@ -451,19 +490,24 @@ function HomePage() {
 
   {/* Daily Reward Button with Fire Icon */}
   <Link
-    to="#"
-    onClick={isRewardAvailable ? openModal : null}
-    style={{
-      textDecoration: "none",
-      pointerEvents: isRewardAvailable ? "auto" : "none",
-      opacity: isRewardAvailable ? 1 : 0.5,
-    }}
-  >
-    <EnergyContainer>
-      <FireIcon $available={isRewardAvailable} />
-      Daily Reward
-    </EnergyContainer>
-  </Link>
+  to="#"
+  onClick={isRewardAvailable ? openModal : null}
+  style={{
+    textDecoration: "none",
+    pointerEvents: isRewardAvailable ? "auto" : "none",
+    opacity: isRewardAvailable ? 1 : 0.5,
+  }}
+>
+  <EnergyContainer>
+    <FireIcon $available={isRewardAvailable} />
+    Daily Reward
+    {/* Show timer immediately after claim */}
+    {!isRewardAvailable && remainingTime > 0 && (
+      <SmallTimerText>{formatRemainingTime(remainingTime)}</SmallTimerText>
+    )}
+  </EnergyContainer>
+</Link>
+
 </BottomContainer>
 
 
