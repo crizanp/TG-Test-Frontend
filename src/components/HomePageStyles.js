@@ -27,10 +27,7 @@ const pointFlyingAnimation = keyframes`
   }
 `;
 
-
-
-
-const slapEffectAnimation = keyframes`
+export const slapEffectAnimation = keyframes`
   0% {
     transform: scale(1) translateY(0) translateX(0);
     opacity: 1;
@@ -118,28 +115,38 @@ export const EagleImage = styled.img`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   margin-top: 10px;
-  user-select: none;      /* Disable text/image selection */
-  pointer-events: none;   /* Disable all pointer events */
-  -webkit-user-drag: none; /* Disable drag on image in Webkit-based browsers */
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
   z-index: 1000;
 
-  &.shift-up {
-    animation: ${eagleShiftUp} 0.2s ease-in-out; /* Slight and quick animation */
+  // Apply subtle animation on tap
+  &.tapped {
+    animation: bounceEffect 0.1s ease-out;
+  }
+
+  @keyframes bounceEffect {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.04); /* Scale up slightly */
+    }
+    100% {
+      transform: scale(1); /* Return to original size */
+    }
   }
 `;
 
 export const BottomContainer = styled.div`
   display: flex;
   justify-content: center; // Centers horizontally
-  align-items: center;     // Centers vertically
+  align-items: center; // Centers vertically
   width: 100%;
   padding: 0 20px;
   box-sizing: border-box;
   align-items: flex-end;
-
-
 `;
-
 
 export const EarnMoreBox = styled.div`
   display: flex;
@@ -167,22 +174,22 @@ export const EarnMoreBox = styled.div`
 `;
 
 export const EnergyContainer = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #2a2a2a00;
-    border-radius: 30px;
-    padding: 0px 9px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 107px;
-    height: 35px;
-    text-align: justify;
-    border: 2px solid #1fa3e6;
-    text-decoration: none;
-    color: white;
-    margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2a2a2a00;
+  border-radius: 30px;
+  padding: 0px 9px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 107px;
+  height: 35px;
+  text-align: justify;
+  border: 2px solid #1fa3e6;
+  text-decoration: none;
+  color: white;
+  margin-left: 10px;
 
   & svg {
     margin-right: 5px;
@@ -212,16 +219,11 @@ export const FlyingNumber = styled.div`
   z-index: 1001;
   pointer-events: none;
   transform: translate(-50%, -100%); /* Adjust for proper centering */
-  
+
   /* Ensure the points fade away completely */
   opacity: 0;
   transition: opacity 0.75s ease-in-out;
 `;
-
-
-
-
-
 
 export const SlapEmojiImage = styled.img`
   position: absolute;
@@ -236,7 +238,7 @@ export const SlapEmojiImage = styled.img`
 
   @keyframes fadeOut {
     0% {
-      opacity: 0.5; /* Reduced opacity for more transparency */
+      opacity: 0.55; /* Reduced opacity for more transparency */
     }
     100% {
       opacity: 0;
@@ -244,7 +246,6 @@ export const SlapEmojiImage = styled.img`
     }
   }
 `;
-
 
 export const CurvedBorderContainer = styled.div`
   width: 110%;
