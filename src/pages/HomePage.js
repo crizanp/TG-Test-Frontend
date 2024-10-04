@@ -8,13 +8,13 @@ import React, {
 import axios from "axios";
 import { usePoints } from "../context/PointsContext";
 import { useEnergy } from "../context/EnergyContext";
-import { debounce } from "lodash";
 import { Link } from "react-router-dom";
-import { FaTasks, FaRegGem, FaFire } from "react-icons/fa";
 import Confetti from "react-confetti";
 import celebrationSound from "../assets/celebration.mp3";
-import styled from "styled-components";
 import leaderboardImage from "../assets/leaderboard.png";
+import { CgProfile } from "react-icons/cg";
+import { useQuery, useQueryClient } from '@tanstack/react-query'; // Import useQueryClient for query invalidation
+import styled, { keyframes } from "styled-components";
 
 import {
   HomeContainer,
@@ -22,7 +22,6 @@ import {
   PointsDisplay,
   MiddleSection,
   Message,
-  EagleContainer,
   EagleImage,
   FlyingNumber,
   SlapEmojiImage,
@@ -31,145 +30,42 @@ import {
   EnergyCounter,
   EnergyIcon,
   BottomContainer,
-} from "./HomePageStyles";
-import UserInfo from "./UserInfo";
+  SmallTimerText,
+  LeaderboardImage,
+  CloseButton,
+  PointsDisplayModal,
+  ClaimButton,
+  ModalHeader,
+  RewardModalContainer,
+  FireIcon,
+  ModalOverlay,
+  SettingsIcon,
+  GemIcon,
+  RightCenterLeaderboardImage,
+  IconLabel,
+  BoostIcon,
+  RightSideMenuContainer,
+  BoostContainer,
+  LeaderboardContainer,
+  IconContainer,
+} from "../style/HomePageStyles";
+import UserInfo from "../components/UserInfo";
 import { getUserID } from "../utils/getUserID";
-import eagleImage from "../assets/eagle.png";
 
-// Styled Gem Icon
-const GemIcon = styled(FaRegGem)`
-  color: #36a8e5;
-  margin-left: 8px;
-  margin-right: 8px;
-  font-size: 1.9rem;
-`;
-
-// Styled Modal
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+ const EagleContainer = styled.div`
+  border-radius: 50%;
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  z-index: 1000;
-`;
-const FireIcon = styled(FaFire)`
-  font-size: 1rem;
-  margin-right: 0px;
-  color: ${(props) =>
-    props.$available
-      ? "#f39c12"
-      : "#a0a0a0"}; // Yellow if available, grey if not
-`;
-
-const RewardModalContainer = styled.div`
-  width: 100%;
-  max-width: 400px;
-  background-color: white;
-  padding: 20px;
-  border-radius: 20px 20px 0 0;
-  position: relative;
-  animation: ${(props) => (props.isClosing ? "slideDown" : "slideUp")} 0.5s
-    ease-in-out;
-
-  @keyframes slideUp {
-    0% {
-      transform: translateY(100%);
-    }
-    100% {
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideDown {
-    0% {
-      transform: translateY(0);
-    }
-    100% {
-      transform: translateY(100%);
-    }
-  }
-`;
-
-const ModalHeader = styled.h2`
-  text-align: center;
-  color: #333;
-`;
-
-const ClaimButton = styled.button`
-  background-color: #36a8e5;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 15px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #298dc8;
-  }
-`;
-
-const PointsDisplayModal = styled.div`
-  font-size: 1.5rem;
-  text-align: center;
-  color: #36a8e5;
-  margin: 20px 0;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  margin-bottom: 15px;
+  justify-content: center;
+  -webkit-user-drag: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 `;
 
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 20px;
-  color: #333;
-  background: none;
-  border: none;
-  cursor: pointer;
-`;
-const LeaderboardImage = styled.img`
-  width: 40px;
-  height: 36px;
-  animation: tiltEffect 5s ease-in-out infinite; // Slower and smoother tilting animation
-
-  @keyframes tiltEffect {
-    0% {
-      transform: rotate(0deg);
-    }
-    25% {
-      transform: rotate(10deg); // Tilts 5 degrees to the right
-    }
-    50% {
-      transform: rotate(-10deg); // Tilts 5 degrees to the left
-    }
-    75% {
-      transform: rotate(7deg); // Tilts back slightly to the right
-    }
-    100% {
-      transform: rotate(0deg); // Returns to original position
-    }
-  }
-`;
-
-const SmallTimerText = styled.span`
-  font-size: 12px;
-  color: #ccc;
-  text-align: center;
-  margin-bottom: 5px; /* Add space between timer and claim button */
-`;
 function HomePage() {
-  const { points, setPoints, userID, setUserID } = usePoints();
-  const { energy, decreaseEnergy } = useEnergy();
+  const { points, setPoints, pointsPerTap, userID, setUserID } = usePoints();
+  const { energy, maxEnergy, decreaseEnergy, isEnergyLoading } = useEnergy(); // Access energy loading state
   const [tapCount, setTapCount] = useState(0);
   const [flyingNumbers, setFlyingNumbers] = useState([]);
   const [slapEmojis, setSlapEmojis] = useState([]);
@@ -185,6 +81,10 @@ function HomePage() {
   const bottomMenuRef = useRef(null);
   const [backgroundImage, setBackgroundImage] = useState(""); // Holds the active background URL
   const [remainingTime, setRemainingTime] = useState(null); // For showing remaining time
+  const [activeAvatar, setActiveAvatar] = useState(null);
+  const [fallbackAvatar, setFallbackAvatar] = useState(null);
+
+  const queryClient = useQueryClient(); // Initialize query client
 
   // Accumulate unsynced points to avoid sending too many server requests
   const [unsyncedPoints, setUnsyncedPoints] = useState(0);
@@ -194,6 +94,74 @@ function HomePage() {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  // Fetch fallback avatar dynamically
+  const fetchFallbackAvatar = useCallback(async () => {
+    try {
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/fallback-avatar`);
+      if (data && data.length > 0) {
+        setFallbackAvatar(data[0].fallbackAvatarUrl); // Set fallback avatar URL
+      }
+    } catch (error) {
+      console.error("Error fetching fallback avatar:", error);
+    }
+  }, []);
+
+  // Fetch active avatar
+  const fetchActiveAvatar = useCallback(
+    async (userID) => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user-avatar/${userID}/active-avatar`
+        );
+
+        if (response.data && response.data.image) {
+          setActiveAvatar(response.data.image); // Set active avatar image
+        } else {
+          fetchFallbackAvatar(); // Fetch fallback if no active avatar is found
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          fetchFallbackAvatar(); // Fetch fallback if 404 occurs
+        } else {
+          console.error("Error fetching active avatar:", error);
+        }
+      } finally {
+        setIsLoading(false); // Once fetching is done, set loading to false
+      }
+    },
+    [fetchFallbackAvatar]
+  );
+  // Initial fetch of avatar (active or fallback)
+  useEffect(() => {
+    if (userID) {
+      fetchActiveAvatar(userID); // Fetch active avatar on component mount
+    }
+  }, [userID, fetchActiveAvatar]);
+
+  // Ensure fallback avatar is loaded if no active avatar exists
+  useEffect(() => {
+    if (!activeAvatar && !fallbackAvatar && !isLoading) {
+      fetchFallbackAvatar(); // Load fallback avatar if neither is available
+    }
+  }, [activeAvatar, fallbackAvatar, isLoading, fetchFallbackAvatar]);
+
+  // Memoized eagle image, ensure it only renders when avatar is available
+  const memoizedEagleImage = useMemo(() => {
+    if (isLoading) return null; // Don't render if still loading
+    return (
+      <EagleImage
+        src={activeAvatar || fallbackAvatar} // Use active avatar if available, fallback otherwise
+        alt=""
+        className="eagle-image"
+        loading="lazy"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = fallbackAvatar; // Fallback if error occurs loading active avatar
+        }}
+      />
+    );
+  }, [activeAvatar, fallbackAvatar, isLoading]);
+
   const fetchActiveBackground = useCallback(async () => {
     try {
       const cachedBackground = localStorage.getItem("activeBackground");
@@ -220,7 +188,17 @@ function HomePage() {
     // Fetch the active background when the component mounts
     fetchActiveBackground();
   }, [fetchActiveBackground]); // Add fetchActiveBackground as a dependency
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("activeBackground"); // Clear the background on page reload/close
+    };
 
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
@@ -245,66 +223,97 @@ function HomePage() {
       const hoursSinceLastClaim = Math.floor(
         (now - new Date(lastDailyReward)) / (1000 * 60 * 60)
       ); // Calculate hours since the last claim
-
+  
       if (hoursSinceLastClaim >= 24) {
         setIsRewardAvailable(true); // Reward is available, button becomes clickable
+        setRemainingTime(0); // No timer if reward is available
       } else {
         setIsRewardAvailable(false); // Reward is not available, button stays disabled
-
+  
         // Calculate remaining time and update the state
         const timeUntilNextClaim =
           24 * 60 * 60 * 1000 - (now - new Date(lastDailyReward));
-        setRemainingTime(timeUntilNextClaim);
+        setRemainingTime(timeUntilNextClaim); // Set remaining time for the next reward
       }
     } finally {
       setIsLoading(false); // End loading state
     }
   }, [userID]);
-
+  
   // Update the remaining time every second if reward is not available
-  useEffect(() => {
-    let interval;
-    if (!isRewardAvailable && remainingTime > 0) {
-      interval = setInterval(() => {
-        setRemainingTime((prevTime) => prevTime - 1000); // Decrease the remaining time by 1 second
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isRewardAvailable, remainingTime]);
+  // Update the remaining time every second if reward is not available
+useEffect(() => {
+  let interval;
+  if (!isRewardAvailable && remainingTime > 0) {
+    interval = setInterval(() => {
+      setRemainingTime((prevTime) => prevTime - 1000); // Decrease the remaining time by 1 second
+    }, 1000);
+  }
+  return () => clearInterval(interval); // Cleanup interval on component unmount
+}, [isRewardAvailable, remainingTime]);
 
-  const formatRemainingTime = (milliseconds) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+  
 
-    if (hours > 1) {
-      return `${hours} hr left`; // Show only hours left if more than 1 hour
-    }
-    return `${hours}h ${minutes}m ${seconds}s left`; // Show full timer for less than 1 hour
-  };
+const formatRemainingTime = (milliseconds) => {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
 
-  const initializeUser = useCallback(async () => {
-    if (!userID) {
-      const userId = await getUserID(setUserID);
-      setUserID(userId);
-    }
+  // Format as "hours:minutes:seconds"
+  if (hours > 1) {
+    return `${hours} hr left`; // Show only hours left if more than 1 hour
+  }
+  return `${hours}h ${minutes}m ${seconds}s left`; // Show full timer for less than 1 hour
+};
+const initializeUser = useCallback(async () => {
+  if (!userID) {
+    // Get userID asynchronously if not already set
+    const fetchedUserID = await getUserID();
+    setUserID(fetchedUserID); // Set the userID in state
+  }
 
-    const savedPoints = localStorage.getItem(`points_${userID}`);
-    if (savedPoints) {
-      setPoints(parseFloat(savedPoints));
-    }
+  // Fetch points from localStorage if available, else initialize it
+  const savedPoints = localStorage.getItem(`points_${userID}`);
+  if (savedPoints) {
+    setPoints(parseFloat(savedPoints)); // Set points from localStorage
+  }
 
-    checkDailyRewardAvailability();
-  }, [userID, setUserID, setPoints, checkDailyRewardAvailability]);
+  // Check reward availability after userID is set
+  if (userID) {
+    await checkDailyRewardAvailability(); // Ensure reward logic executes after setting userID
+  }
+}, [userID, setUserID, setPoints, checkDailyRewardAvailability]);
+useEffect(() => {
+  initializeUser(); // Call once when component mounts
+}, [initializeUser]); // Dependency is the memoized initializeUser function
   const handleContextMenu = (e) => {
     e.preventDefault(); // This will prevent the default long-press behavior
   };
+  // Refetch avatar if the user changes it
   useEffect(() => {
     if (userID) {
-      initializeUser();
+      fetchActiveAvatar(userID); // Fetch the active avatar after getting the userID
     }
-  }, [userID, initializeUser]);
+  }, [userID, fetchActiveAvatar]);
+
+  // Invalidate the avatar queries to refetch when avatar is changed
+  useEffect(() => {
+    const invalidateAvatar = () => {
+      queryClient.invalidateQueries(['activeAvatar', userID]); // Refetch active avatar
+    };
+
+    window.addEventListener("avatarChanged", invalidateAvatar); // Custom event listener
+
+    return () => {
+      window.removeEventListener("avatarChanged", invalidateAvatar);
+    };
+  }, [userID, queryClient]);
+  useEffect(() => {
+    if (userID) {
+      fetchActiveAvatar(userID); // Fetch the active avatar after getting userID
+    }
+  }, [userID, fetchActiveAvatar]);
 
   const getMessage = useMemo(() => {
     if (tapCount >= 150) return "He's feeling it! Keep going!";
@@ -353,57 +362,57 @@ function HomePage() {
   const handleTap = useCallback(
     (e) => {
       if (energy <= 0) return; // Prevent tapping if there's no energy
-  
+
       // Trigger the bounce animation on the eagle image
       const eagleElement = document.querySelector(".eagle-image");
       if (eagleElement) {
         eagleElement.classList.add("tapped");
-  
+
         // Remove the class after animation completes to allow re-triggering
         setTimeout(() => {
           eagleElement.classList.remove("tapped");
         }, 300); // Match the duration of the animation (0.3s)
       }
-  
+
       // Get the touch or click event data (support both mobile and desktop)
       const touches = e.touches
         ? Array.from(e.touches)
         : [{ clientX: e.clientX, clientY: e.clientY }];
-  
+
       // Limit to a maximum of 4 simultaneous finger taps
       const validTouches = touches.length <= 4 ? touches : touches.slice(0, 4);
-  
+
       validTouches.forEach((touch, index) => {
         const tapX = touch.clientX; // X coordinate of tap
         const tapY = touch.clientY; // Y coordinate of tap
-  
+
         // Get the boundaries of the interactive area to ensure valid taps
         const topBoundaryElement = curvedBorderRef.current;
         const bottomBoundaryElement = bottomMenuRef.current;
-  
+
         if (topBoundaryElement && bottomBoundaryElement) {
           const topBoundary = topBoundaryElement.getBoundingClientRect().bottom;
           const bottomBoundary =
             bottomBoundaryElement.getBoundingClientRect().top;
-  
+
           // Ensure tap is within the interactive area (between top and bottom sections)
           if (tapY < topBoundary || tapY > bottomBoundary) {
             return;
           }
-  
+
           // Points to add per tap (assuming 1 point per tap for simplicity)
-          const pointsToAdd = 1;
-  
+          const pointsToAdd = pointsPerTap || 1; // Use the dynamic points per tap
+
           // Update points optimistically (before syncing with server)
           setPoints((prevPoints) => {
             const newPoints = prevPoints + pointsToAdd;
             localStorage.setItem(`points_${userID}`, newPoints); // Save updated points locally
             return newPoints; // Update state with new points
           });
-  
+
           // Increase tap count (for UI feedback messages)
           setTapCount((prevTapCount) => prevTapCount + 1);
-  
+
           // Add flying number animation for tap feedback
           const animateFlyingPoints = () => {
             const id = Date.now() + index; // Unique ID for flying number (per finger tap)
@@ -416,7 +425,7 @@ function HomePage() {
                 value: pointsToAdd,
               }, // Offset each flying number slightly
             ]);
-  
+
             // Remove flying number after animation completes
             setTimeout(() => {
               setFlyingNumbers((prevNumbers) =>
@@ -424,9 +433,9 @@ function HomePage() {
               );
             }, 750); // Animation duration: 750ms
           };
-  
+
           animateFlyingPoints(); // Trigger flying number animation
-  
+
           // Offline points accumulation for syncing later
           setOfflinePoints(
             (prevOfflinePoints) => prevOfflinePoints + pointsToAdd
@@ -434,10 +443,10 @@ function HomePage() {
           setUnsyncedPoints(
             (prevUnsyncedPoints) => prevUnsyncedPoints + pointsToAdd
           );
-  
+
           // Deduct energy for each tap (1 energy per tap)
           decreaseEnergy(1);
-  
+
           // Save unsynced points to localStorage
           const currentUnsyncedPoints = parseInt(
             localStorage.getItem(`unsyncedPoints_${userID}`) || 0
@@ -446,7 +455,7 @@ function HomePage() {
             `unsyncedPoints_${userID}`,
             currentUnsyncedPoints + pointsToAdd
           );
-  
+
           // Trigger the sync after a timeout (if no other taps happen within the interval)
           clearTimeout(window.syncTimeout);
           window.syncTimeout = setTimeout(() => {
@@ -456,7 +465,7 @@ function HomePage() {
           }, 5000); // Sync after 5 seconds of inactivity
         }
       });
-  
+
       // Haptic feedback when the user taps
       if (window.Telegram && window.Telegram.WebApp) {
         try {
@@ -467,35 +476,53 @@ function HomePage() {
         }
       }
     },
-    [energy, setPoints, setTapCount, setFlyingNumbers, setOfflinePoints, setUnsyncedPoints, decreaseEnergy, syncPointsWithServer, userID]
+    [
+      energy,
+      pointsPerTap,
+      setPoints,
+      setTapCount,
+      setFlyingNumbers,
+      setOfflinePoints,
+      setUnsyncedPoints,
+      decreaseEnergy,
+      syncPointsWithServer,
+      userID,
+    ]
   );
   const claimDailyReward = async () => {
     try {
-      setShowModal(false); // Close the modal immediately after the claim button is clicked
-
+      // Close the modal immediately after the claim button is clicked
+      setShowModal(false);
+    
+      // Make the API call to claim the reward
       const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/user-info/claim-daily-reward/${userID}`
       );
+      
+      // Get the new points after claiming the reward
       const newPoints = response.data.points;
-
+    
+      // Update the points in the state and local storage
       setPoints(newPoints);
-      localStorage.setItem(`points_${userID}`, newPoints); // Update points in local storage
-      setIsRewardAvailable(false); // Reward just claimed, so it's no longer available
-
-      // Reset the remaining time to 24 hours (86400000 milliseconds)
-      setRemainingTime(24 * 60 * 60 * 1000);
-
+      localStorage.setItem(`points_${userID}`, newPoints);
+    
+      // Mark the reward as claimed and set the timer to reset for 24 hours
+      setIsRewardAvailable(false); 
+      setRemainingTime(24 * 60 * 60 * 1000); // Reset to 24 hours (86400000 milliseconds)
+    
+      // Play the celebration sound and show confetti
       setShowConfetti(true);
-      audioRef.current.play(); // Play celebration sound
-
+      audioRef.current.play(); // Play the celebration sound
+    
+      // Hide confetti after 5 seconds
       setTimeout(() => {
-        setShowConfetti(false); // Hide confetti after 5 seconds
+        setShowConfetti(false);
       }, 5000);
     } catch (error) {
       console.error("Error claiming daily reward:", error);
     }
   };
-
+  
   const openModal = () => setShowModal(true);
 
   const closeModal = () => {
@@ -524,7 +551,16 @@ function HomePage() {
       style={{
         backgroundImage: `url(${backgroundImage})`,
       }}
-      onTouchStart={handleTap}
+      onTouchStart={(e) => {
+        // Check if the target is one of the elements that should not trigger a tap
+        if (
+          e.target.closest(".leaderboard-container") ||
+          e.target.closest(".boost-container")
+        ) {
+          return; // Don't trigger the handleTap function
+        }
+        handleTap(e); // Trigger the handleTap function for other areas
+      }}
     >
       <UserInfo />
       <CurvedBorderContainer ref={curvedBorderRef} className="curved-border" />
@@ -534,61 +570,127 @@ function HomePage() {
           {Math.floor(points)}
         </PointsDisplay>
       </PointsDisplayContainer>
+
       <MiddleSection>
-        <Message>{getMessage}</Message>{" "}
-        {/* Use getMessage directly as a value, not a function */}
-        <EagleContainer>
-          <EagleImage
-            src={eagleImage}
-            alt="Eagle"
-            className="eagle-image"
-            onContextMenu={(e) => e.preventDefault()} // Prevent default context menu
-          />
-        </EagleContainer>
+        {/* <Message>{getMessage}</Message>{" "} */}
+        <EagleContainer>{memoizedEagleImage}</EagleContainer>
       </MiddleSection>
 
-      <BottomContainer ref={bottomMenuRef} className="bottom-menu">
-        <Link to="/leaderboard" style={{ textDecoration: "none" }}>
-          <LeaderboardImage src={leaderboardImage} alt="Leaderboard" />
+      {/* Right-side menu container to handle Boost and Leaderboard */}
+      <RightSideMenuContainer>
+        {/* Boost with hover, floating and gradient background */}
+        {/* Boost with hover, floating and gradient background */}
+        <Link
+          to="/boosts"
+          onClick={(e) => e.stopPropagation()} // Prevent tap propagation
+          style={{
+            marginBottom: "15px",
+            textDecoration: "none",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            userSelect:"none",
+          }}
+        >
+          <BoostContainer className="boost-container">
+            <BoostIcon />
+          </BoostContainer>
+          <IconLabel>Boost</IconLabel>
         </Link>
 
+        {/* Leaderboard with hover, floating and gradient background */}
+        <Link
+          to="/leaderboard"
+          onClick={(e) => e.stopPropagation()} // Prevent tap propagation
+          style={{
+            textDecoration: "none",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            userSelect:"none",
+          }}
+        >
+          <LeaderboardContainer className="leaderboard-container">
+            <RightCenterLeaderboardImage
+              src={leaderboardImage}
+              alt="Leaderboard"
+            />
+          </LeaderboardContainer>
+          <IconLabel>Leaderboard</IconLabel>
+        </Link>
+        <Link
+          to="/avatars"
+          onClick={(e) => e.stopPropagation()} // Prevent tap propagation
+          style={{
+            marginTop: "15px",
+            textDecoration: "none",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            userSelect:"none",
+          }}
+        >
+          <BoostContainer className="boost-container">
+          <CgProfile size={30} color="#fff" />
+          </BoostContainer>
+          <IconLabel>Use Avatar</IconLabel>
+        </Link>
+      </RightSideMenuContainer>
+
+      {/* Bottom container with only Energy and Claim */}
+      <BottomContainer ref={bottomMenuRef} className="bottom-menu">
         <EnergyContainer>
-          <EnergyIcon energy={energy} />
-          <EnergyCounter>{Math.floor(energy)}/1000</EnergyCounter>
+          {/* Conditionally render based on isEnergyLoading */}
+          {isEnergyLoading ? (
+            <div style={{ textAlign: "center", padding: "10px" }}>
+              <p>Analyzing Energy...</p>
+            </div>
+          ) : (
+            <>
+              <EnergyIcon energy={energy} />
+              <EnergyCounter>
+                {Math.floor(energy)}/{maxEnergy}
+              </EnergyCounter>
+            </>
+          )}
         </EnergyContainer>
 
         <Link
-          to="#"
-          onClick={isRewardAvailable ? openModal : null}
-          style={{
-            textDecoration: "none",
-            pointerEvents: isRewardAvailable ? "auto" : "none",
-            opacity: isRewardAvailable ? 1 : 0.5,
-          }}
-        >
-          {/* Show timer immediately above the claim button */}
-          {!isRewardAvailable && remainingTime > 0 && (
-            <SmallTimerText>
-              {formatRemainingTime(remainingTime)}
-            </SmallTimerText>
-          )}
-          <EnergyContainer>
-            <FireIcon $available={isRewardAvailable} />
-            Daily Reward
-          </EnergyContainer>
-        </Link>
+  to="#"
+  onClick={isRewardAvailable ? openModal : null}
+  style={{
+    textDecoration: "none",
+    pointerEvents: isRewardAvailable ? "auto" : "none",
+    opacity: isRewardAvailable ? 1 : 0.5, // Dim the button if reward is not available
+  }}
+>
+  {/* Show the timer if reward is not available and remaining time is greater than 0 */}
+  {!isRewardAvailable && remainingTime > 0 && (
+    <SmallTimerText>
+      {formatRemainingTime(remainingTime)} {/* Call the formatting function */}
+    </SmallTimerText>
+  )}
+  <EnergyContainer>
+    <FireIcon $available={isRewardAvailable} />
+    Daily Reward
+  </EnergyContainer>
+</Link>
+
       </BottomContainer>
 
       {showModal && (
         <ModalOverlay onClick={closeModal}>
           <RewardModalContainer
             onClick={(e) => {
-              e.stopPropagation(); // Prevent the click event from propagating to the HomeContainer
+              e.stopPropagation();
             }}
             onTouchStart={(e) => {
-              e.stopPropagation(); // Prevent the touch event from propagating to the HomeContainer
+              e.stopPropagation();
             }}
-            isClosing={isClosing} // Pass the closing state as a prop
+            isClosing={isClosing}
           >
             <CloseButton onClick={closeModal}>×</CloseButton>
             <ModalHeader>Claim Your Daily Reward!</ModalHeader>
@@ -604,7 +706,6 @@ function HomePage() {
         </ModalOverlay>
       )}
 
-      {/* Confetti */}
       {showConfetti && (
         <Confetti width={windowSize.width} height={windowSize.height} />
       )}

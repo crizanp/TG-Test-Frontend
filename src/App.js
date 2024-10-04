@@ -1,29 +1,30 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { PointsProvider } from './context/PointsContext';
-import { EnergyProvider } from './context/EnergyContext'; // Import EnergyProvider
-import Layout from './components/Layout';
-import TaskList from './components/TaskList';
-import HomePage from './components/HomePage';
-import EcosystemPage from './components/EcosystemPage';
-import FriendPage from './components/FriendPage';
-import AirdropPage from './components/AirdropPage';
-import GamesPage from './components/GamesPage';
-import SpinWheelPage from './components/SpinWheelPage';
-import LoadingPage from './components/LoadingPage';
-import ProtectedRoute from './components/ProtectedRoute';
-import LeaderboardPage from './components/LeaderboardPage';
-import LevelPage from './components/LevelPage';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { PointsProvider } from "./context/PointsContext";
+import { EnergyProvider } from "./context/EnergyContext"; // Import EnergyProvider
+import Layout from "./components/Layout";
+import TaskList from "./pages/TaskList";
+import HomePage from "./pages/HomePage";
+import EcosystemPage from "./pages/EcosystemPage";
+import FriendPage from "./pages/FriendPage";
+import AirdropPage from "./pages/AirdropPage";
+import GamesPage from "./pages/GamesPage";
+import SpinWheelPage from "./pages/SpinWheelPage";
+import LoadingPage from "./components/LoadingPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LeaderboardPage from "./pages/LeaderboardPage";
+import LevelPage from "./pages/LevelPage";
+import BoostsPage from "./pages/BoostsPage";
+import AvatarPage from "./pages/AvatarProfile";
 
 function App() {
   return (
     <PointsProvider>
-      <EnergyProvider> 
+      <EnergyProvider>
         <Router>
           <Layout>
             <Routes>
               <Route path="/" element={<LoadingPage />} />
-
               {/* Protected Routes */}
               <Route
                 path="/home"
@@ -89,7 +90,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-               <Route
+              <Route
                 path="/levelpage"
                 element={
                   <ProtectedRoute>
@@ -97,7 +98,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-             
+              <Route
+                path="/boosts"
+                element={
+                  <ProtectedRoute>
+                    <BoostsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/avatars"
+                element={
+                  <ProtectedRoute>
+                    <AvatarPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </Layout>
         </Router>

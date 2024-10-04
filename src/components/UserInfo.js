@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaRegGem, FaBell, FaLevelUpAlt } from 'react-icons/fa'; // Import necessary icons
+import { FaRegGem, FaBell, FaLevelUpAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { usePoints } from '../context/PointsContext';
-import { getUserID } from '../utils/getUserID'; // Assuming the file is named getUserID.js
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { getUserID } from '../utils/getUserID';
+import SkeletonLoader from './skeleton/UserinfoSkeleton'; // Correct the import here
 
 // Main container with dark theme and compact mobile-first size
 const UserInfoContainer = styled.div`
   color: white;
-  background-color: #000000;  // Dark background
-  padding: 10px 10px;
+  background-color: #000000;
+  padding: 7px 10px;
   border-radius: 20px;
-  border: #867c7c 1px solid;
-  top: 2%;
-  width: 85%;  
+  border: #3baeef 1px solid;
+  top: 2.75%;
+  width: 85%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -23,10 +25,10 @@ const UserInfoContainer = styled.div`
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 999;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   font-family: 'Orbitron', sans-serif;
-  animation: fadeIn 0.6s ease-in-out;  /* Wake-up animation */
+  animation: fadeIn 0.6s ease-in-out;
 `;
 
 // Username and Level container
@@ -43,7 +45,7 @@ const Username = styled.div`
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-right: 8px;  // Space between username and level
+  margin-right: 8px;
 `;
 
 // Icon for gems
@@ -76,7 +78,7 @@ const LevelContainer = styled.div`
   font-size: 13px;
   color: #ffac00;
   font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);  // Add shadow for depth
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 `;
 
 // Level icon styled for mobile
@@ -95,48 +97,54 @@ const BellIcon = styled(FaBell)`
 
 // Styled Link to remove underline
 const StyledLink = styled(Link)`
-  text-decoration: none;  // Remove the underline
+  text-decoration: none;
 `;
 
-const UserInfo = () => {
-  const [userLevel, setUserLevel] = useState(0);  // Default to 0
-  const [firstName, setFirstName] = useState('User');
-  const { points } = usePoints();  // Points context
+const fetchUserLevel = async (userID) => {
+  const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/user-level/user-level/${userID}`);
+  return data;
+};
 
+const UserInfo = () => {
+  const { points } = usePoints();  // Points context
+  const [firstName, setFirstName] = useState(null);
+
+  // Fetch userID and handle firstName from Telegram WebApp
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const userID = await getUserID(() => {}, () => {});
-
-        // Fetch the user's level from the API
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-level/user-level/${userID}`);
-        const data = response.data;
-
-        // Set the user's level and first name, default to 0 if level is missing
-        setUserLevel(data.currentLevel ?? 0);
-
-        // Get the first name from Telegram WebApp or fallback to 'User'
-        let firstNameFromTelegram = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name || 'User';
-
-        // Trim the first name to the first 10 alphanumeric characters
-        firstNameFromTelegram = firstNameFromTelegram.split(/[^\w]+/)[0].slice(0, 10);
-
-        setFirstName(firstNameFromTelegram);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setUserLevel(0);  // Default to level 0 on error
-        setFirstName('User');  // Default to 'User' on error
+      const firstNameFromTelegram = window.Telegram.WebApp?.initDataUnsafe?.user?.first_name;
+      if (firstNameFromTelegram) {
+        setFirstName(firstNameFromTelegram.split(/[^\w]+/)[0].slice(0, 10)); // Trim the first name
       }
     };
 
     fetchUserData();
   }, []);
 
+  // Fetch user level using React Query
+  const { data: userLevelData, isLoading, isError } = useQuery({
+    queryKey: ['userLevel'],
+    queryFn: async () => {
+      const userID = await getUserID();
+      return fetchUserLevel(userID);
+    },
+  });
+
+  if (isLoading) {
+    return <SkeletonLoader />; // Correctly using SkeletonLoader here
+  }
+
+  if (isError) {
+    return <UserInfoContainer>Error loading user info</UserInfoContainer>;
+  }
+
+  const userLevel = userLevelData?.currentLevel ?? 0;  // Default to 0 if no level is found
+
   return (
     <UserInfoContainer>
       {/* Display the username and level together */}
       <UserLevelContainer>
-        <Username>Hi {firstName}</Username>
+        <Username>Hi {firstName || 'User'}</Username>
         {/* Apply the styled Link here */}
         <StyledLink to="/levelpage">
           <LevelContainer>
@@ -147,7 +155,7 @@ const UserInfo = () => {
 
       {/* Display points and bell icon */}
       <PointsContainer>
-        <GemIcon /> {Math.floor(points)} GEMS  {/* Keep points functionality as in the previous version */}
+        <GemIcon /> {Math.floor(points)} GEMS  {/* Keep points functionality */}
         {/* Link to Telegram for notifications */}
         <a href="https://t.me/gemhuntersclub" target="_blank" rel="noopener noreferrer">
           <BellIcon />
