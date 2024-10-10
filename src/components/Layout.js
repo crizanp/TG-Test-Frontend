@@ -74,16 +74,16 @@ function Layout({ children }) {
 
     if (isLocalhost) {
       console.log('Running on localhost:3000');
-      setShowBottomMenu(false);
-      setLoading(true);
+      setShowBottomMenu(true);
+      setLoading(false);
     } else if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
       const platform = tg.platform;
 
       if (platform === 'android' || platform === 'ios') {
         console.log('Confirmed: Running inside Telegram mobile app');
         tg.expand();
-        setShowBottomMenu(false);
-        setLoading(true);
+        setShowBottomMenu(true);
+        setLoading(false);
 
         // Disable vertical swipes to prevent app collapse
         tg.disableVerticalSwipes();
