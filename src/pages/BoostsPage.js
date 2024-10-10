@@ -236,48 +236,48 @@ const BoostsPage = () => {
             handleOptionClick("maxEnergy", 1000, 0)
           }
         >
-          Max 1000 Energy (Level 0 or 1)
+          Max 1000 Energy (Level 0 or 1 or 2)
           <EligibleTag>Eligible</EligibleTag>
         </BoostOption>
         <BoostOption
           selected={selectedEnergyBoost === 1500}
           disabled={selectedEnergyBoost === 1500}
           onClick={() =>
-            handleOptionClick("maxEnergy", 1500, 2)
+            handleOptionClick("maxEnergy", 1500, 3)
           }
         >
-          Max 1500 Energy (Level 2)
-          {userLevel >= 2 && <EligibleTag>Eligible</EligibleTag>}
+          Max 1500 Energy (Level 3)
+          {userLevel >= 3 && <EligibleTag>Eligible</EligibleTag>}
         </BoostOption>
         <BoostOption
           selected={selectedEnergyBoost === 2500}
           disabled={selectedEnergyBoost === 2500}
           onClick={() =>
-            handleOptionClick("maxEnergy", 2500, 3)
+            handleOptionClick("maxEnergy", 2500, 6)
           }
         >
-          Max 2500 Energy (Level 3)
-          {userLevel >= 3 && <EligibleTag>Eligible</EligibleTag>}
+          Max 2500 Energy (Level 6)
+          {userLevel >= 6 && <EligibleTag>Eligible</EligibleTag>}
         </BoostOption>
         <BoostOption
           selected={selectedEnergyBoost === 4000}
           disabled={selectedEnergyBoost === 4000}
           onClick={() =>
-            handleOptionClick("maxEnergy", 4000, 4)
+            handleOptionClick("maxEnergy", 4000, 9)
           }
         >
-          Max 4000 Energy (Level 4)
-          {userLevel >= 4 && <EligibleTag>Eligible</EligibleTag>}
+          Max 4000 Energy (Level 9)
+          {userLevel >= 9 && <EligibleTag>Eligible</EligibleTag>}
         </BoostOption>
         <BoostOption
           selected={selectedEnergyBoost === 7000}
           disabled={selectedEnergyBoost === 7000}
           onClick={() =>
-            handleOptionClick("maxEnergy", 7000, 5)
+            handleOptionClick("maxEnergy", 7000, 12)
           }
         >
-          Max 7000 Energy (Level 5)
-          {userLevel >= 5 && <EligibleTag>Eligible</EligibleTag>}
+          Max 7000 Energy (Level 12)
+          {userLevel >= 12 && <EligibleTag>Eligible</EligibleTag>}
         </BoostOption>
       </Section>
 
@@ -308,21 +308,21 @@ const BoostsPage = () => {
           selected={selectedTapBoost === 3}
           disabled={selectedTapBoost === 3}
           onClick={() =>
-            handleOptionClick("pointsPerTap", 3, 4)
+            handleOptionClick("pointsPerTap", 3, 7)
           }
         >
-          3 Points Per Tap (Level 4)
-          {userLevel >= 4 && <EligibleTag>Eligible</EligibleTag>}
+          3 Points Per Tap (Level 7)
+          {userLevel >= 7 && <EligibleTag>Eligible</EligibleTag>}
         </BoostOption>
         <BoostOption
           selected={selectedTapBoost === 5}
           disabled={selectedTapBoost === 5}
           onClick={() =>
-            handleOptionClick("pointsPerTap", 5, 5)
+            handleOptionClick("pointsPerTap", 5, 12)
           }
         >
-          5 Points Per Tap (Level 5)
-          {userLevel >= 5 && <EligibleTag>Eligible</EligibleTag>}
+          5 Points Per Tap (Level 12)
+          {userLevel >= 12 && <EligibleTag>Eligible</EligibleTag>}
         </BoostOption>
       </Section>
 
