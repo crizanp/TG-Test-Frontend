@@ -9,7 +9,7 @@ import { getUserID } from "../utils/getUserID";  // Importing the function corre
 const LayoutContainer = styled.div`
   font-family: 'Orbitron', sans-serif;
   background-color: #090c12;
-  max-width: 460px;
+  max-width: 564px;
   height: 100vh;
   margin: 0 auto;
   display: flex;
@@ -23,7 +23,7 @@ const RestrictedContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  max-width: 460px;
+  max-width: 564px;
   background-image: ${(props) => `url(${props.imageUrl})`};
   background-size: cover;
   background-position: center;
@@ -74,16 +74,16 @@ function Layout({ children }) {
 
     if (isLocalhost) {
       console.log('Running on localhost:3000');
-      setShowBottomMenu(true);
-      setLoading(false);
+      setShowBottomMenu(false);
+      setLoading(true);
     } else if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
       const platform = tg.platform;
 
       if (platform === 'android' || platform === 'ios') {
         console.log('Confirmed: Running inside Telegram mobile app');
         tg.expand();
-        setShowBottomMenu(true);
-        setLoading(false);
+        setShowBottomMenu(false);
+        setLoading(true);
 
         // Disable vertical swipes to prevent app collapse
         tg.disableVerticalSwipes();

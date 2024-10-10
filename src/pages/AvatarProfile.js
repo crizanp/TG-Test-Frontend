@@ -24,50 +24,49 @@ import {
   LeftSection,
   TopSection,
   Container,
-  ActiveAvatarAnimation  // Import the animation for the right-side active avatar
+  ActiveAvatarAnimation,
+  MenuItem,
+  MenuOptions
 } from "../style/AvatarProfileStyle";
 
 const AvatarSelection = () => {
-  const { points, setPoints } = usePoints(); // Points Context
-  const [modalData, setModalData] = useState(null); // Modal data for confirmation
-  const [unlockedAvatars, setUnlockedAvatars] = useState([]); // Unlocked avatars
-  const [activeAvatar, setActiveAvatar] = useState(null); // Active avatar
-  const [fallbackAvatar, setFallbackAvatar] = useState(null); // Fallback avatar
-  const [userID, setUserID] = useState(null); // Track userID
-  const [processing, setProcessing] = useState(false); // Processing state for modal
-  const queryClient = useQueryClient(); // Initialize query client to invalidate queries
-  const [isClosing, setIsClosing] = useState(false); // Modal closing animation state
+  const { points, setPoints } = usePoints();
+  const [modalData, setModalData] = useState(null);
+  const [unlockedAvatars, setUnlockedAvatars] = useState([]);
+  const [activeAvatar, setActiveAvatar] = useState(null);
+  const [fallbackAvatar, setFallbackAvatar] = useState(null);
+  const [userID, setUserID] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [filterType, setFilterType] = useState('all'); // State for avatar filter
+  const queryClient = useQueryClient();
+  const [isClosing, setIsClosing] = useState(false);
 
   const handleModalClose = () => {
-    if (isClosing) return; // Prevent multiple close events
+    if (isClosing) return;
     setIsClosing(true);
     setTimeout(() => {
       setModalData(null);
-      setIsClosing(false); // Reset the state after the modal is closed
-    }, 500); // Timeout matches the animation duration
+      setIsClosing(false);
+    }, 500);
   };
 
-  // Fetch userID
   useEffect(() => {
     const fetchUserID = async () => {
       const id = await getUserID();
-      setUserID(id); // Set userID after fetching
+      setUserID(id);
     };
     fetchUserID();
   }, []);
 
-  // Fetch fallback avatar if active avatar is not available
   const fetchFallbackAvatar = async () => {
     try {
       const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/fallback-avatar`);
-      const defaultAvatar = data.length > 0 ? data[0] : null;
-      setFallbackAvatar(defaultAvatar);
+      setFallbackAvatar(data.length > 0 ? data[0] : null);
     } catch (error) {
       console.error('Error fetching fallback avatar:', error);
     }
   };
 
-  // Fetch user details (avatars, points, level)
   const fetchUserDetails = async (userID) => {
     try {
       const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/user-avatar/${userID}`);
@@ -78,41 +77,36 @@ const AvatarSelection = () => {
     }
   };
 
-  // Fetch active avatar
   const fetchActiveAvatar = async (userID) => {
     try {
       const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/user-avatar/${userID}/active-avatar`);
-      return data; // Return the active avatar if found
+      return data;
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        fetchFallbackAvatar(); // If no active avatar, fetch fallback
-        return null; // Return null if no active avatar found
+        fetchFallbackAvatar();
+        return null;
       } else {
         showToast('Error fetching active avatar.', 'error');
-        console.error('Error fetching active avatar:', error);
-        throw error; // Re-throw other errors
+        throw error;
       }
     }
   };
 
-  // Fetch unlocked avatars
   const fetchUnlockedAvatars = async (userID) => {
     try {
       const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/user-avatar/${userID}/unlocked-avatars`);
-      return data; // Return the unlocked avatars if found
+      return data;
     } catch (error) {
       if (error.response && error.response.status === 404) {
         showToast('No unlocked avatars found.', 'info');
-        return []; // Return empty array if no unlocked avatars found
+        return [];
       } else {
         showToast('Error fetching unlocked avatars.', 'error');
-        console.error('Error fetching unlocked avatars:', error);
-        throw error; // Re-throw other errors
+        throw error;
       }
     }
   };
 
-  // Fetch all avatars
   const fetchAvatars = async () => {
     try {
       const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/avatar`);
@@ -122,11 +116,10 @@ const AvatarSelection = () => {
     }
   };
 
-  // Use React Query to fetch userDetails, avatars, unlockedAvatars, and activeAvatar
   const { data: userDetails, isLoading: userLoading, isError: userError } = useQuery({
     queryKey: ['userDetails', userID],
     queryFn: () => fetchUserDetails(userID),
-    enabled: !!userID, // Ensure this query runs only when userID is available
+    enabled: !!userID,
     staleTime: Infinity,
     cacheTime: Infinity,
     refetchOnWindowFocus: false,
@@ -169,14 +162,19 @@ const AvatarSelection = () => {
   }, [unlockedAvatarData, activeAvatarData]);
 
   if (!userID) {
-    return <SkeletonLoader />; // Loading state until the userID is available
+    return <SkeletonLoader />;
   }
 
-  // Handle avatar unlocking
   const handleUnlockAvatar = async (avatar) => {
-    if (modalData) return; // Prevent multiple modals
-
-    if (points >= avatar.gemsRequired && userDetails.level >= avatar.levelRequired) {
+    if (modalData) return;
+  
+    // Check if the avatar is already unlocked
+    const isAlreadyUnlocked = unlockedAvatars.some((unlockedAvatar) => unlockedAvatar._id === avatar._id);
+  
+    if (isAlreadyUnlocked) {
+      // If the avatar is already unlocked, switch to the avatar instead of unlocking
+      handleSwitchAvatar(avatar);
+    } else if (points >= avatar.gemsRequired && userDetails.level >= avatar.levelRequired) {
       setModalData({
         avatar,
         message: `Are you sure you want to unlock the avatar ${avatar.name} and deduct ${avatar.gemsRequired} gems?`,
@@ -188,14 +186,18 @@ const AvatarSelection = () => {
       showToast('You are not eligible to unlock this avatar. Please level up.', 'error');
     }
   };
-
-  // Handle setting active avatar (Switching avatars)
   const handleSwitchAvatar = async (avatar) => {
     if (modalData) return; // Prevent multiple modals
-
+  
+    // Check if the avatar is the current active avatar, if so, no need to switch
+    if (activeAvatar && activeAvatar._id === avatar._id) {
+      showToast('This avatar is already active.', 'info');
+      return;
+    }
+    // Set modal data to prompt user for switching avatar confirmation
     setModalData({
       actionType: 'switch',
-      currentAvatarName: activeAvatar?.name || "your current avatar",
+      currentAvatarName: activeAvatar?.name || 'your current avatar', // Show current avatar name or fallback message
       newAvatarName: avatar.name,
       avatar,
     });
@@ -215,26 +217,30 @@ const AvatarSelection = () => {
 
         // Deduct points and store in both context and localStorage
         const newPoints = points - modalData.gemsRequired;
-        setPoints(newPoints); 
+        setPoints(newPoints);
         localStorage.setItem(`points_${userID}`, newPoints);
 
+        // Set the newly unlocked avatar as active by default
         setUnlockedAvatars((prev) => [...prev, modalData.avatar]);
-        setActiveAvatar(modalData.avatar); // Set the unlocked avatar as active by default
-        localStorage.setItem(`activeAvatar_${userID}`, JSON.stringify(modalData.avatar)); // Update active avatar in localStorage
+        setActiveAvatar(modalData.avatar); 
+        localStorage.setItem(`activeAvatar_${userID}`, JSON.stringify(modalData.avatar));
 
         showToast(`Avatar ${modalData.avatar.name} has been unlocked and set as active!`, 'success');
-        
+
         // Set the avatar as active via API
         await axios.put(`${process.env.REACT_APP_API_URL}/user-avatar/${userID}/set-active-avatar/${avatarId}`);
       } else if (modalData.actionType === 'switch') {
+        // Update the active avatar on the server
         await axios.put(`${process.env.REACT_APP_API_URL}/user-avatar/${userID}/set-active-avatar/${avatarId}`);
+
+        // Update the active avatar in state and localStorage
         setActiveAvatar(modalData.avatar);
-        localStorage.setItem(`activeAvatar_${userID}`, JSON.stringify(modalData.avatar)); // Update active avatar in localStorage
+        localStorage.setItem(`activeAvatar_${userID}`, JSON.stringify(modalData.avatar));
         showToast(`Avatar has been switched to ${modalData.avatar.name}!`, 'success');
       }
 
-      queryClient.invalidateQueries(['activeAvatar', userID]);
-      queryClient.invalidateQueries(['unlockedAvatars', userID]);
+      queryClient.invalidateQueries(['activeAvatar', userID]); // Refetch active avatar data
+      queryClient.invalidateQueries(['unlockedAvatars', userID]); // Refetch unlocked avatars
       setModalData(null); // Close modal after confirmation
     } catch (error) {
       showToast('Failed to complete the action. Please try again.', 'error');
@@ -243,49 +249,30 @@ const AvatarSelection = () => {
     }
   };
 
-  // Filter out avatars that are already unlocked for the locked avatars section
   const lockedAvatars = avatars?.filter((avatar) => !unlockedAvatars.some((uAvatar) => uAvatar._id === avatar._id));
+  
+  const filteredAvatars = filterType === 'all' ? avatars : unlockedAvatars;
 
-  if (userLoading || avatarsLoading || activeAvatarLoading || unlockedAvatarsLoading) return <SkeletonLoader />; // Loading state
+  if (userLoading || avatarsLoading || activeAvatarLoading || unlockedAvatarsLoading) return <SkeletonLoader />;
 
   if (userError || avatarsError) {
-    return <div>Error loading avatars or user data</div>; // Error handling
+    return <div>Error loading avatars or user data</div>;
   }
 
   return (
     <Container>
       <UserInfo />
       <TopSection>
-        <LeftSection>
-          <AvatarList>
-            {unlockedAvatars.length > 0 ? (
-              unlockedAvatars.map((avatar) => (
-                <AvatarCard
-                  key={avatar._id}
-                  isLocked={false}
-                  onClick={() => handleSwitchAvatar(avatar)} // Switch avatars
-                >
-                  <AvatarImage src={avatar.image} alt={avatar.name} />
-                  <div>{avatar.name}</div>
-                </AvatarCard>
-              ))
-            ) : (
-              <p>No avatars unlocked yet.</p>
-            )}
-          </AvatarList>
-        </LeftSection>
-
         <RightSection>
           {activeAvatar ? (
             <>
-            <ActiveAvatarAnimation>  {/* Wrap active avatar image with animation */}
-              <CurrentAvatarImage src={activeAvatar.image} alt={activeAvatar.name} />
-              
-            </ActiveAvatarAnimation>
-            <AvatarInfo>
+              <ActiveAvatarAnimation>
+                <CurrentAvatarImage src={activeAvatar.image} alt={activeAvatar.name} />
+              </ActiveAvatarAnimation>
+              <AvatarInfo>
                 <Title>{activeAvatar.name}</Title>
               </AvatarInfo>
-              </>
+            </>
           ) : fallbackAvatar ? (
             <>
               <CurrentAvatarImage src={fallbackAvatar.fallbackAvatarUrl} alt="Fallback Avatar" />
@@ -300,9 +287,26 @@ const AvatarSelection = () => {
       </TopSection>
 
       <MoreAvatarsSection>
-        <MoreAvatarsTitle>More Avatars to Unlock</MoreAvatarsTitle>
+        <MoreAvatarsTitle>Collect Avatars to Level Up</MoreAvatarsTitle>
+
+        {/* New Filter Menu */}
+        <MenuOptions>
+          <MenuItem
+            active={filterType === 'all'}
+            onClick={() => setFilterType('all')}
+          >
+            All Avatars
+          </MenuItem>
+          <MenuItem
+            active={filterType === 'unlocked'}
+            onClick={() => setFilterType('unlocked')}
+          >
+            Unlocked Avatars
+          </MenuItem>
+        </MenuOptions>
+
         <MoreAvatarsGrid>
-          {lockedAvatars?.map((avatar) => {
+          {filteredAvatars?.map((avatar) => {
             const isLocked = userDetails.level < avatar.levelRequired || points < avatar.gemsRequired;
             return (
               <AvatarCard
@@ -310,7 +314,7 @@ const AvatarSelection = () => {
                 isLocked={isLocked}
                 onClick={() => !isLocked && handleUnlockAvatar(avatar)}
               >
-                <LevelDisplay>Lvl {avatar.levelRequired}</LevelDisplay> {/* New level display */}
+                <LevelDisplay>Lvl {avatar.levelRequired}</LevelDisplay>
                 <TopRightGems>
                   <GemIcon /> {avatar.gemsRequired}
                 </TopRightGems>
@@ -333,7 +337,7 @@ const AvatarSelection = () => {
           onGoAhead={handleConfirmAction}
           onClose={handleModalClose}
           isClosing={isClosing}
-          processing={processing} // Pass the processing state here
+          processing={processing}
         />
       )}
     </Container>
