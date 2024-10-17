@@ -36,7 +36,16 @@ const StyledLeaderboardPage = styled.div`
   padding: 0;
   width: 100%;
 `;
+const NoteText = styled.div`
+color: #aaaaaa;
+    margin-bottom: 20px;
+    margin-left: 18px;
+    margin-right: 18px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
 
+`;
 const StyledTableRow = styled(TableRow)`
   background: ${({ rank }) => {
     if (rank === 1 || rank === 3) return "#2c15d354"; // Bluish background for ranks 1 and 3
@@ -444,7 +453,7 @@ function LeaderboardPage() {
               ))}
             </DateTabContainer>
             {renderWeeklyTop3Leaderboard()} */}
-            The weekly winners leaderboard is still in the testing phase and has not been announced yet. Please wait for the development to be completed and stay tuned for the final announcement in the Gem Hunters Club
+            <NoteText>The weekly winners leaderboard is still in the testing phase and has not been announced yet. Please wait for the development to be completed and stay tuned for the final announcement in the Gem Hunters Club</NoteText>
           </FullWidthContainer>
         </>
       )}
