@@ -13,7 +13,6 @@ for (let i = 1; i <= 20; i++) {
 export const LeaderboardContainer = styled.div`
   background: linear-gradient(135deg, #1e1e1e, #343434); // Dark gradient background
   color: #ffffff;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   font-family: 'Orbitron', sans-serif; // Futuristic font
@@ -90,7 +89,7 @@ export const TableHeader = styled.th`
 // Styling for individual table rows with hover effect
 export const TableRow = styled.tr`
   &:nth-child(even) {
-    background-color: #2e2e2e; // Alternating row color
+    background-color: none; // Alternating row color
   }
   &:hover {
     background-color: #333333;
@@ -167,7 +166,34 @@ export const PointsCell = styled.td`
     color: #36a8e5; // Blue accent color for points icon
   }
 `;
+// Cell displaying points in the leaderboard
+export const PointsCellbelow = styled.td`
+  display: flex;
+  align-items: center;  // Ensures vertical alignment is centered
+  justify-content: center;  // Optional: Adjust if you want to center the content horizontally
+  padding: 12px;
+  color: #d5dbd7;
+  font-weight: bold;
+  font-size: 18px;
 
+  svg {
+    margin-right: 8px;  // Space between the icon and points
+  }
+
+  span {
+    vertical-align: middle;  // Ensures the text is aligned
+  }
+`;
+export const AirdropDescription = styled.p`
+  color: #aaaaaa;
+  margin-bottom: 20px;
+  margin-left: 18px;
+    margin-right: 18px;
+  
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+`;
 // Avatar image styling in the leaderboard
 export const UserAvatar = styled.img`
   width: 42px;
@@ -249,4 +275,27 @@ export const PointsDisplay = styled.div`
   -webkit-user-drag: none;
   text-align: center; // Optional, adjust as per your layout
   margin-top: 20px;   // Optional, add margin for spacing if needed
+`;
+// Styled component for Tabs container
+export const TabContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+`;
+
+// Styled component for each Tab
+export const Tab = styled.button`
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: ${(props) => (props.active ? "#36a8e5" : "#f1f1f1")};
+  color: ${(props) => (props.active ? "#ffffff" : "#000000")};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.active ? "#36a8e5" : "#d9d9d9")};
+  }
 `;
