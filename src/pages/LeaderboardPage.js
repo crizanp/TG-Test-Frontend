@@ -25,7 +25,7 @@ import {
   TabContainer,
   Top30LeaderText,
   PointsCellbelow,
-  AirdropDescription
+  AirdropDescription,
 } from "../style/LeaderboardStyles";
 
 // Styled Components
@@ -39,12 +39,13 @@ const StyledLeaderboardPage = styled.div`
 
 const StyledTableRow = styled(TableRow)`
   background: ${({ rank }) => {
-    if (rank === 1 || rank === 3) return "#2c15d354";  // Bluish background for ranks 1 and 3
-    if (rank === 2) return "#2745b07d";  // Always apply dim background for rank 2
-    return rank % 2 === 0 ? "transparent" : "#333333";  // Alternating backgrounds for even/odd rows
+    if (rank === 1 || rank === 3) return "#2c15d354"; // Bluish background for ranks 1 and 3
+    if (rank === 2) return "#2745b07d"; // Always apply dim background for rank 2
+    return rank % 2 === 0 ? "transparent" : "#333333"; // Alternating backgrounds for even/odd rows
   }};
   font-weight: ${({ rank }) => (rank <= 3 ? "bold" : "normal")};
-  color: ${({ rank }) => (rank <= 3 ? "#fff" : "#e8e7e4")};  // Light color for top 3
+  color: ${({ rank }) =>
+    rank <= 3 ? "#fff" : "#e8e7e4"}; // Light color for top 3
   &:hover {
     background-color: #333333;
     transition: background-color 0.3s ease-in-out;
@@ -52,8 +53,6 @@ const StyledTableRow = styled(TableRow)`
     transform: scale(1.01);
   }
 `;
-
-
 
 const StyledTop3Container = styled.div`
   display: flex;
@@ -68,13 +67,17 @@ const Top3Card = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ rank }) => (rank === 1 ? "#4CAF50" : "#2c15d354")};  // Green for rank 1, bluish for others
+  background: ${({ rank }) =>
+    rank === 1
+      ? "#4CAF50"
+      : "#2c15d354"}; // Green for rank 1, bluish for others
   padding: 20px;
   border-radius: 10px;
   color: #fff;
   font-weight: bold;
   position: ${({ rank }) => (rank === 1 ? "relative" : "static")};
-  order: ${({ rank }) => (rank === 2 ? 1 : rank === 1 ? 2 : 3)}; // Ensure rank 1 is in the center
+  order: ${({ rank }) =>
+    rank === 2 ? 1 : rank === 1 ? 2 : 3}; // Ensure rank 1 is in the center
   ${({ rank }) =>
     rank === 1
       ? `
@@ -113,17 +116,16 @@ const DateTabContainer = styled(TabContainer)`
   &::-webkit-scrollbar {
     display: none;
   }
-  -ms-overflow-style: none;  /* Hide scrollbar in IE and Edge */
-  scrollbar-width: none;  /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
 
   /* Add margin to the first tab to ensure it's fully visible */
   & > :first-child {
-    ${'' /* margin-left: 117px;  */}
-    /* Adjust this margin to ensure proper spacing */
+    ${
+      "" /* margin-left: 117px;  */
+    }/* Adjust this margin to ensure proper spacing */
   }
 `;
-
-
 
 // Utility function to truncate usernames (used only for non-top-3 users)
 const truncateUsername = (username) => {
@@ -133,19 +135,25 @@ const truncateUsername = (username) => {
 
 // Fetching the top 30 users for Lifetime leaderboard
 const fetchTopUsers = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/fetchdata`);
+  const response = await axios.get(
+    `${process.env.REACT_APP_API_URL}/user-info/fetchdata`
+  );
   return response.data.sort((a, b) => b.points - a.points).slice(0, 30); // Fetch top 30 users
 };
 
 // Fetching the top 10 users for Weekly leaderboard
 const fetchTop10WeeklyUsers = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/leaderboard/weekly`);
+  const response = await axios.get(
+    `${process.env.REACT_APP_API_URL}/user-info/leaderboard/weekly`
+  );
   return response.data.filter((user) => user.weeklyPoints > 0).slice(0, 10); // Fetch top 10 weekly users
 };
 
 // Fetching all the weekly data at once
 const fetchAllWeeklyData = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_API_URL}/weekly-winner/`);
+  const response = await axios.get(
+    `${process.env.REACT_APP_API_URL}/weekly-winner/`
+  );
   return response.data; // Assuming this returns all weeks data with top 3 users for each week
 };
 
@@ -157,26 +165,26 @@ function LeaderboardPage() {
   const [weeks, setWeeks] = useState([]); // Available weeks
 
   // Fetch Lifetime leaderboard data (Top 30 users)
-  const { data: users = [], isLoading: isUsersLoading, isError: isUsersError } = useQuery(
-    ["topUsers"],
-    fetchTopUsers,
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 30,
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    data: users = [],
+    isLoading: isUsersLoading,
+    isError: isUsersError,
+  } = useQuery(["topUsers"], fetchTopUsers, {
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+  });
 
   // Fetch Weekly Top 10 leaderboard data
-  const { data: top10WeeklyUsers = [], isLoading: isWeeklyLoading, isError: isWeeklyError } = useQuery(
-    ["top10WeeklyUsers"],
-    fetchTop10WeeklyUsers,
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 30,
-      refetchOnWindowFocus: false,
-    }
-  );
+  const {
+    data: top10WeeklyUsers = [],
+    isLoading: isWeeklyLoading,
+    isError: isWeeklyError,
+  } = useQuery(["top10WeeklyUsers"], fetchTop10WeeklyUsers, {
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+  });
 
   // Fetch all weekly data at once when component mounts
   useEffect(() => {
@@ -200,7 +208,9 @@ function LeaderboardPage() {
   // Update top users when selected week changes
   useEffect(() => {
     if (selectedWeek && weeklyData.length > 0) {
-      const selectedWeekData = weeklyData.find(week => week.weekStartDate === selectedWeek);
+      const selectedWeekData = weeklyData.find(
+        (week) => week.weekStartDate === selectedWeek
+      );
       if (selectedWeekData) {
         setWeeklyTopUsers(selectedWeekData.topUsers);
       }
@@ -241,14 +251,33 @@ function LeaderboardPage() {
           {users.map((user, index) => (
             <StyledTableRow key={user.userID} rank={index + 1}>
               <RankCell rank={index + 1}>
-                {index + 1 === 1 && <img src="https://i.ibb.co/5cZBk7J/3d-5.png" alt="First Place" />}
-                {index + 1 === 2 && <img src="https://i.ibb.co/swJQnL0/3d-6.png" alt="Second Place" />}
-                {index + 1 === 3 && <img src="https://i.ibb.co/tqBDBFv/3d-7.png" alt="Third Place" />}
+                {index + 1 === 1 && (
+                  <img
+                    src="https://i.ibb.co/5cZBk7J/3d-5.png"
+                    alt="First Place"
+                  />
+                )}
+                {index + 1 === 2 && (
+                  <img
+                    src="https://i.ibb.co/swJQnL0/3d-6.png"
+                    alt="Second Place"
+                  />
+                )}
+                {index + 1 === 3 && (
+                  <img
+                    src="https://i.ibb.co/tqBDBFv/3d-7.png"
+                    alt="Third Place"
+                  />
+                )}
                 {index + 1 > 3 && index + 1}
               </RankCell>
               <UserCell>
-                <UserAvatar src={avatarImages[(user.userID % 20) + 1]} alt="User Avatar" />
-                <span>{truncateUsername(user.username)}</span> {/* Truncate usernames here */}
+                <UserAvatar
+                  src={avatarImages[(user.userID % 20) + 1]}
+                  alt="User Avatar"
+                />
+                <span>{truncateUsername(user.username)}</span>{" "}
+                {/* Truncate usernames here */}
               </UserCell>
               <PointsCell>
                 <FaRegGem style={{ marginRight: "8px", color: "#36a8e5" }} />
@@ -284,14 +313,33 @@ function LeaderboardPage() {
           {top10WeeklyUsers.map((user, index) => (
             <StyledTableRow key={user.userID} rank={index + 1}>
               <RankCell rank={index + 1}>
-                {index + 1 === 1 && <img src="https://i.ibb.co/5cZBk7J/3d-5.png" alt="First Place" />}
-                {index + 1 === 2 && <img src="https://i.ibb.co/swJQnL0/3d-6.png" alt="Second Place" />}
-                {index + 1 === 3 && <img src="https://i.ibb.co/tqBDBFv/3d-7.png" alt="Third Place" />}
+                {index + 1 === 1 && (
+                  <img
+                    src="https://i.ibb.co/5cZBk7J/3d-5.png"
+                    alt="First Place"
+                  />
+                )}
+                {index + 1 === 2 && (
+                  <img
+                    src="https://i.ibb.co/swJQnL0/3d-6.png"
+                    alt="Second Place"
+                  />
+                )}
+                {index + 1 === 3 && (
+                  <img
+                    src="https://i.ibb.co/tqBDBFv/3d-7.png"
+                    alt="Third Place"
+                  />
+                )}
                 {index + 1 > 3 && index + 1}
               </RankCell>
               <UserCell>
-                <UserAvatar src={avatarImages[(user.userID % 20) + 1]} alt="User Avatar" />
-                <span>{truncateUsername(user.username)}</span> {/* Truncate usernames here */}
+                <UserAvatar
+                  src={avatarImages[(user.userID % 20) + 1]}
+                  alt="User Avatar"
+                />
+                <span>{truncateUsername(user.username)}</span>{" "}
+                {/* Truncate usernames here */}
               </UserCell>
               <PointsCell>
                 <FaRegGem style={{ marginRight: "8px", color: "#36a8e5" }} />
@@ -313,7 +361,11 @@ function LeaderboardPage() {
       <StyledTop3Container>
         {weeklyTopUsers.map((user, index) => (
           <Top3Card key={user.userID} rank={index + 1}>
-            <AvatarImage src={avatarImages[(user.userID % 20) + 1]} alt="User Avatar" rank={index + 1} />
+            <AvatarImage
+              src={avatarImages[(user.userID % 20) + 1]}
+              alt="User Avatar"
+              rank={index + 1}
+            />
             <span>{user.username}</span> {/* No truncation for top 3 users */}
             <PointsCellbelow>
               <FaRegGem style={{ marginRight: "8px", color: "#fff" }} />
@@ -329,10 +381,16 @@ function LeaderboardPage() {
     <StyledLeaderboardPage>
       {/* Tab Navigation */}
       <TabContainer>
-        <Tab active={activeTab === "lifetime"} onClick={() => setActiveTab("lifetime")}>
+        <Tab
+          active={activeTab === "lifetime"}
+          onClick={() => setActiveTab("lifetime")}
+        >
           Lifetime Leaderboard
         </Tab>
-        <Tab active={activeTab === "weekly"} onClick={() => setActiveTab("weekly")}>
+        <Tab
+          active={activeTab === "weekly"}
+          onClick={() => setActiveTab("weekly")}
+        >
           Weekly Leaderboard
         </Tab>
       </TabContainer>
@@ -343,7 +401,9 @@ function LeaderboardPage() {
             <Top30LeaderText>Top 30 Lifetime Leaders</Top30LeaderText>
           </PointsDisplayContainer>
           {isUsersError ? (
-            <NoUsersMessage>Error fetching leaderboard data. Please try again later.</NoUsersMessage>
+            <NoUsersMessage>
+              Error fetching leaderboard data. Please try again later.
+            </NoUsersMessage>
           ) : (
             renderLifetimeLeaderboard()
           )}
@@ -353,22 +413,26 @@ function LeaderboardPage() {
           <FullWidthContainer>
             <PointsDisplayContainer>
               <Top30LeaderText>Top 10 Weekly Leaders</Top30LeaderText>
-              
             </PointsDisplayContainer>
             {isWeeklyError ? (
-              <NoUsersMessage>Error fetching leaderboard data. Please try again later.</NoUsersMessage>
+              <NoUsersMessage>
+                Error fetching leaderboard data. Please try again later.
+              </NoUsersMessage>
             ) : (
               renderWeeklyTop10Leaderboard()
-            )}<AirdropDescription>
-              Participate in the weekly leaderboard challenge and earn USDT every week. Top 3 Highest will get rewarded. Check announcement on Gem Hunters Club official channel.
-        </AirdropDescription>
+            )}
+            <AirdropDescription>
+              Participate in the weekly leaderboard challenge and earn USDT
+              every week. Top 3 Highest will get rewarded. Check announcement on
+              Gem Hunters Club official channel.
+            </AirdropDescription>
           </FullWidthContainer>
 
           <FullWidthContainer>
             <PointsDisplayContainer>
               <Top30LeaderText>Weekly Winners</Top30LeaderText>
             </PointsDisplayContainer>
-<DateTabContainer>
+            {/* <DateTabContainer>
               {weeks.map((week) => (
                 <Tab
                   key={week}
@@ -379,9 +443,8 @@ function LeaderboardPage() {
                 </Tab>
               ))}
             </DateTabContainer>
-            {renderWeeklyTop3Leaderboard()}
-
-            
+            {renderWeeklyTop3Leaderboard()} */}
+            The weekly winners leaderboard is still in the testing phase and has not been announced yet. Please wait for the development to be completed and stay tuned for the final announcement in the Gem Hunters Club
           </FullWidthContainer>
         </>
       )}
