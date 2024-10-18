@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FaTasks, FaGamepad, FaUserFriends, FaEdit } from 'react-icons/fa';
 import { useUserInfo } from '../context/UserInfoContext'; // To fetch user data
 import { getUserID } from '../utils/getUserID'; // To fetch Telegram user ID
+import ToastNotification, { showToast } from '../components/ToastNotification'; // Import toast
 
 // Skeleton animation
 const shimmer = keyframes`
@@ -229,10 +230,10 @@ const ProfilePage = () => {
         username: newUsername, // Update with Telegram username or first name
       });
 
-      alert('Username updated successfully!');
+      showToast('Username updated successfully!', 'success'); // Show success toast
     } catch (error) {
       console.error('Error updating username:', error);
-      alert('Failed to update username. Please try again.');
+      showToast('Failed to update username. Please try again.', 'error'); // Show error toast
     }
   };
 
@@ -291,10 +292,13 @@ const ProfilePage = () => {
         {/* Show update button if user clicked to edit */}
         {showEdit && (
           <UpdateButton onClick={handleUsernameUpdate}>
-          Refresh with your latest Telegram username
+            Refresh with your latest Telegram username
           </UpdateButton>
         )}
       </InfoSection>
+
+      {/* Toast container for displaying notifications */}
+      <ToastNotification />
     </ProfilePageContainer>
   );
 };
