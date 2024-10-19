@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getUserID } from '../utils/getUserID'; 
-import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { getUserID } from "../utils/getUserID";
+import axios from "axios";
 
 const EnergyContext = createContext();
 
@@ -26,7 +26,7 @@ export const EnergyProvider = ({ children }) => {
         const id = await getUserID();
         setUSER_ID(id);
       } catch (error) {
-        console.error('Error fetching user ID:', error);
+        console.error("Error fetching user ID:", error);
       }
     };
     fetchUserID();
@@ -35,13 +35,15 @@ export const EnergyProvider = ({ children }) => {
   // Function to fetch max energy and set it
   const fetchMaxEnergy = async (userID) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/user-info/${userID}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user-info/${userID}`
+      );
       const dynamicMaxEnergy = response.data.maxEnergy || INITIAL_ENERGY; // Default to INITIAL_ENERGY if not set
       setMaxEnergy(dynamicMaxEnergy);
       setIsEnergyReady(true); // Energy is ready to regenerate
       setIsEnergyLoading(false); // Stop loading once max energy is fetched
     } catch (error) {
-      console.error('Error fetching max energy:', error);
+      console.error("Error fetching max energy:", error);
       setMaxEnergy(INITIAL_ENERGY); // Default to 1000 on error
       setIsEnergyReady(true); // Allow energy regeneration even if there's an error
       setIsEnergyLoading(false); // Stop loading even in case of an error
@@ -54,15 +56,18 @@ export const EnergyProvider = ({ children }) => {
     return Math.min(maxEnergy, savedEnergy + timeElapsed * ENERGY_REGEN_RATE);
   };
 
-  // Handle cooldown timer logic
+ // Handle cooldown timer logic
 useEffect(() => {
   if (isCooldownActive) {
-    const cooldownEnd = parseInt(localStorage.getItem(`cooldownEnd_${USER_ID}`), 10);
+    const cooldownEnd = parseInt(
+      localStorage.getItem(`cooldownEnd_${USER_ID}`),
+      10
+    );
     const now = Date.now();
 
     if (now >= cooldownEnd) {
       // Cooldown is over, reset energy to 0 and resume regeneration
-      setEnergy(0);  // Reset energy to 0 after cooldown
+      setEnergy(0); // Reset energy to 0 after cooldown
       setIsCooldownActive(false);
       localStorage.removeItem(`cooldownEnd_${USER_ID}`);
       return;
@@ -74,7 +79,7 @@ useEffect(() => {
       const updatedCooldownTime = cooldownEnd - Date.now();
       if (updatedCooldownTime <= 0) {
         clearInterval(cooldownInterval);
-        setEnergy(0);  // Reset energy to 0 after cooldown
+        setEnergy(0); // Reset energy to 0 after cooldown
         setIsCooldownActive(false); // Cooldown is over
         setCooldownTimeLeft(0);
         localStorage.removeItem(`cooldownEnd_${USER_ID}`);
@@ -105,10 +110,17 @@ useEffect(() => {
       }
 
       // Check if energy exists in localStorage, if not, set initial energy for new users
-      const savedEnergy = parseFloat(localStorage.getItem(`energy_${USER_ID}`)) || INITIAL_ENERGY;
-      const lastUpdate = parseInt(localStorage.getItem(`lastUpdate_${USER_ID}`), 10) || Date.now();
+      const savedEnergy =
+        parseFloat(localStorage.getItem(`energy_${USER_ID}`)) || INITIAL_ENERGY;
+      const lastUpdate =
+        parseInt(localStorage.getItem(`lastUpdate_${USER_ID}`), 10) ||
+        Date.now();
 
-      const initialEnergy = regenerateEnergy(savedEnergy, lastUpdate, maxEnergy);
+      const initialEnergy = regenerateEnergy(
+        savedEnergy,
+        lastUpdate,
+        maxEnergy
+      );
       setEnergy(initialEnergy); // Set the initial energy state
 
       // Save updated energy and last update time in localStorage
@@ -118,26 +130,37 @@ useEffect(() => {
   }, [USER_ID, maxEnergy, isEnergyReady]);
 
   // Regenerate energy every second without user action
-  useEffect(() => {
-    if (!isEnergyReady || isCooldownActive) return; // Ensure energy is ready before regenerating
+useEffect(() => {
+  // Ensure energy is ready and cooldown is NOT active before regenerating
+  if (!isEnergyReady || isCooldownActive) return;
 
-    const regenInterval = setInterval(() => {
-      if (USER_ID && maxEnergy !== null) {
-        setEnergy((prevEnergy) => {
-          const lastUpdate = parseInt(localStorage.getItem(`lastUpdate_${USER_ID}`), 10) || Date.now();
-          const regeneratedEnergy = regenerateEnergy(prevEnergy, lastUpdate, maxEnergy);
+  const regenInterval = setInterval(() => {
+    if (USER_ID && maxEnergy !== null) {
+      setEnergy((prevEnergy) => {
+        // If cooldown just ended, energy will be 0, so we start regenerating from 0
+        const lastUpdate =
+          parseInt(localStorage.getItem(`lastUpdate_${USER_ID}`), 10) ||
+          Date.now();
+        const regeneratedEnergy = regenerateEnergy(
+          prevEnergy,
+          lastUpdate,
+          maxEnergy
+        );
 
-          // Save regenerated energy and update time
-          localStorage.setItem(`energy_${USER_ID}`, regeneratedEnergy.toFixed(2));
-          localStorage.setItem(`lastUpdate_${USER_ID}`, Date.now().toString());
+        // Save regenerated energy and update time
+        localStorage.setItem(
+          `energy_${USER_ID}`,
+          regeneratedEnergy.toFixed(2)
+        );
+        localStorage.setItem(`lastUpdate_${USER_ID}`, Date.now().toString());
 
-          return regeneratedEnergy; // Update state with the regenerated energy
-        });
-      }
-    }, ENERGY_REGEN_INTERVAL); // Regenerate energy every second
+        return regeneratedEnergy; // Update state with the regenerated energy
+      });
+    }
+  }, ENERGY_REGEN_INTERVAL); // Regenerate energy every second
 
-    return () => clearInterval(regenInterval); // Clean up interval on component unmount
-  }, [USER_ID, maxEnergy, isEnergyReady, isCooldownActive]);
+  return () => clearInterval(regenInterval); // Clean up interval on component unmount
+}, [USER_ID, maxEnergy, isEnergyReady, isCooldownActive]);
 
   // Decrease energy function (can be used from other parts of the app)
 const decreaseEnergy = (amount) => {
@@ -152,6 +175,9 @@ const decreaseEnergy = (amount) => {
       localStorage.setItem(`cooldownEnd_${USER_ID}`, cooldownEnd.toString());
       setIsCooldownActive(true); // Activate cooldown
       setCooldownTimeLeft(COOLDOWN_DURATION); // Start cooldown timer
+
+      // Stop regeneration immediately by setting energy to 0 and skipping further logic
+      setEnergy(0);
     }
 
     localStorage.setItem(`energy_${USER_ID}`, newEnergy.toFixed(2));
@@ -161,15 +187,17 @@ const decreaseEnergy = (amount) => {
   });
 };
   return (
-    <EnergyContext.Provider value={{
-      energy,
-      maxEnergy,
-      decreaseEnergy,
-      isEnergyLoading,
-      setMaxEnergy,
-      isCooldownActive,
-      cooldownTimeLeft, // Export cooldown time to display in the UI
-    }}>
+    <EnergyContext.Provider
+      value={{
+        energy,
+        maxEnergy,
+        decreaseEnergy,
+        isEnergyLoading,
+        setMaxEnergy,
+        isCooldownActive,
+        cooldownTimeLeft, // Export cooldown time to display in the UI
+      }}
+    >
       {children}
     </EnergyContext.Provider>
   );
