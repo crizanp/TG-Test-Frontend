@@ -55,37 +55,37 @@ export const EnergyProvider = ({ children }) => {
   };
 
   // Handle cooldown timer logic
-  useEffect(() => {
-    if (isCooldownActive) {
-      const cooldownEnd = parseInt(localStorage.getItem(`cooldownEnd_${USER_ID}`), 10);
-      const now = Date.now();
+useEffect(() => {
+  if (isCooldownActive) {
+    const cooldownEnd = parseInt(localStorage.getItem(`cooldownEnd_${USER_ID}`), 10);
+    const now = Date.now();
 
-      if (now >= cooldownEnd) {
-        // Cooldown is over, reset energy to 0 and resume regeneration
-        setEnergy(0);  // Reset energy to 0 after cooldown
-        setIsCooldownActive(false);
-        localStorage.removeItem(`cooldownEnd_${USER_ID}`);
-        return;
-      }
-
-      setCooldownTimeLeft(cooldownEnd - now); // Calculate remaining cooldown time
-
-      const cooldownInterval = setInterval(() => {
-        const updatedCooldownTime = cooldownEnd - Date.now();
-        if (updatedCooldownTime <= 0) {
-          clearInterval(cooldownInterval);
-          setEnergy(0);  // Reset energy to 0 after cooldown
-          setIsCooldownActive(false); // Cooldown is over
-          setCooldownTimeLeft(0);
-          localStorage.removeItem(`cooldownEnd_${USER_ID}`);
-        } else {
-          setCooldownTimeLeft(updatedCooldownTime);
-        }
-      }, 1000); // Update every second
-
-      return () => clearInterval(cooldownInterval);
+    if (now >= cooldownEnd) {
+      // Cooldown is over, reset energy to 0 and resume regeneration
+      setEnergy(0);  // Reset energy to 0 after cooldown
+      setIsCooldownActive(false);
+      localStorage.removeItem(`cooldownEnd_${USER_ID}`);
+      return;
     }
-  }, [isCooldownActive, USER_ID]);
+
+    setCooldownTimeLeft(cooldownEnd - now); // Calculate remaining cooldown time
+
+    const cooldownInterval = setInterval(() => {
+      const updatedCooldownTime = cooldownEnd - Date.now();
+      if (updatedCooldownTime <= 0) {
+        clearInterval(cooldownInterval);
+        setEnergy(0);  // Reset energy to 0 after cooldown
+        setIsCooldownActive(false); // Cooldown is over
+        setCooldownTimeLeft(0);
+        localStorage.removeItem(`cooldownEnd_${USER_ID}`);
+      } else {
+        setCooldownTimeLeft(updatedCooldownTime);
+      }
+    }, 1000); // Update every second
+
+    return () => clearInterval(cooldownInterval);
+  }
+}, [isCooldownActive, USER_ID]);
 
   useEffect(() => {
     if (USER_ID) {
@@ -140,27 +140,26 @@ export const EnergyProvider = ({ children }) => {
   }, [USER_ID, maxEnergy, isEnergyReady, isCooldownActive]);
 
   // Decrease energy function (can be used from other parts of the app)
-  const decreaseEnergy = (amount) => {
-    if (!USER_ID) return;
+const decreaseEnergy = (amount) => {
+  if (!USER_ID) return;
 
-    setEnergy((prevEnergy) => {
-      const newEnergy = Math.max(prevEnergy - amount, 0); // Prevent energy from going below 0
+  setEnergy((prevEnergy) => {
+    const newEnergy = Math.max(prevEnergy - amount, 0); // Prevent energy from going below 0
 
-      if (newEnergy === 0 && !isCooldownActive) {
-        // Start cooldown if energy reaches 0
-        const cooldownEnd = Date.now() + COOLDOWN_DURATION;
-        localStorage.setItem(`cooldownEnd_${USER_ID}`, cooldownEnd.toString());
-        setIsCooldownActive(true); // Activate cooldown
-        setCooldownTimeLeft(COOLDOWN_DURATION); // Start cooldown timer
-      }
+    if (newEnergy === 0 && !isCooldownActive) {
+      // Start cooldown if energy reaches 0
+      const cooldownEnd = Date.now() + COOLDOWN_DURATION;
+      localStorage.setItem(`cooldownEnd_${USER_ID}`, cooldownEnd.toString());
+      setIsCooldownActive(true); // Activate cooldown
+      setCooldownTimeLeft(COOLDOWN_DURATION); // Start cooldown timer
+    }
 
-      localStorage.setItem(`energy_${USER_ID}`, newEnergy.toFixed(2));
-      localStorage.setItem(`lastUpdate_${USER_ID}`, Date.now().toString());
+    localStorage.setItem(`energy_${USER_ID}`, newEnergy.toFixed(2));
+    localStorage.setItem(`lastUpdate_${USER_ID}`, Date.now().toString());
 
-      return newEnergy;
-    });
-  };
-
+    return newEnergy;
+  });
+};
   return (
     <EnergyContext.Provider value={{
       energy,
