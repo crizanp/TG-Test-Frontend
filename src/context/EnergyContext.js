@@ -18,7 +18,7 @@ export const EnergyProvider = ({ children }) => {
   const INITIAL_ENERGY = 1000; // Default initial energy for new users
   const ENERGY_REGEN_RATE = 1; // Energy regenerated per interval
   const ENERGY_REGEN_INTERVAL = 1000; // Interval for energy regeneration (1 second)
-  const COOLDOWN_DURATION = 60 * 2 * 1000; // 2-min cooldown in milliseconds
+  const COOLDOWN_DURATION = 45 * 1000; // 2-min cooldown in milliseconds
 
   useEffect(() => {
     const fetchUserID = async () => {
@@ -62,7 +62,7 @@ export const EnergyProvider = ({ children }) => {
       if (now >= cooldownEnd) {
         // Cooldown is over, deduct 120 energy
         setEnergy((prevEnergy) => {
-          const newEnergy = Math.max(prevEnergy - 120, 0); // Deduct 120, but ensure it doesn't go below 0
+          const newEnergy = Math.max(prevEnergy - 45, 0); // Deduct 120, but ensure it doesn't go below 0
           localStorage.setItem(`energy_${USER_ID}`, newEnergy.toFixed(2)); // Save updated energy
           return newEnergy;
         });
