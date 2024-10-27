@@ -113,7 +113,7 @@ const FriendPage = () => {
       {/* Invite Friend Section */}
       <PointsDisplayContainer>
         <InviteIcon3D
-          src="https://i.postimg.cc/VNBwg5PP/square.png"
+          src="https://icogemhunters.com/gems/img/friend/friend_top_icon.png"
           alt="Invite Icon"
         />
         <InviteText>
@@ -126,7 +126,7 @@ const FriendPage = () => {
         <BonusBox>
           <BonusContent>
             <BonusIcon
-              src="https://i.postimg.cc/tCWXS96k/Invite-Friend-Premium.png"
+              src="https://icogemhunters.com/gems/img/friend/Invite-Friend-Premium.png"
               alt="Premium Icon"
             />
             <BonusText>
@@ -141,7 +141,7 @@ const FriendPage = () => {
         <BonusBox>
           <BonusContent>
             <BonusIcon
-              src="https://i.postimg.cc/rFFBWcJz/Invite-Friend-Normal.png"
+              src="https://icogemhunters.com/gems/img/friend/Invite-Friend-Normal.png"
               alt="Crown Icon"
             />
             <BonusText>

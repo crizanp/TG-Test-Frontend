@@ -236,7 +236,7 @@ const verifyTelegramTask = async (task) => {
           <UserInfo userID={userID} points={points} />
           <PointsDisplay>
             <img
-              src="https://i.postimg.cc/y6Pn7xpB/square-3.png"
+              src="https://icogemhunters.com/gems/img/Task/top_icon_task.png"
               alt="Logo Icon"
               style={{
                 width: "100px",
@@ -279,7 +279,7 @@ const verifyTelegramTask = async (task) => {
         <UserInfo userID={userID} points={points} />
         <PointsDisplay>
           <img
-            src="https://i.postimg.cc/y6Pn7xpB/square-3.png"
+            src="https://icogemhunters.com/gems/img/Task/top_icon_task.png"
             alt="Logo Icon"
             style={{
               width: "100px",

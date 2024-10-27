@@ -242,7 +242,7 @@ function AirdropPage() {
     <AirdropContainer>
       {/* Top section with logo and description */}
       <TopSection>
-        <Logo src="https://i.ibb.co/ykCTY86/airdrop.png" alt="Earn Logo" />
+        <Logo src="https://icogemhunters.com/gems/img/Airdrop/airdrop-icon.png" alt="Earn Logo" />
         <DescriptionText>
           Earn tokens by participating in exciting airdrop campaigns
         </DescriptionText>

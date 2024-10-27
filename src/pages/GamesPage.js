@@ -112,7 +112,7 @@ function GamesPage() {
           <GameItem as={Link} to="/ecosystem">
             <IconWrapper>
               <GameIcon
-                src="https://i.ibb.co/rMcfScz/3d-1.png"
+                src="https://icogemhunters.com/gems/img/game/quiz_icon.png"
                 alt="Quiz Icon"
               />
             </IconWrapper>
@@ -123,7 +123,7 @@ function GamesPage() {
         <GameItem as={Link} to="/spin-wheel">
           <IconWrapper>
             <GameIcon
-              src="https://i.ibb.co/W3tQ6hf/3d-2.png"
+              src="https://icogemhunters.com/gems/img/game/spin_wheel.png"
               alt="Spin the Wheel Icon"
             />
           </IconWrapper>
@@ -142,7 +142,7 @@ function GamesPage() {
           <LockIcon />
           <DimmedIconWrapper>
             <GameIcon
-              src="https://i.ibb.co/20zNsDw/3d-3.png"
+              src="https://icogemhunters.com/gems/img/game/tresure_hunt.png"
               alt="Treasure Hunt Icon"
             />
           </DimmedIconWrapper>
@@ -158,7 +158,7 @@ function GamesPage() {
           <LockIcon />
           <DimmedIconWrapper>
             <GameIcon
-              src="https://cdn-icons-png.freepik.com/512/8853/8853822.png"
+              src="https://icogemhunters.com/gems/img/game/predictandwin.png"
               alt="Predict & Win Icon"
             />
           </DimmedIconWrapper>
@@ -177,7 +177,7 @@ function GamesPage() {
         <GameItem comingSoon>
           <IconWrapper>
             <GameIcon
-              src="https://www.freeiconspng.com/thumbs/eagle-icon-png/eagle-icon-png-9.png"
+              src="https://icogemhunters.com/gems/img/game/catch_the_eagle.png"
               alt="Catch the Eagle Icon"
             />
           </IconWrapper>
@@ -187,7 +187,7 @@ function GamesPage() {
         <GameItem comingSoon>
           <IconWrapper>
             <GameIcon
-              src="https://i.ibb.co/887LhN5/3d-4.png"
+              src="https://icogemhunters.com/gems/img/game/coming-soon.png"
               alt="Coming Soon Icon"
             />
           </IconWrapper>
