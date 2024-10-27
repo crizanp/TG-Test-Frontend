@@ -129,6 +129,7 @@ const FriendPage = () => {
               src="https://icogemhunters.com/gems/img/friend/Invite-Friend-Premium.png"
               alt="Premium Icon"
             />
+            
             <BonusText>
               Invite Premium User
               <CrownText>
